@@ -64,6 +64,7 @@ deploy:
     - export DEPLOY_PATH="/home/$STAGE_SERVER_USER/inferno-games"
   script:
     - echo "Testing SSH connectivity..."
+    - ssh-keygen -y -f ~/.ssh/id_rsa | sha256sum
     - ssh -i ~/.ssh/id_rsa "$STAGE_SERVER_USER@$STAGE_SERVER_HOST" "echo Connected"
     - ssh -i ~/.ssh/id_rsa "$STAGE_SERVER_USER@$STAGE_SERVER_HOST" "mkdir -p $DEPLOY_PATH"
     - if [ ! -f docker-compose.yml ]; then echo "docker-compose.yml not found"; exit 1; fi

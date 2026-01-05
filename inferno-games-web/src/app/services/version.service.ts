@@ -11,19 +11,13 @@ export interface AppVersion {
   version: string;
 }
 
-export interface BackendVersions {
-  rest: AppVersion | undefined;
-  recog: AppVersion | undefined;
-}
-
 export interface FullVersions {
   web: AppVersion;
-  backend: BackendVersions;
+  backend: AppVersion;
 }
 
 enum AppName {
-  REST = 'rest',
-  RECOG = 'recog'
+  REST = 'rest'
 }
 
 @Injectable({
@@ -42,26 +36,20 @@ export class VersionService extends BaseService {
   }
 
   getWebAppVersion(): AppVersion {
-    return { name: 'inferno-comics-web', version: this.version };
+    return { name: 'inferno-games-web', version: this.version };
   }
 
-  getBackendAppVersions(): Observable<ApiResponse<AppVersion[]>> {
-    return this.get<ApiResponse<AppVersion[]>>(this.apiUrl);
+  getBackendAppVersions(): Observable<ApiResponse<AppVersion>> {
+    return this.get<ApiResponse<AppVersion>>(this.apiUrl);
   }
 
-  getRestAndRecog(): Observable<BackendVersions> {
+  getRest(): Observable<AppVersion> {
     return this.getBackendAppVersions().pipe(
-      map((response: ApiResponse<AppVersion[]>) => {
-        if (!response.data) return {rest: {name: AppName.REST, version: "N/A"}, recog: {name: AppName.RECOG, version: "N/A"}};
+      map((response: ApiResponse<AppVersion>) => {
+        if (!response.data) return {name: AppName.REST, version: "N/A"};
+        const rest: AppVersion | undefined = response.data;
 
-        const rest: AppVersion | undefined = response.data.find((v) =>
-          v.name.includes(AppName.REST)
-        );
-        const recog: AppVersion | undefined = response.data.find((v) =>
-          v.name.includes(AppName.RECOG)
-        );
-
-        return { rest, recog };
+        return rest;
       })
     );
   }
@@ -69,7 +57,7 @@ export class VersionService extends BaseService {
   getAllVersions(): Observable<ApiResponse<FullVersions>> {
     return forkJoin({
       web: of(this.getWebAppVersion()),
-      backend: this.getRestAndRecog(),
+      backend: this.getRest(),
     }).pipe(
       map((result) => {
         const fullVersions: FullVersions = {
