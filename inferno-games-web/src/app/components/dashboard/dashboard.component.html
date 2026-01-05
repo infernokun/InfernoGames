@@ -1,0 +1,291 @@
+<div class="dashboard-container">
+  <!-- Hero Section -->
+  <section class="hero-section" [@fadeInUp]>
+    <div class="hero-content">
+      <div class="hero-text">
+        <h1 class="hero-title">
+          <span class="title-icon">🎮</span>
+          Inferno Games
+        </h1>
+        <p class="hero-subtitle">Track your gaming adventures. Conquer your backlog.</p>
+      </div>
+      <div class="hero-actions">
+        <button mat-raised-button class="btn-add-game" routerLink="/games/search">
+          <mat-icon>add</mat-icon>
+          Add Game
+        </button>
+      </div>
+    </div>
+  </section>
+
+  <!-- Stats Overview -->
+  @if (!loading && stats) {
+    <section class="stats-section" [@slideInUp]>
+      <div class="stats-grid">
+        <div class="stat-card total">
+          <div class="stat-glow"></div>
+          <div class="stat-icon-wrapper">
+            <mat-icon>library_books</mat-icon>
+          </div>
+          <div class="stat-info">
+            <span class="stat-value">{{ stats.totalGames }}</span>
+            <span class="stat-label">Total Games</span>
+          </div>
+        </div>
+
+        <div class="stat-card completed">
+          <div class="stat-glow"></div>
+          <div class="stat-icon-wrapper">
+            <mat-icon>emoji_events</mat-icon>
+          </div>
+          <div class="stat-info">
+            <span class="stat-value">{{ stats.completedGames }}</span>
+            <span class="stat-label">Completed</span>
+          </div>
+          <div class="stat-badge">{{ stats.completionRate }}%</div>
+        </div>
+
+        <div class="stat-card playing">
+          <div class="stat-glow"></div>
+          <div class="stat-icon-wrapper">
+            <mat-icon>play_circle</mat-icon>
+          </div>
+          <div class="stat-info">
+            <span class="stat-value">{{ stats.inProgressGames }}</span>
+            <span class="stat-label">Playing Now</span>
+          </div>
+        </div>
+
+        <div class="stat-card playtime">
+          <div class="stat-glow"></div>
+          <div class="stat-icon-wrapper">
+            <mat-icon>schedule</mat-icon>
+          </div>
+          <div class="stat-info">
+            <span class="stat-value">{{ stats.totalPlaytime }}h</span>
+            <span class="stat-label">Total Playtime</span>
+          </div>
+        </div>
+      </div>
+    </section>
+  }
+
+  <!-- Currently Playing Section -->
+  @if (!loading && inProgressGames.length > 0) {
+    <section class="games-section currently-playing" [@fadeInUp]>
+      <div class="section-header">
+        <h2>
+          <mat-icon>play_circle</mat-icon>
+          Currently Playing
+        </h2>
+        <a mat-button routerLink="/games" [queryParams]="{status: 'IN_PROGRESS'}" class="view-all-btn">
+          View All <mat-icon>arrow_forward</mat-icon>
+        </a>
+      </div>
+      <div class="games-grid featured">
+        @for (game of inProgressGames; track trackByGame($index, game)) {
+          <div class="game-card featured" [@cardAnimation] [routerLink]="['/games', game.id]">
+            <div class="game-cover">
+              @if (game.coverImageUrl) {
+                <img [src]="game.coverImageUrl" [alt]="game.title" loading="lazy">
+              } @else {
+                <div class="cover-placeholder">
+                  <mat-icon>videogame_asset</mat-icon>
+                </div>
+              }
+              <div class="game-overlay">
+                <div class="progress-ring">
+                  <svg viewBox="0 0 36 36">
+                    <path class="progress-bg"
+                      d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" />
+                    <path class="progress-fill"
+                      [attr.stroke-dasharray]="(game.completionPercentage || 0) + ', 100'"
+                      d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" />
+                  </svg>
+                  <span class="progress-text">{{ game.completionPercentage || 0 }}%</span>
+                </div>
+              </div>
+              <div class="status-badge" [class]="getStatusColor(game.status)">
+                {{ getStatusLabel(game.status) }}
+              </div>
+            </div>
+            <div class="game-info">
+              <h3 class="game-title">{{ game.title }}</h3>
+              <div class="game-meta">
+                <span class="platform">
+                  <mat-icon>{{ getPlatformIcon(game.platform || '') }}</mat-icon>
+                  {{ getPlatformLabel(game.platform || '') }}
+                </span>
+                <span class="playtime">
+                  <mat-icon>schedule</mat-icon>
+                  {{ formatPlaytime(game.playtimeHours) }}
+                </span>
+              </div>
+            </div>
+          </div>
+        }
+      </div>
+    </section>
+  }
+
+  <!-- Platform & Genre Stats -->
+  @if (!loading) {
+    <section class="insights-section" [@fadeInUp]>
+      <div class="insights-grid">
+        <!-- Platform Breakdown -->
+        <div class="insight-card platforms">
+          <h3>
+            <mat-icon>devices</mat-icon>
+            Platforms
+          </h3>
+          <div class="platform-list">
+            @for (platform of platformStats; track platform.platform) {
+              <div class="platform-item">
+                <div class="platform-info">
+                  <mat-icon>{{ getPlatformIcon(platform.platform) }}</mat-icon>
+                  <span class="platform-name">{{ getPlatformLabel(platform.platform) }}</span>
+                </div>
+                <div class="platform-stats">
+                  <span class="game-count">{{ platform.gameCount }} games</span>
+                  <div class="progress-bar">
+                    <div class="progress-fill" [style.width.%]="platform.percentage"></div>
+                  </div>
+                </div>
+              </div>
+            }
+          </div>
+        </div>
+
+        <!-- Genre Breakdown -->
+        <div class="insight-card genres">
+          <h3>
+            <mat-icon>category</mat-icon>
+            Genres
+          </h3>
+          <div class="genre-tags">
+            @for (genre of genreStats; track genre.genre) {
+              <div class="genre-tag" [style.--size]="genre.percentage">
+                <span class="genre-name">{{ genre.genre }}</span>
+                <span class="genre-count">{{ genre.gameCount }}</span>
+              </div>
+            }
+          </div>
+        </div>
+      </div>
+    </section>
+  }
+
+  <!-- Backlog Section -->
+  @if (!loading && backlogGames.length > 0) {
+    <section class="games-section backlog" [@fadeInUp]>
+      <div class="section-header">
+        <h2>
+          <mat-icon>inventory_2</mat-icon>
+          Your Backlog
+        </h2>
+        <a mat-button routerLink="/games" [queryParams]="{status: 'NOT_STARTED'}" class="view-all-btn">
+          View All ({{ stats?.notStartedGames || 0 }}) <mat-icon>arrow_forward</mat-icon>
+        </a>
+      </div>
+      <div class="games-grid compact">
+        @for (game of backlogGames; track trackByGame($index, game)) {
+          <div class="game-card compact" [@cardAnimation] [routerLink]="['/games', game.id]">
+            <div class="game-cover">
+              @if (game.coverImageUrl) {
+                <img [src]="game.coverImageUrl" [alt]="game.title" loading="lazy">
+              } @else {
+                <div class="cover-placeholder">
+                  <mat-icon>videogame_asset</mat-icon>
+                </div>
+              }
+              <button class="quick-start-btn" mat-mini-fab color="primary" 
+                (click)="startPlaying($event, game)"
+                matTooltip="Start Playing">
+                <mat-icon>play_arrow</mat-icon>
+              </button>
+            </div>
+            <div class="game-info">
+              <h4 class="game-title">{{ game.title }}</h4>
+              <span class="game-genre">{{ game.genre }}</span>
+            </div>
+          </div>
+        }
+      </div>
+    </section>
+  }
+
+  <!-- Favorites Section -->
+  @if (!loading && favoriteGames.length > 0) {
+    <section class="games-section favorites" [@fadeInUp]>
+      <div class="section-header">
+        <h2>
+          <mat-icon>favorite</mat-icon>
+          Favorites
+        </h2>
+        <a mat-button routerLink="/games" [queryParams]="{favorites: true}" class="view-all-btn">
+          View All <mat-icon>arrow_forward</mat-icon>
+        </a>
+      </div>
+      <div class="games-grid">
+        @for (game of favoriteGames; track trackByGame($index, game)) {
+          <div class="game-card" [@cardAnimation] [routerLink]="['/games', game.id]">
+            <div class="game-cover">
+              @if (game.coverImageUrl) {
+                <img [src]="game.coverImageUrl" [alt]="game.title" loading="lazy">
+              } @else {
+                <div class="cover-placeholder">
+                  <mat-icon>videogame_asset</mat-icon>
+                </div>
+              }
+              <div class="favorite-badge">
+                <mat-icon>favorite</mat-icon>
+              </div>
+              @if (game.rating) {
+                <div class="rating-badge">
+                  <mat-icon>star</mat-icon>
+                  {{ game.rating }}
+                </div>
+              }
+            </div>
+            <div class="game-info">
+              <h3 class="game-title">{{ game.title }}</h3>
+              <div class="game-meta">
+                <span class="status-chip" [class]="getStatusColor(game.status)">
+                  {{ getStatusLabel(game.status) }}
+                </span>
+              </div>
+            </div>
+          </div>
+        }
+      </div>
+    </section>
+  }
+
+  <!-- Loading State -->
+  @if (loading) {
+    <div class="loading-container">
+      <div class="loading-content">
+        <div class="loading-spinner">
+          <mat-spinner diameter="48"></mat-spinner>
+        </div>
+        <h3>Loading your collection...</h3>
+        <p>Gathering your game data</p>
+      </div>
+    </div>
+  }
+
+  <!-- Empty State -->
+  @if (!loading && games.length === 0) {
+    <div class="empty-state" [@fadeInUp]>
+      <div class="empty-content">
+        <mat-icon>sports_esports</mat-icon>
+        <h2>Welcome to Inferno Games!</h2>
+        <p>Start building your game collection by adding your first game.</p>
+        <button mat-raised-button class="btn-add-game" routerLink="/games/search">
+          <mat-icon>add</mat-icon>
+          Add Your First Game
+        </button>
+      </div>
+    </div>
+  }
+</div>

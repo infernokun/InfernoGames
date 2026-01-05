@@ -1,0 +1,173 @@
+<div class="game-detail-container">
+  @if (loading) {
+    <div class="loading-container">
+      <mat-spinner diameter="48"></mat-spinner>
+      <h3>Loading game details...</h3>
+    </div>
+  }
+
+  @if (!loading && game) {
+    <!-- Back Button -->
+    <button mat-button class="back-btn" routerLink="/games">
+      <mat-icon>arrow_back</mat-icon>
+      Back to Library
+    </button>
+
+    <div class="game-content" [@fadeInUp]>
+      <!-- Hero Section -->
+      <div class="hero-section">
+        <div class="cover-wrapper">
+          @if (game.coverImageUrl) {
+            <img [src]="game.coverImageUrl" [alt]="game.title" class="game-cover">
+          } @else {
+            <div class="cover-placeholder">
+              <mat-icon>videogame_asset</mat-icon>
+            </div>
+          }
+        </div>
+
+        <div class="hero-info">
+          <div class="title-row">
+            <h1 class="game-title">{{ game.title }}</h1>
+            <button mat-icon-button class="favorite-btn" (click)="toggleFavorite()">
+              <mat-icon [class.favorited]="game.favorite">
+                {{ game.favorite ? 'favorite' : 'favorite_border' }}
+              </mat-icon>
+            </button>
+          </div>
+
+          <div class="meta-tags">
+            <span class="status-badge" [class]="getStatusColor(game.status)">
+              {{ getStatusLabel(game.status) }}
+            </span>
+            <span class="platform-tag">
+              <mat-icon>{{ getPlatformIcon(game.platform || '') }}</mat-icon>
+              {{ getPlatformLabel(game.platform || '') }}
+            </span>
+            <span class="genre-tag">{{ game.genre }}</span>
+            <span class="year-tag">{{ game.releaseYear }}</span>
+          </div>
+
+          <div class="details-row">
+            <div class="detail-item">
+              <span class="label">Developer</span>
+              <span class="value">{{ game.developer }}</span>
+            </div>
+            <div class="detail-item">
+              <span class="label">Publisher</span>
+              <span class="value">{{ game.publisher }}</span>
+            </div>
+          </div>
+
+          @if (game.rating) {
+            <div class="rating-display">
+              <div class="rating-stars">
+                @for (star of [1,2,3,4,5,6,7,8,9,10]; track star) {
+                  <mat-icon [class.filled]="star <= (game.rating || 0)">
+                    {{ star <= (game.rating || 0) ? 'star' : 'star_border' }}
+                  </mat-icon>
+                }
+              </div>
+              <span class="rating-value">{{ game.rating }}/10</span>
+            </div>
+          }
+
+          <div class="action-buttons">
+            <button mat-raised-button class="btn-edit" [routerLink]="['/games', game.id, 'edit']">
+              <mat-icon>edit</mat-icon>
+              Edit
+            </button>
+            <button mat-stroked-button class="btn-delete" (click)="deleteGame()">
+              <mat-icon>delete</mat-icon>
+              Delete
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Stats Section -->
+      <div class="stats-section" [@slideInUp]>
+        <div class="stat-card">
+          <mat-icon>schedule</mat-icon>
+          <div class="stat-info">
+            <span class="stat-value">{{ formatPlaytime(game.playtimeHours) }}</span>
+            <span class="stat-label">Playtime</span>
+          </div>
+        </div>
+
+        <div class="stat-card">
+          <mat-icon>trending_up</mat-icon>
+          <div class="stat-info">
+            <span class="stat-value">{{ game.completionPercentage || 0 }}%</span>
+            <span class="stat-label">Completion</span>
+          </div>
+          <div class="progress-bar">
+            <div class="progress-fill" [style.width.%]="game.completionPercentage || 0"></div>
+          </div>
+        </div>
+
+        @if (game.totalAchievements) {
+          <div class="stat-card">
+            <mat-icon>emoji_events</mat-icon>
+            <div class="stat-info">
+              <span class="stat-value">{{ game.achievements || 0 }}/{{ game.totalAchievements }}</span>
+              <span class="stat-label">Achievements</span>
+            </div>
+            <div class="progress-bar">
+              <div class="progress-fill achievements" [style.width.%]="getAchievementProgress()"></div>
+            </div>
+          </div>
+        }
+      </div>
+
+      <!-- Status Selector -->
+      <div class="status-section" [@slideInUp]>
+        <h3>Update Status</h3>
+        <div class="status-options">
+          @for (status of statuses; track status) {
+            <button
+              mat-stroked-button
+              class="status-option"
+              [class]="getStatusColor(status)"
+              [class.active]="game.status === status"
+              (click)="updateStatus(status)"
+            >
+              {{ getStatusLabel(status) }}
+            </button>
+          }
+        </div>
+      </div>
+
+      <!-- Description -->
+      @if (game.description) {
+        <div class="description-section" [@slideInUp]>
+          <h3>About</h3>
+          <p>{{ game.description }}</p>
+        </div>
+      }
+
+      <!-- Notes -->
+      @if (game.notes) {
+        <div class="notes-section" [@slideInUp]>
+          <h3>
+            <mat-icon>sticky_note_2</mat-icon>
+            Personal Notes
+          </h3>
+          <p>{{ game.notes }}</p>
+        </div>
+      }
+    </div>
+  }
+
+  @if (!loading && !game) {
+    <div class="not-found">
+      <mat-icon>error_outline</mat-icon>
+      <h2>Game not found</h2>
+      <p>The game you're looking for doesn't exist or has been deleted.</p>
+      <button mat-raised-button routerLink="/games">
+        <mat-icon>arrow_back</mat-icon>
+        Back to Library
+      </button>
+    </div>
+  }
+</div>

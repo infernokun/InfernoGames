@@ -1,0 +1,7 @@
+{
+  "production": true,
+  "baseUrl": "https://your-domain.com",
+  "restUrl": "https://your-domain.com/inferno-games-rest/api",
+  "baseEndPoint": "inferno-games",
+  "websocketUrl": "wss://your-domain.com/inferno-games-rest"
+}

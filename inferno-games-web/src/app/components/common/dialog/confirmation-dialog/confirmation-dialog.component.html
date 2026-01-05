@@ -1,0 +1,59 @@
+<div class="dialog-container">
+  <div class="dialog-header" [ngClass]="{'warn-header': data.isDestructive || data.confirmButtonColor === 'warn'}">
+    <mat-icon class="header-icon">{{ getHeaderIcon() }}</mat-icon>
+    <h2 class="dialog-title">{{ data.title }}</h2>
+  </div>
+
+  <mat-dialog-content class="dialog-content">
+    @if (data.innerHTML) {
+      <p class="dialog-message" [innerHTML]="data.message"></p>
+    } @else {
+      <p class="dialog-message">{{ data.message }}</p>
+    }
+
+    <!-- Add support for details list -->
+    @if (data.details && data.details.length > 0) {
+      <ul class="details-list">
+        @for (detail of data.details; track detail) {
+          <li>{{ detail }}</li>
+        }
+      </ul>
+    }
+
+    <!-- Add destructive warning if needed -->
+    @if (data.isDestructive) {
+      <div class="destructive-warning">
+        <mat-icon style="vertical-align: middle; margin-right: 8px; font-size: 16px;">warning</mat-icon>
+        This action cannot be undone.
+      </div>
+    }
+  </mat-dialog-content>
+
+  <mat-dialog-actions class="dialog-actions">
+    @if (data.showThirdOption && data.thirdOptionText) {
+      <button mat-button
+        class="cancel-button"
+        [mat-dialog-close]="'third'"
+        >
+        {{ data.thirdOptionText }}
+      </button>
+    }
+
+    <button mat-button
+      class="cancel-button"
+      [mat-dialog-close]="data.showThirdOption ? 'cancel' : false">
+      {{ data.cancelButtonText || data.cancelText || 'Cancel' }}
+    </button>
+
+    <button mat-raised-button
+      class="confirm-button"
+      [ngClass]="{'warn-button': data.isDestructive || data.confirmButtonColor === 'warn'}"
+      [color]="(data.isDestructive || data.confirmButtonColor === 'warn') ? 'warn' : (data.confirmButtonColor || 'primary')"
+      [mat-dialog-close]="data.showThirdOption ? 'confirm' : true">
+      @if (data.isDestructive || data.confirmButtonColor === 'warn') {
+        <mat-icon>delete</mat-icon>
+      }
+      {{ data.confirmButtonText || data.confirmText || 'Confirm' }}
+    </button>
+  </mat-dialog-actions>
+</div>

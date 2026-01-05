@@ -1,0 +1,26 @@
+<div class="dialog-container">
+  <!-- Header with Title -->
+  <div class="bg-alert">
+    <h1 class="dialog-title" mat-dialog-title>{{ data.title }}</h1>
+  </div>
+  
+  <!-- Content Section -->
+  <mat-dialog-content class="dialog-content">
+    <!-- Regular content display -->
+    @if (!isCode) {
+      <div class="text-lg enable-crlf">
+        {{ data.content }}
+      </div>
+    }
+  </mat-dialog-content>
+
+  <!-- Action Buttons -->
+  <mat-dialog-actions align="end" class="dialog-actions">
+    <button mat-button class="mat-raised-button mat-cancel" (click)="close()">
+      <span class="button-text">Cancel</span>
+    </button>
+    <button mat-button class="mat-raised-button mat-accent" (click)="close()">
+      <span class="button-text">Confirm</span>
+    </button>
+  </mat-dialog-actions>
+</div>

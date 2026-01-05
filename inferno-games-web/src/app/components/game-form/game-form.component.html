@@ -1,0 +1,156 @@
+<div class="game-form-container" [@fadeInUp]>
+  <button mat-button class="back-btn" (click)="cancel()">
+    <mat-icon>arrow_back</mat-icon>
+    {{ isEditMode ? 'Back to Game' : 'Back to Library' }}
+  </button>
+
+  <div class="form-card">
+    <div class="form-header">
+      <h1>{{ isEditMode ? 'Edit Game' : 'Add New Game' }}</h1>
+      <p>{{ isEditMode ? 'Update the details of your game' : 'Add a new game to your collection' }}</p>
+    </div>
+
+    @if (loading) {
+      <div class="loading-container">
+        <mat-spinner diameter="40"></mat-spinner>
+        <span>Loading game data...</span>
+      </div>
+    } @else {
+      <form [formGroup]="gameForm" (ngSubmit)="onSubmit()">
+        <!-- Basic Info Section -->
+        <div class="form-section">
+          <h3>Basic Information</h3>
+          
+          <mat-form-field appearance="outline" class="full-width">
+            <mat-label>Title</mat-label>
+            <input matInput formControlName="title" placeholder="Enter game title">
+            @if (gameForm.get('title')?.hasError('required') && gameForm.get('title')?.touched) {
+              <mat-error>Title is required</mat-error>
+            }
+          </mat-form-field>
+
+          <div class="form-row">
+            <mat-form-field appearance="outline">
+              <mat-label>Developer</mat-label>
+              <input matInput formControlName="developer" placeholder="Game developer">
+            </mat-form-field>
+
+            <mat-form-field appearance="outline">
+              <mat-label>Publisher</mat-label>
+              <input matInput formControlName="publisher" placeholder="Game publisher">
+            </mat-form-field>
+          </div>
+
+          <div class="form-row">
+            <mat-form-field appearance="outline">
+              <mat-label>Genre</mat-label>
+              <input matInput formControlName="genre" placeholder="e.g., Action RPG">
+            </mat-form-field>
+
+            <mat-form-field appearance="outline">
+              <mat-label>Release Year</mat-label>
+              <input matInput type="number" formControlName="releaseYear" placeholder="2024">
+            </mat-form-field>
+          </div>
+
+          <mat-form-field appearance="outline" class="full-width">
+            <mat-label>Description</mat-label>
+            <textarea matInput formControlName="description" rows="3" placeholder="Brief description of the game"></textarea>
+          </mat-form-field>
+
+          <mat-form-field appearance="outline" class="full-width">
+            <mat-label>Cover Image URL</mat-label>
+            <input matInput formControlName="coverImageUrl" placeholder="https://...">
+            <mat-hint>Enter a URL for the game cover image</mat-hint>
+          </mat-form-field>
+        </div>
+
+        <!-- Status & Platform Section -->
+        <div class="form-section">
+          <h3>Status & Platform</h3>
+
+          <div class="form-row">
+            <mat-form-field appearance="outline">
+              <mat-label>Platform</mat-label>
+              <mat-select formControlName="platform">
+                <mat-option [value]="null">Select platform</mat-option>
+                @for (platform of platforms; track platform) {
+                  <mat-option [value]="platform">{{ getPlatformLabel(platform) }}</mat-option>
+                }
+              </mat-select>
+            </mat-form-field>
+
+            <mat-form-field appearance="outline">
+              <mat-label>Status</mat-label>
+              <mat-select formControlName="status">
+                @for (status of statuses; track status) {
+                  <mat-option [value]="status">{{ getStatusLabel(status) }}</mat-option>
+                }
+              </mat-select>
+            </mat-form-field>
+          </div>
+
+          <div class="checkbox-row">
+            <mat-checkbox formControlName="favorite" color="primary">
+              <mat-icon>favorite</mat-icon>
+              Mark as Favorite
+            </mat-checkbox>
+          </div>
+        </div>
+
+        <!-- Progress Section -->
+        <div class="form-section">
+          <h3>Progress & Stats</h3>
+
+          <div class="form-row">
+            <mat-form-field appearance="outline">
+              <mat-label>Playtime (hours)</mat-label>
+              <input matInput type="number" formControlName="playtimeHours" placeholder="0">
+            </mat-form-field>
+
+            <mat-form-field appearance="outline">
+              <mat-label>Completion %</mat-label>
+              <input matInput type="number" formControlName="completionPercentage" placeholder="0">
+              <mat-hint>0-100</mat-hint>
+            </mat-form-field>
+
+            <mat-form-field appearance="outline">
+              <mat-label>Rating</mat-label>
+              <input matInput type="number" formControlName="rating" placeholder="1-10">
+              <mat-hint>1-10</mat-hint>
+            </mat-form-field>
+          </div>
+        </div>
+
+        <!-- Notes Section -->
+        <div class="form-section">
+          <h3>Personal Notes</h3>
+          
+          <mat-form-field appearance="outline" class="full-width">
+            <mat-label>Notes</mat-label>
+            <textarea matInput formControlName="notes" rows="4" placeholder="Add any personal notes about this game..."></textarea>
+          </mat-form-field>
+        </div>
+
+        <!-- Form Actions -->
+        <div class="form-actions">
+          <button mat-button type="button" class="btn-cancel" (click)="cancel()">
+            Cancel
+          </button>
+          
+          <button mat-raised-button type="submit" class="btn-save" [disabled]="saving">
+            @if (saving) {
+              <mat-spinner diameter="20"></mat-spinner>
+              Saving...
+            } @else {
+              <ng-container>   
+                <mat-icon>save</mat-icon>
+                {{ isEditMode ? 'Update Game' : 'Add Game' }}
+              </ng-container>
+            }
+          </button>
+        </div>
+      </form>
+    }
+  </div>
+</div>

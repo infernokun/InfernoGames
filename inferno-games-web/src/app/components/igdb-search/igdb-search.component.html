@@ -1,0 +1,210 @@
+<div class="igdb-search-container" @fadeInUp>
+  <!-- Header -->
+  <div class="page-header">
+    <button mat-icon-button routerLink="/games" class="back-btn">
+      <mat-icon>arrow_back</mat-icon>
+    </button>
+    <div class="header-content">
+      <h1>🎮 Add Games</h1>
+      <p>Search IGDB to find and add games to your library</p>
+    </div>
+    <button mat-stroked-button routerLink="/games/new" class="manual-btn">
+      <mat-icon>edit</mat-icon>
+      Add Manually
+    </button>
+  </div>
+
+  <!-- Search Bar -->
+  <div class="search-section">
+    <div class="search-bar">
+      <mat-icon class="search-icon">search</mat-icon>
+      <input
+        type="text"
+        [(ngModel)]="searchQuery"
+        (input)="onSearchInput()"
+        placeholder="Search for games..."
+        class="search-input"
+        autofocus
+      />
+      @if (searchQuery) {
+        <button mat-icon-button class="clear-btn" (click)="clearSearch()">
+          <mat-icon>close</mat-icon>
+        </button>
+      }
+      @if (searching) {
+        <mat-spinner diameter="24" class="search-spinner"></mat-spinner>
+      }
+    </div>
+  </div>
+
+  <!-- Tabs -->
+  <div class="tabs-section">
+    <button 
+      class="tab-btn" 
+      [class.active]="activeTab === 'search'"
+      (click)="onTabChange('search')"
+    >
+      <mat-icon>search</mat-icon>
+      Search Results
+      @if (searchResults.length > 0) {
+        <span class="badge">{{ searchResults.length }}</span>
+      }
+    </button>
+    <button 
+      class="tab-btn" 
+      [class.active]="activeTab === 'popular'"
+      (click)="onTabChange('popular')"
+    >
+      <mat-icon>trending_up</mat-icon>
+      Popular
+    </button>
+    <button 
+      class="tab-btn" 
+      [class.active]="activeTab === 'recent'"
+      (click)="onTabChange('recent')"
+    >
+      <mat-icon>new_releases</mat-icon>
+      Recent Releases
+    </button>
+    <button 
+      class="tab-btn" 
+      [class.active]="activeTab === 'upcoming'"
+      (click)="onTabChange('upcoming')"
+    >
+      <mat-icon>event</mat-icon>
+      Upcoming
+    </button>
+  </div>
+
+  <!-- Results -->
+  <div class="results-section">
+    @if (loading) {
+      <div class="loading-state">
+        <mat-spinner diameter="48"></mat-spinner>
+        <p>Loading games...</p>
+      </div>
+    } @else if (activeTab === 'search' && !searchQuery) {
+      <div class="empty-state">
+        <mat-icon>search</mat-icon>
+        <h3>Search for Games</h3>
+        <p>Enter a game title to search the IGDB database</p>
+        <div class="search-tips">
+          <span class="tip">💡 Try searching for "Zelda", "Final Fantasy", or "Dark Souls"</span>
+        </div>
+      </div>
+    } @else if (activeTab === 'search' && searchQuery && getDisplayGames().length === 0 && !searching) {
+      <div class="empty-state">
+        <mat-icon>search_off</mat-icon>
+        <h3>No Results for "{{ searchQuery }}"</h3>
+        <p>Try adjusting your search or check the spelling</p>
+        <button mat-stroked-button (click)="clearSearch()" class="try-again-btn">
+          <mat-icon>refresh</mat-icon>
+          Clear Search
+        </button>
+      </div>
+    } @else if (getDisplayGames().length === 0) {
+      <div class="empty-state">
+        <mat-icon>videogame_asset_off</mat-icon>
+        <h3>No Games Found</h3>
+        <p>Try a different search term or browse other tabs</p>
+      </div>
+    } @else {
+      <div class="games-grid">
+        @for (game of getDisplayGames(); track trackByGame($index, game)) {
+          <div class="game-card" @cardAnimation>
+            <div class="card-cover">
+              @if (game.coverUrl) {
+                <img [src]="game.coverUrl" [alt]="game.name" loading="lazy" />
+              } @else {
+                <div class="no-cover">
+                  <mat-icon>videogame_asset</mat-icon>
+                </div>
+              }
+              
+              <!-- Rating Badge -->
+              @if (game.rating) {
+                <div class="rating-badge">
+                  <mat-icon>star</mat-icon>
+                  {{ formatRating(game.rating) }}
+                </div>
+              }
+            </div>
+
+            <div class="card-content">
+              <h3 class="game-title">{{ game.name }}</h3>
+              
+              <div class="game-meta">
+                @if (game.releaseYear) {
+                  <span class="meta-item">
+                    <mat-icon>calendar_today</mat-icon>
+                    {{ game.releaseYear }}
+                  </span>
+                }
+                @if (game.developer) {
+                  <span class="meta-item">
+                    <mat-icon>code</mat-icon>
+                    {{ game.developer }}
+                  </span>
+                }
+              </div>
+
+              @if (game.genres && game.genres.length > 0) {
+                <div class="genres">
+                  @for (genre of game.genres.slice(0, 3); track genre) {
+                    <span class="genre-tag">{{ genre }}</span>
+                  }
+                </div>
+              }
+
+              @if (game.platforms && game.platforms.length > 0) {
+                <div class="platforms">
+                  @for (platform of game.platforms.slice(0, 4); track platform) {
+                    <span class="platform-tag">{{ platform }}</span>
+                  }
+                  @if (game.platforms.length > 4) {
+                    <span class="platform-tag more">+{{ game.platforms.length - 4 }}</span>
+                  }
+                </div>
+              }
+
+              @if (game.summary) {
+                <p class="game-summary">{{ game.summary | slice:0:120 }}{{ game.summary.length > 120 ? '...' : '' }}</p>
+              }
+            </div>
+
+            <div class="card-actions">
+              @if (isGameAdded(game)) {
+                <button 
+                  mat-flat-button 
+                  class="added-btn"
+                  disabled
+                >
+                  <mat-icon>check_circle</mat-icon>
+                  Added
+                </button>
+              } @else {
+              <button 
+                mat-flat-button 
+                color="primary" 
+                class="add-btn"
+                (click)="importGame(game)"
+                [disabled]="importingId === game.igdbId"
+              >
+                @if (importingId === game.igdbId) {
+                  <mat-spinner diameter="20"></mat-spinner>
+                  Adding...
+                } @else {
+                  <ng-container>
+                    <mat-icon>add</mat-icon>
+                    Add to Library
+                  </ng-container>
+                }
+              </button>
+              }
+            </div>
+          </div>
+        }
+      </div>
+    }
+  </div>
+</div>

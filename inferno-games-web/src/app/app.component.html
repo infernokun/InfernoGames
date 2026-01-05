@@ -1,0 +1,63 @@
+<mat-toolbar color="primary">
+  <mat-toolbar-row>
+    <a routerLink="/" class="title-link">
+      <span class="logo-icon">🎮</span>
+      <span>{{ title }}</span>
+    </a>
+
+    <app-version-info [webSocketConnected]="webSocketConnected"></app-version-info>
+    
+    <span class="spacer"></span>
+
+    <!-- Desktop Navigation (hidden on mobile) -->
+    <nav class="desktop-nav">
+      <button mat-button routerLink="/dashboard" routerLinkActive="active-link">
+        <mat-icon>dashboard</mat-icon>
+        Dashboard
+      </button>
+      <button mat-button routerLink="/games" routerLinkActive="active-link" [routerLinkActiveOptions]="{exact: true}">
+        <mat-icon>sports_esports</mat-icon>
+        Library
+      </button>
+      <button mat-flat-button color="accent" routerLink="/games/search" routerLinkActive="active-link" class="add-game-btn">
+        <mat-icon>add</mat-icon>
+        Add Game
+      </button>
+    </nav>
+
+    <!-- Theme Toggle (always visible) -->
+    <button mat-icon-button class="icon-btn theme-toggle" (click)="toggleTheme()"
+            [attr.aria-label]="(isDarkMode$ | async) ? 'Switch to light mode' : 'Switch to dark mode'">
+      <mat-icon>{{ (isDarkMode$ | async) ? 'light_mode' : 'dark_mode' }}</mat-icon>
+    </button>
+
+    <!-- Mobile Hamburger Menu (hidden on desktop) -->
+    <button mat-icon-button class="mobile-menu-btn" [matMenuTriggerFor]="mobileMenu" aria-label="Open menu">
+      <mat-icon>menu</mat-icon>
+    </button>
+
+    <mat-menu #mobileMenu="matMenu" class="mobile-nav-menu">
+      <a mat-menu-item routerLink="/dashboard" routerLinkActive="active-menu-item">
+        <mat-icon>dashboard</mat-icon>
+        <span>Dashboard</span>
+      </a>
+      <a mat-menu-item routerLink="/games" routerLinkActive="active-menu-item" [routerLinkActiveOptions]="{exact: true}">
+        <mat-icon>sports_esports</mat-icon>
+        <span>Game Library</span>
+      </a>
+      <mat-divider></mat-divider>
+      <a mat-menu-item routerLink="/games/search" routerLinkActive="active-menu-item">
+        <mat-icon>search</mat-icon>
+        <span>Search IGDB</span>
+      </a>
+      <a mat-menu-item routerLink="/games/new" routerLinkActive="active-menu-item">
+        <mat-icon>edit</mat-icon>
+        <span>Add Manually</span>
+      </a>
+    </mat-menu>
+
+  </mat-toolbar-row>
+</mat-toolbar>
+<div class="main-content">
+  <router-outlet></router-outlet>
+</div>
