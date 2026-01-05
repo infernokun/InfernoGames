@@ -1,6 +1,6 @@
 {
   "name": "inferno-games-rest",
-  "version": "0.0.",
+  "version": "0.0.1",
   "description": "Java backend for the inferno-games-web",
   "port": 8080,
   "scripts": {
