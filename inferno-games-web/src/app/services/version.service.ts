@@ -1,3 +1,4 @@
+// version.service.ts
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable, map, forkJoin, of } from 'rxjs';
@@ -13,7 +14,7 @@ export interface AppVersion {
 
 export interface FullVersions {
   web: AppVersion;
-  backend: AppVersion;
+  rest: AppVersion;
 }
 
 enum AppName {
@@ -43,13 +44,11 @@ export class VersionService extends BaseService {
     return this.get<ApiResponse<AppVersion>>(this.apiUrl);
   }
 
-  getRest(): Observable<AppVersion> {
+  getRest(): Observable<{ version: AppVersion; response: ApiResponse<AppVersion> }> {
     return this.getBackendAppVersions().pipe(
       map((response: ApiResponse<AppVersion>) => {
-        if (!response.data) return {name: AppName.REST, version: "N/A"};
-        const rest: AppVersion | undefined = response.data;
-
-        return rest;
+        const version = response.data || { name: AppName.REST, version: "N/A" };
+        return { version, response };
       })
     );
   }
@@ -57,20 +56,20 @@ export class VersionService extends BaseService {
   getAllVersions(): Observable<ApiResponse<FullVersions>> {
     return forkJoin({
       web: of(this.getWebAppVersion()),
-      backend: this.getRest(),
+      rest: this.getRest(),
     }).pipe(
       map((result) => {
         const fullVersions: FullVersions = {
           web: result.web,
-          backend: result.backend
+          rest: result.rest.version
         };
         
         return new ApiResponse<FullVersions>({
-          code: 200,
-          message: 'Versions retrieved successfully',
+          code: result.rest.response.code,
+          message: result.rest.response.message,
           data: fullVersions,
-          type: 4, // SUCCESS
-          timeMs: 0
+          type: result.rest.response.type,
+          timeMs: result.rest.response.timeMs
         });
       })
     );

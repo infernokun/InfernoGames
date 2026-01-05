@@ -8,10 +8,9 @@ import { ApiResponse } from '../../../models/api-response.model';
   selector: 'app-version-info',
   template: `
     <div class="version-info-container"
-      (mouseenter)="showPanel = true"
-      (mouseleave)="showPanel = false">
+         (mouseenter)="showPanel = true"
+         (mouseleave)="showPanel = false">
       <mat-icon class="info-icon" [ngClass]="{ connected: webSocketConnected }">info</mat-icon>
-    
       @if (showPanel) {
         <div class="version-panel">
           <div class="panel-header">
@@ -26,11 +25,7 @@ import { ApiResponse } from '../../../models/api-response.model';
               </div>
               <div class="version-item">
                 <span class="label">REST API</span>
-                <span class="version">{{ versions.backend.rest.version }}</span>
-              </div>
-              <div class="version-item">
-                <span class="label">Recognition</span>
-                <span class="version">{{ versions.backend.recog.version }}</span>
+                <span class="version">{{ versions.rest.version }}</span>
               </div>
             </div>
           } @else {
