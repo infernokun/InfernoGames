@@ -56,14 +56,14 @@ public class GameController extends BaseController {
 
     // ─── Status & Favorite Endpoints ────────────────────────────────────────────
 
-    @PatchMapping("/{id}/status")
+    @PostMapping("/{id}/status")
     public ResponseEntity<ApiResponse<Game>> updateGameStatus(
             @PathVariable Long id,
             @RequestParam GameStatus status) {
         return createSuccessResponse(gameService.updateGameStatus(id, status), "Status updated successfully");
     }
 
-    @PatchMapping("/{id}/favorite")
+    @PostMapping("/{id}/favorite")
     public ResponseEntity<ApiResponse<Game>> toggleFavorite(@PathVariable Long id) {
         return createSuccessResponse(gameService.toggleFavorite(id));
     }

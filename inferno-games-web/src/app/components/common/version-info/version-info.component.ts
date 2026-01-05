@@ -10,12 +10,12 @@ import { ApiResponse } from '../../../models/api-response.model';
     <div class="version-info-container"
          (mouseenter)="showPanel = true"
          (mouseleave)="showPanel = false">
-      <mat-icon class="info-icon" [ngClass]="{ connected: webSocketConnected }">info</mat-icon>
+      <mat-icon class="info-icon">info</mat-icon>
       @if (showPanel) {
         <div class="version-panel">
           <div class="panel-header">
             <mat-icon>info_outline</mat-icon>
-            <span>Version Information ({{webSocketConnected ? 'connected' : 'disconnected'}})</span>
+            <span>Version Information</span>
           </div>
           @if (versions) {
             <div class="panel-content">
@@ -51,11 +51,6 @@ import { ApiResponse } from '../../../models/api-response.model';
       height: 24px;
       cursor: pointer;
       transition: color 0.2s ease;
-      color: #dc3545;
-
-      &.connected {
-        color: #28a745;
-  }   
     }
 
     .info-icon:hover {
@@ -141,8 +136,6 @@ export class VersionInfoComponent implements OnInit {
   showPanel = false;
   versions: any = null;
 
-  @Input() webSocketConnected: boolean = true;
-  
   constructor(private vs: VersionService) {}
   
   ngOnInit() {

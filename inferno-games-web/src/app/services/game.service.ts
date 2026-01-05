@@ -86,7 +86,7 @@ export class GameService extends BaseService {
   // ─── Status & Favorite Operations ───────────────────────────────────────────
 
   updateGameStatus(id: number, status: GameStatus): Observable<ApiResponse<Game>> {
-    return this.patch<ApiResponse<Game>>(`${this.apiUrl}/${id}/status?status=${status}`, {}).pipe(
+    return this.post<ApiResponse<Game>>(`${this.apiUrl}/${id}/status?status=${status}`, {}).pipe(
       map(response => ({
         ...response,
         data: response.data ? new Game(response.data) : undefined
@@ -99,7 +99,7 @@ export class GameService extends BaseService {
   }
 
   toggleFavorite(id: number): Observable<ApiResponse<Game>> {
-    return this.patch<ApiResponse<Game>>(`${this.apiUrl}/${id}/favorite`, {}).pipe(
+    return this.post<ApiResponse<Game>>(`${this.apiUrl}/${id}/favorite`, {}).pipe(
       map(response => ({
         ...response,
         data: response.data ? new Game(response.data) : undefined

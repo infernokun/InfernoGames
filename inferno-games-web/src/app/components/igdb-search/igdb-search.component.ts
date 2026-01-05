@@ -58,9 +58,6 @@ export class IgdbSearchComponent implements OnInit, OnDestroy {
         this.searchResults = [];
       }
     });
-
-    // Load initial data
-    this.loadPopularGames();
   }
 
   ngOnDestroy(): void {
