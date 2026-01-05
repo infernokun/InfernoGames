@@ -1,0 +1,18 @@
+app:
+  version: 0.0.1
+
+server:
+  servlet:
+    contextPath: /${URL_PREFIX}
+
+springdoc:
+  api-docs:
+    enabled: true
+  swagger-ui:
+    enabled: true
+
+spring:
+  application:
+    name: inferno-comics-rest
+  profiles:
+    active: local

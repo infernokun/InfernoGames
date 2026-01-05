@@ -1,0 +1,8 @@
+{
+  "name": "inferno-games",
+  "version": "0.0.0",
+  "scripts": {
+    "start:web": "cd inferno-games-web && npm run start",
+    "push:git": "git push gitlab main && git push github main"
+  }
+}

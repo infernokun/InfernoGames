@@ -1,0 +1,85 @@
+services:
+  inferno-games-web:
+    image: infernokun/inferno-games-web:latest
+    restart: always
+    environment:
+      - BASE_URL=http://inferno-games-web
+      - REST_URL=/api
+    ports:
+      - "8784:80"
+    volumes:
+      - inferno-games-web:/var/log/nginx
+    networks:
+      - inferno-games-network
+
+  inferno-games-db:
+    image: postgres:17.4
+    restart: always
+    environment:
+      POSTGRES_USER: "${POSTGRES_USER:-inferno-games}"
+      POSTGRES_PASSWORD: "${POSTGRES_PASSWORD:-inferno-games}"
+      POSTGRES_DB: "${POSTGRES_DB:-inferno-games}"
+    volumes:
+      - inferno-games-db:/var/lib/postgresql/data
+    networks:
+      - inferno-games-network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-inferno-games}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  inferno-games-rest:
+    image: infernokun/inferno-games-rest:latest
+    #build: ./inferno-games-rest
+    restart: always
+    ports:
+      - "8785:8080"
+    environment:
+      DOCKER_COMPOSE_PATH: "${DOCKER_COMPOSE_PATH:-/var/tmp/inferno-games}"
+      DB_IP: "${POSTGRES_IP:-inferno-games-db}"
+      DB_NAME: "${POSTGRES_DB:-inferno-games}"
+      DB_USER: "${POSTGRES_USER:-inferno-games}"
+      DB_PASS: "${POSTGRES_PASSWORD:-inferno-games}"
+      DB_PORT: "${DB_PORT:-5432}"
+      ENCRYPTION_KEY: "${ENCRYPTION_KEY:-secret_key}"
+      RSA_PRIVATE_KEY_PATH: "${RSA_PRIVATE_KEY_PATH:-/var/tmp/inferno-games/private.pem}"
+      RSA_PUBLIC_KEY_PATH: "${RSA_PUBLIC_KEY_PATH:-/var/tmp/inferno-games/public.pem}"
+      REDIS_HOST: "${REDIS_HOST:-inferno-games-redis}"
+      REDIS_PORT: "${REDIS_PORT:-6379}"
+    volumes:
+      - /var/tmp/inferno-games:/var/tmp/inferno-games
+    networks:
+      - inferno-games-network
+    depends_on:
+      inferno-games-redis:
+        condition: service_healthy
+      inferno-games-db:
+        condition: service_healthy
+
+  inferno-games-redis:
+    image: redis:latest
+    restart: unless-stopped
+    volumes:
+      - inferno-games-redis:/data
+    networks:
+      - inferno-games-network
+    command: redis-server --appendonly yes
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 5
+
+networks:
+  inferno-games-network:
+    driver: bridge
+    name: inferno-games-network
+
+volumes:
+  inferno-games-db:
+    driver: local
+  inferno-games-redis:
+    driver: local
+  inferno-games-web:
+    driver: local
