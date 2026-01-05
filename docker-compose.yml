@@ -6,7 +6,7 @@ services:
       - BASE_URL=http://inferno-games-web
       - REST_URL=/api
     ports:
-      - "8784:80"
+      - "8710:80"
     volumes:
       - inferno-games-web:/var/log/nginx
     networks:
@@ -34,7 +34,7 @@ services:
     #build: ./inferno-games-rest
     restart: always
     ports:
-      - "8785:8080"
+      - "8711:8080"
     environment:
       DOCKER_COMPOSE_PATH: "${DOCKER_COMPOSE_PATH:-/var/tmp/inferno-games}"
       DB_IP: "${POSTGRES_IP:-inferno-games-db}"
