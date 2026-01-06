@@ -86,13 +86,20 @@ export class GamesListComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
-    // Check for query params
+    // Check for query params - these override localStorage preferences
     this.route.queryParams.pipe(takeUntil(this.destroy$)).subscribe(params => {
+      // Only override if query params are explicitly set
       if (params['status']) {
         this.selectedStatus = params['status'] as GameStatus;
       }
       if (params['favorites'] === 'true') {
         this.showFavoritesOnly = true;
+      }
+      if (params['platform']) {
+        this.selectedPlatform = params['platform'] as GamePlatform;
+      }
+      if (params['genre']) {
+        this.selectedGenre = params['genre'];
       }
       this.loadGames();
     });
@@ -199,8 +206,8 @@ export class GamesListComponent implements OnInit, OnDestroy {
     return this.sortOptions.find(option => option.value === this.currentSortOption);
   }
 
-  toggleView(): void {
-    this.viewMode = this.viewMode === 'grid' ? 'list' : 'grid';
+  setViewMode(mode: ViewMode): void {
+    this.viewMode = mode;
     this.saveUserPreferences();
   }
 
@@ -426,6 +433,11 @@ export class GamesListComponent implements OnInit, OnDestroy {
       this.currentSortOption = prefs.currentSortOption || 'title';
       this.currentSortDirection = prefs.currentSortDirection || 'asc';
       this.pageSize = prefs.pageSize || 12;
+      // Load filter preferences (but don't override query params)
+      this.selectedStatus = prefs.selectedStatus || '';
+      this.selectedPlatform = prefs.selectedPlatform || '';
+      this.selectedGenre = prefs.selectedGenre || '';
+      this.showFavoritesOnly = prefs.showFavoritesOnly || false;
     }
   }
 
@@ -434,7 +446,11 @@ export class GamesListComponent implements OnInit, OnDestroy {
       viewMode: this.viewMode,
       currentSortOption: this.currentSortOption,
       currentSortDirection: this.currentSortDirection,
-      pageSize: this.pageSize
+      pageSize: this.pageSize,
+      selectedStatus: this.selectedStatus,
+      selectedPlatform: this.selectedPlatform,
+      selectedGenre: this.selectedGenre,
+      showFavoritesOnly: this.showFavoritesOnly
     };
     localStorage.setItem('gamesListPreferences', JSON.stringify(preferences));
   }

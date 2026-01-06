@@ -95,17 +95,6 @@
           </div>
         </div>
 
-        <div class="stat-card">
-          <mat-icon>trending_up</mat-icon>
-          <div class="stat-info">
-            <span class="stat-value">{{ game.completionPercentage || 0 }}%</span>
-            <span class="stat-label">Completion</span>
-          </div>
-          <div class="progress-bar">
-            <div class="progress-fill" [style.width.%]="game.completionPercentage || 0"></div>
-          </div>
-        </div>
-
         @if (game.totalAchievements) {
           <div class="stat-card">
             <mat-icon>emoji_events</mat-icon>

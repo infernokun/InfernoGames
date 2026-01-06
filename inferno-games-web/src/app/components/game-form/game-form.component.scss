@@ -6,9 +6,15 @@
 .back-btn {
   color: var(--text-secondary) !important;
   margin-bottom: 20px;
+  display: inline-flex !important;
+  align-items: center !important;
 
   mat-icon {
     margin-right: 4px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    line-height: 1;
   }
 
   &:hover {
@@ -162,7 +168,7 @@ mat-form-field {
     color: white !important;
     padding: 10px 24px !important;
     border-radius: 10px !important;
-    display: flex !important;
+    display: inline-flex !important;
     align-items: center !important;
     gap: 8px !important;
     min-width: 140px !important;
@@ -188,6 +194,10 @@ mat-form-field {
       font-size: 20px;
       width: 20px;
       height: 20px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      line-height: 1;
     }
   }
 }

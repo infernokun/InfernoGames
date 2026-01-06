@@ -73,7 +73,6 @@ export class GameFormComponent implements OnInit, OnDestroy {
       status: [GameStatus.NOT_STARTED],
       rating: [null, [Validators.min(1), Validators.max(10)]],
       playtimeHours: [0, [Validators.min(0)]],
-      completionPercentage: [0, [Validators.min(0), Validators.max(100)]],
       notes: [''],
       favorite: [false]
     });
@@ -100,7 +99,6 @@ export class GameFormComponent implements OnInit, OnDestroy {
               status: res.data.status,
               rating: res.data.rating,
               playtimeHours: res.data.playtimeHours,
-              completionPercentage: res.data.completionPercentage,
               notes: res.data.notes,
               favorite: res.data.favorite
             });

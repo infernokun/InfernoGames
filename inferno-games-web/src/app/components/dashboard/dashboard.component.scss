@@ -74,7 +74,7 @@
   padding: 12px 24px !important;
   border-radius: 12px !important;
   font-size: 1rem !important;
-  display: flex !important;
+  display: inline-flex !important;
   align-items: center !important;
   gap: 8px !important;
   box-shadow: 0 4px 20px rgba(59, 130, 246, 0.3) !important;
@@ -89,6 +89,10 @@
     font-size: 20px;
     width: 20px;
     height: 20px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    line-height: 1;
   }
 }
 
@@ -161,7 +165,7 @@
     width: 56px;
     height: 56px;
     border-radius: 14px;
-    display: flex;
+    display: inline-flex;
     align-items: center;
     justify-content: center;
     flex-shrink: 0;
@@ -171,6 +175,10 @@
       width: 28px;
       height: 28px;
       color: white;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      line-height: 1;
     }
   }
 
@@ -231,7 +239,7 @@
     font-weight: 700;
     color: var(--text-primary);
     margin: 0;
-    display: flex;
+    display: inline-flex;
     align-items: center;
     gap: 10px;
 
@@ -240,6 +248,10 @@
       width: 24px;
       height: 24px;
       color: var(--primary-color);
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      line-height: 1;
     }
 
     @media (max-width: 480px) {
@@ -250,7 +262,7 @@
   .view-all-btn {
     color: var(--primary-color) !important;
     font-weight: 500;
-    display: flex;
+    display: inline-flex;
     align-items: center;
     gap: 4px;
 
@@ -258,6 +270,10 @@
       font-size: 18px;
       width: 18px;
       height: 18px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      line-height: 1;
     }
   }
 }
@@ -473,7 +489,7 @@
         width: 16px;
         height: 16px;
         color: white;
-        display: flex;
+        display: inline-flex;
         align-items: center;
         justify-content: center;
         line-height: 1;
@@ -488,7 +504,7 @@
       backdrop-filter: blur(8px);
       padding: 6px 10px;
       border-radius: 8px;
-      display: flex;
+      display: inline-flex;
       align-items: center;
       gap: 4px;
       font-weight: 700;
@@ -499,6 +515,10 @@
         width: 16px;
         height: 16px;
         color: #fbbf24;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        line-height: 1;
       }
     }
   }
@@ -525,7 +545,7 @@
       flex-wrap: wrap;
 
       .platform, .playtime {
-        display: flex;
+        display: inline-flex;
         align-items: center;
         gap: 4px;
         font-size: 0.8rem;
@@ -535,6 +555,10 @@
           font-size: 16px;
           width: 16px;
           height: 16px;
+          display: inline-flex;
+          align-items: center;
+          justify-content: center;
+          line-height: 1;
         }
       }
 
@@ -685,6 +709,10 @@
         font-size: 28px;
         width: 28px;
         height: 28px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        line-height: 1;
       }
     }
 
@@ -921,6 +949,10 @@
       width: 22px;
       height: 22px;
       color: var(--primary-color);
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      line-height: 1;
     }
   }
 
@@ -938,7 +970,7 @@
       gap: 16px;
 
       .platform-info {
-        display: flex;
+        display: inline-flex;
         align-items: center;
         gap: 10px;
         min-width: 120px;
@@ -948,6 +980,10 @@
           width: 20px;
           height: 20px;
           color: var(--text-secondary);
+          display: inline-flex;
+          align-items: center;
+          justify-content: center;
+          line-height: 1;
         }
 
         .platform-name {

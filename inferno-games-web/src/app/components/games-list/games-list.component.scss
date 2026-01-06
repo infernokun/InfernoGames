@@ -22,7 +22,7 @@
       font-weight: 700;
       color: var(--text-primary);
       margin: 0 0 4px 0;
-      display: flex;
+      display: inline-flex;
       align-items: center;
       gap: 10px;
 
@@ -31,6 +31,10 @@
         width: 28px;
         height: 28px;
         color: var(--primary-color);
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        line-height: 1;
       }
     }
 
@@ -48,7 +52,7 @@
   font-weight: 600 !important;
   padding: 10px 20px !important;
   border-radius: 10px !important;
-  display: flex !important;
+  display: inline-flex !important;
   align-items: center !important;
   gap: 8px !important;
   box-shadow: 0 4px 16px rgba(59, 130, 246, 0.25) !important;
@@ -56,6 +60,13 @@
   &:hover {
     transform: translateY(-2px);
     box-shadow: 0 6px 20px rgba(59, 130, 246, 0.35) !important;
+  }
+
+  mat-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    line-height: 1;
   }
 }
 
@@ -80,11 +91,16 @@
     box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
   }
 
-  mat-icon {
+  > mat-icon {
     color: var(--text-muted);
     font-size: 22px;
     width: 22px;
     height: 22px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    line-height: 1;
   }
 
   input {
@@ -148,8 +164,8 @@
   border-radius: 10px !important;
   border-color: var(--border-color) !important;
   color: var(--text-secondary) !important;
-  display: inline-flex;
-  align-items: center;
+  display: inline-flex !important;
+  align-items: center !important;
   gap: 6px;
 
   &.active {
@@ -162,7 +178,7 @@
     font-size: 18px;
     width: 18px;
     height: 18px;
-    display: flex;
+    display: inline-flex;
     align-items: center;
     justify-content: center;
     line-height: 1;
@@ -176,6 +192,10 @@
     font-size: 18px;
     width: 18px;
     height: 18px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    line-height: 1;
   }
 }
 
@@ -210,12 +230,12 @@
   border: 1px solid var(--border-color);
   border-radius: 10px;
   color: var(--text-secondary);
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
 
   mat-icon {
-    display: flex;
+    display: inline-flex;
     align-items: center;
     justify-content: center;
     line-height: 1;
@@ -234,12 +254,12 @@
     height: 36px;
     border-radius: 8px;
     color: var(--text-muted);
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
 
     mat-icon {
-      display: flex;
+      display: inline-flex;
       align-items: center;
       justify-content: center;
       line-height: 1;
@@ -295,7 +315,8 @@
     }
 
     .card-actions {
-      opacity: 1;
+      opacity: 1 !important;
+      visibility: visible !important;
     }
   }
 
@@ -341,31 +362,37 @@
       flex-direction: column;
       gap: 6px;
       opacity: 0;
-      transition: opacity 0.2s ease;
+      visibility: hidden;
+      transition: opacity 0.2s ease, visibility 0.2s ease;
+      z-index: 10;
 
       .action-btn {
-        width: 32px;
-        height: 32px;
-        background: rgba(0, 0, 0, 0.7);
+        width: 32px !important;
+        height: 32px !important;
+        min-width: 32px !important;
+        padding: 0 !important;
+        background: rgba(0, 0, 0, 0.7) !important;
         backdrop-filter: blur(8px);
-        color: white;
-        display: inline-flex;
-        align-items: center;
-        justify-content: center;
+        color: white !important;
+        display: inline-flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+        border-radius: 8px !important;
 
         mat-icon {
           font-size: 18px;
           width: 18px;
           height: 18px;
           line-height: 1;
-          display: flex;
+          display: inline-flex;
           align-items: center;
           justify-content: center;
+          color: white;
         }
 
-        &.favorite:hover { background: rgba(239, 68, 68, 0.9); }
-        &.edit:hover { background: rgba(59, 130, 246, 0.9); }
-        &.delete:hover { background: rgba(239, 68, 68, 0.9); }
+        &.favorite:hover { background: rgba(239, 68, 68, 0.9) !important; }
+        &.edit:hover { background: rgba(59, 130, 246, 0.9) !important; }
+        &.delete:hover { background: rgba(239, 68, 68, 0.9) !important; }
       }
     }
 
@@ -394,7 +421,7 @@
       backdrop-filter: blur(8px);
       padding: 4px 8px;
       border-radius: 6px;
-      display: flex;
+      display: inline-flex;
       align-items: center;
       gap: 4px;
       font-size: 0.8rem;
@@ -406,6 +433,10 @@
         width: 14px;
         height: 14px;
         color: #fbbf24;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        line-height: 1;
       }
     }
 
@@ -468,7 +499,7 @@
       flex-wrap: wrap;
 
       .platform-tag, .playtime-tag {
-        display: flex;
+        display: inline-flex;
         align-items: center;
         gap: 4px;
         font-size: 0.75rem;
@@ -478,6 +509,10 @@
           font-size: 14px;
           width: 14px;
           height: 14px;
+          display: inline-flex;
+          align-items: center;
+          justify-content: center;
+          line-height: 1;
         }
       }
     }
@@ -583,7 +618,7 @@
       gap: 20px;
 
       .stat-item {
-        display: flex;
+        display: inline-flex;
         align-items: center;
         gap: 6px;
         color: var(--text-secondary);
@@ -593,6 +628,10 @@
           font-size: 18px;
           width: 18px;
           height: 18px;
+          display: inline-flex;
+          align-items: center;
+          justify-content: center;
+          line-height: 1;
         }
 
         &.rating {
@@ -627,18 +666,19 @@
 
     button {
       color: var(--text-muted);
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
+      display: inline-flex !important;
+      align-items: center !important;
+      justify-content: center !important;
 
       &:hover {
         color: var(--primary-color);
       }
 
       mat-icon {
-        display: flex;
+        display: inline-flex;
         align-items: center;
         justify-content: center;
+        line-height: 1;
         
         &.favorited {
           color: var(--error-color);

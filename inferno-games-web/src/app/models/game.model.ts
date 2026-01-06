@@ -244,14 +244,14 @@ export class Game {
       });
     }*/
     
-    if (this.steamPlaytimeMacMinutes && this.steamPlaytimeMacMinutes > 0) {
+    /*if (this.steamPlaytimeMacMinutes && this.steamPlaytimeMacMinutes > 0) {
       breakdown.push({
         platform: 'Mac',
         minutes: this.steamPlaytimeMacMinutes,
         hours: Math.round(this.steamPlaytimeMacMinutes / 60 * 10) / 10,
         percentage: Math.round(this.steamPlaytimeMacMinutes / total * 100)
       });
-    }
+    }*/
     
     if (this.steamPlaytimeDeckMinutes && this.steamPlaytimeDeckMinutes > 0) {
       breakdown.push({

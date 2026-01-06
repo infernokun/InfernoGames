@@ -90,10 +90,10 @@
         </button>
 
         <div class="view-toggle">
-          <button mat-icon-button [class.active]="viewMode === 'grid'" (click)="viewMode = 'grid'" matTooltip="Grid View">
+          <button mat-icon-button [class.active]="viewMode === 'grid'" (click)="setViewMode('grid')" matTooltip="Grid View">
             <mat-icon>grid_view</mat-icon>
           </button>
-          <button mat-icon-button [class.active]="viewMode === 'list'" (click)="viewMode = 'list'" matTooltip="List View">
+          <button mat-icon-button [class.active]="viewMode === 'list'" (click)="setViewMode('list')" matTooltip="List View">
             <mat-icon>view_list</mat-icon>
           </button>
         </div>
@@ -146,12 +146,6 @@
               <div class="rating-badge">
                 <mat-icon>star</mat-icon>
                 {{ game.rating }}
-              </div>
-            }
-
-            @if (game.status === 'IN_PROGRESS' && game.completionPercentage) {
-              <div class="progress-indicator">
-                <div class="progress-fill" [style.width.%]="game.completionPercentage"></div>
               </div>
             }
           </div>
