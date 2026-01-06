@@ -120,6 +120,54 @@
         }
       </div>
 
+      <!-- Steam Playtime Breakdown -->
+      @if (game.hasSteamData && hasSteamPlaytimeData()) {
+        <div class="steam-section" [@slideInUp]>
+          <div class="section-header-row">
+            <h3>
+              <img src="https://store.steampowered.com/favicon.ico" alt="Steam" class="steam-icon">
+              Steam Playtime Breakdown
+            </h3>
+            <div class="steam-actions">
+              @if (game.steamLastSynced) {
+                <span class="last-synced">
+                  <mat-icon>sync</mat-icon>
+                  Synced {{ formatLastSynced(game.steamLastSynced) }}
+                </span>
+              }
+              <button mat-icon-button matTooltip="Sync Steam Data" (click)="syncSteamData()" [disabled]="syncingSteam">
+                <mat-icon [class.spinning]="syncingSteam">refresh</mat-icon>
+              </button>
+            </div>
+          </div>
+          
+          <div class="steam-playtime-grid">
+            @for (breakdown of game.getSteamPlaytimeBreakdown(); track breakdown.platform) {
+              <div class="playtime-card" [class]="getPlatformClass(breakdown.platform)">
+                <div class="playtime-icon">
+                  <mat-icon>{{ getPlatformIconForSteam(breakdown.platform) }}</mat-icon>
+                </div>
+                <div class="playtime-info">
+                  <span class="platform-name">{{ breakdown.platform }}</span>
+                  <span class="playtime-value">{{ breakdown.hours }}h</span>
+                </div>
+                <div class="playtime-bar">
+                  <div class="playtime-fill" [style.width.%]="breakdown.percentage"></div>
+                </div>
+                <span class="playtime-percentage">{{ breakdown.percentage }}%</span>
+              </div>
+            }
+          </div>
+
+          @if (game.steamLastPlayed) {
+            <div class="steam-last-played">
+              <mat-icon>history</mat-icon>
+              <span>Last played: {{ formatDate(game.steamLastPlayed) }}</span>
+            </div>
+          }
+        </div>
+      }
+
       <!-- Status Selector -->
       <div class="status-section" [@slideInUp]>
         <h3>Update Status</h3>

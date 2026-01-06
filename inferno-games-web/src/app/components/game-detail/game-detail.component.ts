@@ -5,7 +5,7 @@ import { FormsModule } from '@angular/forms';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import { MaterialModule } from '../../material.module';
-import { Game, GameStatus, GamePlatform } from '../../models/game.model';
+import { Game, GameStatus } from '../../models/game.model';
 import { GameService } from '../../services/game.service';
 import { ApiResponse } from '../../models/api-response.model';
 import { FADE_IN_UP, SLIDE_IN_UP } from '../../utils/animations';
@@ -29,6 +29,7 @@ export class GameDetailComponent implements OnInit, OnDestroy {
   game: Game | null = null;
   loading = true;
   gameId: number | null = null;
+  syncingSteam = false;
 
   private destroy$ = new Subject<void>();
 
@@ -188,6 +189,76 @@ export class GameDetailComponent implements OnInit, OnDestroy {
   getAchievementProgress(): number {
     if (!this.game?.totalAchievements) return 0;
     return Math.round((this.game.achievements || 0) / this.game.totalAchievements * 100);
+  }
+
+  // Steam-related methods
+  hasSteamPlaytimeData(): boolean {
+    if (!this.game) return false;
+    return (this.game.steamPlaytimeWindowsMinutes || 0) > 0 ||
+           (this.game.steamPlaytimeLinuxMinutes || 0) > 0 ||
+           (this.game.steamPlaytimeMacMinutes || 0) > 0 ||
+           (this.game.steamPlaytimeDeckMinutes || 0) > 0;
+  }
+
+  syncSteamData(): void {
+    if (!this.game?.id || this.syncingSteam) return;
+    
+    this.syncingSteam = true;
+    this.gameService.syncGameSteamData(this.game.id)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: (res) => {
+          if (res.data) {
+            this.game = res.data;
+            this.snackBar.open('Steam data synced!', 'Close', { duration: 2000 });
+          }
+          this.syncingSteam = false;
+        },
+        error: (error) => {
+          console.error('Error syncing Steam data:', error);
+          this.snackBar.open('Failed to sync Steam data', 'Close', { duration: 3000 });
+          this.syncingSteam = false;
+        }
+      });
+  }
+
+  getPlatformIconForSteam(platform: string): string {
+    switch (platform) {
+      case 'Windows': return 'desktop_windows';
+      case 'Linux': return 'terminal';
+      case 'Mac': return 'laptop_mac';
+      case 'Steam Deck': return 'sports_esports';
+      default: return 'devices';
+    }
+  }
+
+  getPlatformClass(platform: string): string {
+    return platform.toLowerCase().replace(' ', '-');
+  }
+
+  formatLastSynced(date: Date | undefined): string {
+    if (!date) return 'Never';
+    const now = new Date();
+    const diff = now.getTime() - new Date(date).getTime();
+    const minutes = Math.floor(diff / 60000);
+    const hours = Math.floor(minutes / 60);
+    const days = Math.floor(hours / 24);
+    
+    if (minutes < 1) return 'just now';
+    if (minutes < 60) return `${minutes}m ago`;
+    if (hours < 24) return `${hours}h ago`;
+    return `${days}d ago`;
+  }
+
+  formatDate(date: Date | undefined): string {
+    if (!date) return 'Unknown';
+    return new Date(date).toLocaleDateString('en-US', {
+      year: 'numeric',
+      month: 'short',
+      day: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit'
+    });
   }
 
   statuses = Object.values(GameStatus);

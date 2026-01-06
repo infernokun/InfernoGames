@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable, map, catchError, of } from 'rxjs';
 import { ApiResponse } from '../models/api-response.model';
-import { Game, GameStats, PlatformStats, GenreStats, GameStatus, GamePlatform, IGDBGame } from '../models/game.model';
+import { Game, GameStats, PlatformStats, GenreStats, GameStatus, GamePlatform, IGDBGame, SteamGameInfo, SteamLibraryStats, SteamStatus } from '../models/game.model';
 import { EnvironmentService } from './environment.service';
 import { BaseService } from './base.service';
 
@@ -364,6 +364,139 @@ export class GameService extends BaseService {
       catchError(error => {
         console.error('Error clearing caches:', error);
         return of({ code: 500, data: undefined, message: 'Failed to clear caches', type: 'ERROR' as any, timeMs: 0 });
+      })
+    );
+  }
+
+  // ─── Steam Integration ───────────────────────────────────────────────────────
+
+  getSteamStatus(): Observable<ApiResponse<SteamStatus>> {
+    return this.get<ApiResponse<SteamStatus>>(`${this.apiUrl}/steam/status`).pipe(
+      catchError(error => {
+        console.error('Error getting Steam status:', error);
+        return of({ code: 500, data: { configured: false, message: 'Failed to get Steam status' }, message: 'Failed to get Steam status', type: 'ERROR' as any, timeMs: 0 });
+      })
+    );
+  }
+
+  getSteamLibrary(): Observable<ApiResponse<SteamGameInfo[]>> {
+    return this.get<ApiResponse<SteamGameInfo[]>>(`${this.apiUrl}/steam/library`).pipe(
+      catchError(error => {
+        console.error('Error fetching Steam library:', error);
+        return of({ code: 500, data: [], message: 'Failed to fetch Steam library', type: 'ERROR' as any, timeMs: 0 });
+      })
+    );
+  }
+
+  getSteamLibraryStats(): Observable<ApiResponse<SteamLibraryStats>> {
+    return this.get<ApiResponse<SteamLibraryStats>>(`${this.apiUrl}/steam/library/stats`).pipe(
+      catchError(error => {
+        console.error('Error fetching Steam library stats:', error);
+        return of({ 
+          code: 500, 
+          data: {
+            totalGames: 0,
+            playedGames: 0,
+            unplayedGames: 0,
+            totalPlaytimeMinutes: 0,
+            totalPlaytimeHours: 0,
+            deckPlaytimeMinutes: 0,
+            deckPlaytimeHours: 0,
+            windowsPlaytimeMinutes: 0,
+            windowsPlaytimeHours: 0,
+            linuxPlaytimeMinutes: 0,
+            linuxPlaytimeHours: 0,
+            playedPercentage: 0
+          }, 
+          message: 'Failed to fetch Steam library stats', 
+          type: 'ERROR' as any, 
+          timeMs: 0 
+        });
+      })
+    );
+  }
+
+  searchSteamLibrary(query: string): Observable<ApiResponse<SteamGameInfo[]>> {
+    return this.get<ApiResponse<SteamGameInfo[]>>(`${this.apiUrl}/steam/search?query=${encodeURIComponent(query)}`).pipe(
+      catchError(error => {
+        console.error('Error searching Steam library:', error);
+        return of({ code: 500, data: [], message: 'Failed to search Steam library', type: 'ERROR' as any, timeMs: 0 });
+      })
+    );
+  }
+
+  getRecentlyPlayedSteam(count: number = 10): Observable<ApiResponse<SteamGameInfo[]>> {
+    return this.get<ApiResponse<SteamGameInfo[]>>(`${this.apiUrl}/steam/recent?count=${count}`).pipe(
+      catchError(error => {
+        console.error('Error fetching recently played Steam games:', error);
+        return of({ code: 500, data: [], message: 'Failed to fetch recently played games', type: 'ERROR' as any, timeMs: 0 });
+      })
+    );
+  }
+
+  getMostPlayedSteam(limit: number = 20): Observable<ApiResponse<SteamGameInfo[]>> {
+    return this.get<ApiResponse<SteamGameInfo[]>>(`${this.apiUrl}/steam/most-played?limit=${limit}`).pipe(
+      catchError(error => {
+        console.error('Error fetching most played Steam games:', error);
+        return of({ code: 500, data: [], message: 'Failed to fetch most played games', type: 'ERROR' as any, timeMs: 0 });
+      })
+    );
+  }
+
+  checkSteamOwnership(appId: string): Observable<ApiResponse<{ appId: string; owned: boolean; gameInfo?: SteamGameInfo }>> {
+    return this.get<ApiResponse<{ appId: string; owned: boolean; gameInfo?: SteamGameInfo }>>(`${this.apiUrl}/steam/check/${appId}`).pipe(
+      catchError(error => {
+        console.error('Error checking Steam ownership:', error);
+        return of({ code: 500, data: { appId, owned: false }, message: 'Failed to check ownership', type: 'ERROR' as any, timeMs: 0 });
+      })
+    );
+  }
+
+  refreshSteamCache(): Observable<ApiResponse<void>> {
+    return this.post<ApiResponse<void>>(`${this.apiUrl}/steam/refresh`, {}).pipe(
+      catchError(error => {
+        console.error('Error refreshing Steam cache:', error);
+        return of({ code: 500, data: undefined, message: 'Failed to refresh Steam cache', type: 'ERROR' as any, timeMs: 0 });
+      })
+    );
+  }
+
+  syncGameSteamData(gameId: number): Observable<ApiResponse<Game>> {
+    return this.post<ApiResponse<Game>>(`${this.apiUrl}/${gameId}/steam/sync`, {}).pipe(
+      map(response => ({
+        ...response,
+        data: response.data ? new Game(response.data) : undefined
+      })),
+      catchError(error => {
+        console.error('Error syncing Steam data:', error);
+        return of({ code: 500, data: undefined, message: 'Failed to sync Steam data', type: 'ERROR' as any, timeMs: 0 });
+      })
+    );
+  }
+
+  triggerSteamSyncAll(): Observable<ApiResponse<void>> {
+    return this.post<ApiResponse<void>>(`${this.apiUrl}/steam/sync-all`, {}).pipe(
+      catchError(error => {
+        console.error('Error triggering Steam sync:', error);
+        return of({ code: 500, data: undefined, message: 'Failed to trigger Steam sync', type: 'ERROR' as any, timeMs: 0 });
+      })
+    );
+  }
+
+  validateSteamPlatforms(): Observable<ApiResponse<{ updatedGames: number; message: string }>> {
+    return this.post<ApiResponse<{ updatedGames: number; message: string }>>(`${this.apiUrl}/steam/validate-platforms`, {}).pipe(
+      catchError(error => {
+        console.error('Error validating Steam platforms:', error);
+        return of({ code: 500, data: { updatedGames: 0, message: 'Failed to validate platforms' }, message: 'Failed to validate platforms', type: 'ERROR' as any, timeMs: 0 });
+      })
+    );
+  }
+
+  migrateSteamData(): Observable<ApiResponse<{ updatedGames: number; message: string }>> {
+    return this.post<ApiResponse<{ updatedGames: number; message: string }>>(`${this.apiUrl}/steam/migrate`, {}).pipe(
+      catchError(error => {
+        console.error('Error migrating Steam data:', error);
+        return of({ code: 500, data: { updatedGames: 0, message: 'Failed to migrate Steam data' }, message: 'Failed to migrate Steam data', type: 'ERROR' as any, timeMs: 0 });
       })
     );
   }

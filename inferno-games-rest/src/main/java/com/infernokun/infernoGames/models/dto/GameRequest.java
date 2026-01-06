@@ -67,6 +67,8 @@ public class GameRequest {
 
     private Integer totalAchievements;
 
+    private String steamAppId;
+
     // IGDB fields
     private Long igdbId;
 }

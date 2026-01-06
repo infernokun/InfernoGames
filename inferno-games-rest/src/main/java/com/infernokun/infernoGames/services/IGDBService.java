@@ -20,7 +20,9 @@ import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -37,8 +39,11 @@ public class IGDBService {
     private String accessToken;
     private long tokenExpiresAt;
 
-    public IGDBService(InfernoGamesConfig config) {
+    private final SteamService steamService;
+
+    public IGDBService(InfernoGamesConfig config, SteamService steamService) {
         this.config = config;
+        this.steamService = steamService;
         this.restTemplate = new RestTemplate();
         this.objectMapper = new ObjectMapper();
     }
@@ -80,12 +85,12 @@ public class IGDBService {
                 "search \"%s\"; " +
                         "fields id,name,summary,cover.url,first_release_date,genres.name,platforms.name," +
                         "involved_companies.company.name,involved_companies.developer,involved_companies.publisher," +
-                        "rating,rating_count,screenshots.url,url; " +
+                        "rating,rating_count,screenshots.url,url,external_games.category,external_games.uid,external_games.name; " +
                         "limit 20;",
                 query.replace("\"", "\\\"")
         );
 
-        return executeIGDBRequest("/games", body);
+        return executeIGDBRequest(body);
     }
 
     /**
@@ -100,12 +105,13 @@ public class IGDBService {
                         "fields id,name,summary,storyline,cover.url,first_release_date,genres.name,platforms.name," +
                         "involved_companies.company.name,involved_companies.developer,involved_companies.publisher," +
                         "rating,rating_count,screenshots.url,url,videos.video_id,websites.url,websites.category," +
-                        "similar_games.name,similar_games.cover.url,aggregated_rating,aggregated_rating_count;",
+                        "similar_games.name,similar_games.cover.url,aggregated_rating,aggregated_rating_count," +
+                        "external_games.category,external_games.uid,external_games.name;",
                 igdbId
         );
 
-        List<IGDBGameDto> results = executeIGDBRequest("/games", body);
-        return results.isEmpty() ? Optional.empty() : Optional.of(results.get(0));
+        List<IGDBGameDto> results = executeIGDBRequest(body);
+        return results.isEmpty() ? Optional.empty() : Optional.of(results.getFirst());
     }
 
     /**
@@ -124,7 +130,7 @@ public class IGDBService {
                 limit
         );
 
-        return executeIGDBRequest("/games", body);
+        return executeIGDBRequest(body);
     }
 
     /**
@@ -145,7 +151,7 @@ public class IGDBService {
                 now, limit
         );
 
-        return executeIGDBRequest("/games", body);
+        return executeIGDBRequest(body);
     }
 
     /**
@@ -166,13 +172,13 @@ public class IGDBService {
                 now, limit
         );
 
-        return executeIGDBRequest("/games", body);
+        return executeIGDBRequest(body);
     }
 
     /**
      * Execute IGDB API request
      */
-    private List<IGDBGameDto> executeIGDBRequest(String endpoint, String body) {
+    private List<IGDBGameDto> executeIGDBRequest(String body) {
         try {
             HttpHeaders headers = new HttpHeaders();
             headers.set("Client-ID", config.getIgdbClientId());
@@ -182,7 +188,7 @@ public class IGDBService {
             HttpEntity<String> request = new HttpEntity<>(body, headers);
 
             ResponseEntity<String> response = restTemplate.exchange(
-                    IGDB_API_URL + endpoint,
+                    IGDB_API_URL + "/games",
                     HttpMethod.POST,
                     request,
                     String.class
@@ -191,7 +197,8 @@ public class IGDBService {
             if (response.getBody() != null) {
                 List<IGDBRawGame> rawGames = objectMapper.readValue(
                         response.getBody(),
-                        new TypeReference<List<IGDBRawGame>>() {}
+                        new TypeReference<>() {
+                        }
                 );
 
                 return rawGames.stream()
@@ -273,6 +280,21 @@ public class IGDBService {
                     .collect(Collectors.toList()));
         }
 
+        if (raw.getExternalGames() != null) {
+            List<SteamService.SteamGameInfo> steamGameInfos = steamService.getOwnedGames();
+
+            Map<String, SteamService.SteamGameInfo> steamMap = steamGameInfos.stream()
+                    .collect(Collectors.toMap(SteamService.SteamGameInfo::getAppId, Function.identity()));
+
+            raw.getExternalGames().forEach(externalGame -> {
+                SteamService.SteamGameInfo match = steamMap.get(externalGame.getUid());
+                if (match != null) {
+                    dto.setSteamAppId(match.getAppId());
+                }
+            });
+        }
+
+
         return dto;
     }
 
@@ -311,6 +333,7 @@ public class IGDBService {
         private Double aggregatedRating;
         private String url;
         private List<String> screenshotUrls;
+        private String steamAppId;
     }
 
     @Data
@@ -334,6 +357,8 @@ public class IGDBService {
         @JsonProperty("involved_companies")
         private List<InvolvedCompany> involvedCompanies;
         private List<Screenshot> screenshots;
+        @JsonProperty("external_games")
+        private List<ExternalGame> externalGames;
 
         @Data
         @JsonIgnoreProperties(ignoreUnknown = true)
@@ -371,6 +396,14 @@ public class IGDBService {
         @JsonIgnoreProperties(ignoreUnknown = true)
         public static class Screenshot {
             private String url;
+        }
+
+        @Data
+        @JsonIgnoreProperties(ignoreUnknown = true)
+        public static class ExternalGame {
+            private Integer category;
+            private String uid;
+            private String name;
         }
     }
 }

@@ -393,6 +393,16 @@
   
   .card-actions {
     padding: 0 1rem 1rem;
+
+    .steam-btn {
+      width: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+      padding: 0.625rem;
+      font-weight: 500;
+    }
     
     .add-btn {
       width: 100%;

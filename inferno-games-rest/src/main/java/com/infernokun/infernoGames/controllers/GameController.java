@@ -7,6 +7,9 @@ import com.infernokun.infernoGames.models.enums.GamePlatform;
 import com.infernokun.infernoGames.models.enums.GameStatus;
 import com.infernokun.infernoGames.services.GameService;
 import com.infernokun.infernoGames.services.IGDBService.IGDBGameDto;
+import com.infernokun.infernoGames.services.SteamService.SteamGameInfo;
+import com.infernokun.infernoGames.services.SteamService.SteamLibraryStats;
+import com.infernokun.infernoGames.services.SteamSyncScheduler;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -23,6 +26,7 @@ import java.util.Map;
 public class GameController extends BaseController {
 
     private final GameService gameService;
+    private final SteamSyncScheduler steamSyncScheduler;
 
     // ─── CRUD Endpoints ─────────────────────────────────────────────────────────
 
@@ -156,6 +160,94 @@ public class GameController extends BaseController {
     @PostMapping("/{id}/igdb/refresh")
     public ResponseEntity<ApiResponse<Game>> refreshFromIGDB(@PathVariable Long id) {
         return createSuccessResponse(gameService.refreshFromIGDB(id), "Game refreshed from IGDB successfully");
+    }
+
+    // ─── Steam Integration ───────────────────────────────────────────────────────
+
+    @GetMapping("/steam/status")
+    public ResponseEntity<ApiResponse<Map<String, Object>>> getSteamStatus() {
+        Map<String, Object> status = Map.of(
+                "configured", gameService.isSteamConfigured(),
+                "message", gameService.isSteamConfigured() ?
+                        "Steam API is configured and ready" :
+                        "Steam API is not configured - set STEAM_CLIENT_ID and STEAM_CLIENT_SECRET"
+        );
+        return createSuccessResponse(status);
+    }
+
+    @GetMapping("/steam/library")
+    public ResponseEntity<ApiResponse<List<SteamGameInfo>>> getSteamLibrary() {
+        return createSuccessResponse(gameService.getSteamOwnedGames());
+    }
+
+    @GetMapping("/steam/library/stats")
+    public ResponseEntity<ApiResponse<SteamLibraryStats>> getSteamLibraryStats() {
+        return createSuccessResponse(gameService.getSteamLibraryStats());
+    }
+
+    @GetMapping("/steam/search")
+    public ResponseEntity<ApiResponse<List<SteamGameInfo>>> searchSteamLibrary(@RequestParam String query) {
+        return createSuccessResponse(gameService.searchSteamGames(query));
+    }
+
+    @GetMapping("/steam/recent")
+    public ResponseEntity<ApiResponse<List<SteamGameInfo>>> getRecentlyPlayedSteam(
+            @RequestParam(defaultValue = "10") int count) {
+        return createSuccessResponse(gameService.getRecentlyPlayedSteamGames(count));
+    }
+
+    @GetMapping("/steam/most-played")
+    public ResponseEntity<ApiResponse<List<SteamGameInfo>>> getMostPlayedSteam(
+            @RequestParam(defaultValue = "20") int limit) {
+        return createSuccessResponse(gameService.getMostPlayedSteamGames(limit));
+    }
+
+    @GetMapping("/steam/check/{appId}")
+    public ResponseEntity<ApiResponse<Map<String, Object>>> checkSteamOwnership(@PathVariable String appId) {
+        boolean owned = gameService.checkSteamOwnership(appId);
+        var steamInfo = gameService.getSteamGameInfo(appId);
+
+        Map<String, Object> result = new java.util.HashMap<>();
+        result.put("appId", appId);
+        result.put("owned", owned);
+        result.put("gameInfo", steamInfo.orElse(null));
+
+        return createSuccessResponse(result);
+    }
+
+    @PostMapping("/steam/refresh")
+    public ResponseEntity<ApiResponse<Void>> refreshSteamCache() {
+        gameService.refreshSteamCache();
+        return createSuccessResponse("Steam cache refreshed successfully");
+    }
+
+    @PostMapping("/{id}/steam/sync")
+    public ResponseEntity<ApiResponse<Game>> syncGameSteamData(@PathVariable Long id) {
+        return createSuccessResponse(gameService.syncGameSteamData(id), "Steam data synced successfully");
+    }
+
+    @PostMapping("/steam/sync-all")
+    public ResponseEntity<ApiResponse<Void>> triggerSteamSync() {
+        steamSyncScheduler.syncSteamPlaytime();
+        return createSuccessResponse("Steam sync triggered successfully");
+    }
+
+    @PostMapping("/steam/validate-platforms")
+    public ResponseEntity<ApiResponse<Map<String, Object>>> validateSteamPlatforms() {
+        int updated = steamSyncScheduler.validateSteamPlatforms();
+        return createSuccessResponse(Map.of(
+                "updatedGames", updated,
+                "message", updated + " games had their platform set to PC"
+        ));
+    }
+
+    @PostMapping("/steam/migrate")
+    public ResponseEntity<ApiResponse<Map<String, Object>>> migrateSteamData() {
+        int updated = gameService.migrateExistingSteamData();
+        return createSuccessResponse(Map.of(
+                "updatedGames", updated,
+                "message", "Migration completed for " + updated + " games"
+        ));
     }
 
     // ─── Cache Management ───────────────────────────────────────────────────────

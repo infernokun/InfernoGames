@@ -448,7 +448,8 @@ class GameTest {
                     90.0,                                                  // igdbRating
                     1000,                                                  // igdbRatingCount
                     now,                                                   // createdAt
-                    now                                                    // updatedAt
+                    now,                                                   // updatedAt,
+                    "123"
             );
 
             assertThat(fullGame.getId()).isEqualTo(1L);

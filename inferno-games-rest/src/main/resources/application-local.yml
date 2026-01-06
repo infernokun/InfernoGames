@@ -70,6 +70,9 @@ inferno-games:
   # IGDB uses Twitch authentication
   igdbClientId: "${IGDB_CLIENT_ID}"
   igdbClientSecret: "${IGDB_CLIENT_SECRET}"
+  # Steam Info
+  steamClientId: "${STEAM_CLIENT_ID}"
+  steamClientSecret: "${STEAM_CLIENT_SECRET}"
 
 logging:
   level:

@@ -70,6 +70,54 @@ export interface IGDBGame {
   aggregatedRating?: number;
   url?: string;
   screenshotUrls?: string[];
+  steamAppId?: string;
+}
+
+// Steam DTOs
+export interface SteamGameInfo {
+  appId: string;
+  name: string;
+  playtimeForever: number;        // Total playtime in minutes
+  playtimeWindowsForever: number; // Windows playtime in minutes
+  playtimeMacForever: number;     // Mac playtime in minutes
+  playtimeLinuxForever: number;   // Linux playtime in minutes
+  playtimeDeckForever: number;    // Steam Deck playtime in minutes
+  imgIconUrl?: string;
+  hasCommunityVisibleStats: boolean;
+  rtimeLastPlayed: number;        // Unix timestamp
+  playtimeDisconnected: number;   // Offline playtime in minutes
+}
+
+export interface SteamPlaytimeInfo {
+  appId: string;
+  playtimeForeverMinutes: number;
+  playtimeForeverHours: number;
+  playtimeWindowsMinutes: number;
+  playtimeMacMinutes: number;
+  playtimeLinuxMinutes: number;
+  playtimeDeckMinutes: number;
+  playtimeDisconnectedMinutes: number;
+  lastPlayed?: Date;
+}
+
+export interface SteamLibraryStats {
+  totalGames: number;
+  playedGames: number;
+  unplayedGames: number;
+  totalPlaytimeMinutes: number;
+  totalPlaytimeHours: number;
+  deckPlaytimeMinutes: number;
+  deckPlaytimeHours: number;
+  windowsPlaytimeMinutes: number;
+  windowsPlaytimeHours: number;
+  linuxPlaytimeMinutes: number;
+  linuxPlaytimeHours: number;
+  playedPercentage: number;
+}
+
+export interface SteamStatus {
+  configured: boolean;
+  message: string;
 }
 
 export class Game {
@@ -103,6 +151,15 @@ export class Game {
   igdbUrl?: string;
   igdbRating?: number;
   igdbRatingCount?: number;
+
+  // Steam Integration fields
+  steamAppId?: string;
+  steamPlaytimeWindowsMinutes?: number;
+  steamPlaytimeLinuxMinutes?: number;
+  steamPlaytimeMacMinutes?: number;
+  steamPlaytimeDeckMinutes?: number;
+  steamLastPlayed?: Date;
+  steamLastSynced?: Date;
   
   createdAt?: Date;
   updatedAt?: Date;
@@ -139,9 +196,72 @@ export class Game {
       this.igdbUrl = data.igdbUrl;
       this.igdbRating = data.igdbRating;
       this.igdbRatingCount = data.igdbRatingCount;
+
+      // Steam fields
+      this.steamAppId = data.steamAppId;
+      this.steamPlaytimeWindowsMinutes = data.steamPlaytimeWindowsMinutes;
+      this.steamPlaytimeLinuxMinutes = data.steamPlaytimeLinuxMinutes;
+      this.steamPlaytimeMacMinutes = data.steamPlaytimeMacMinutes;
+      this.steamPlaytimeDeckMinutes = data.steamPlaytimeDeckMinutes;
+      this.steamLastPlayed = data.steamLastPlayed ? DateUtils.parseDateTimeArray(data.steamLastPlayed) : undefined;
+      this.steamLastSynced = data.steamLastSynced ? DateUtils.parseDateTimeArray(data.steamLastSynced) : undefined;
       
       this.createdAt = data.createdAt ? DateUtils.parseDateTimeArray(data.createdAt) : undefined;
       this.updatedAt = data.updatedAt ? DateUtils.parseDateTimeArray(data.updatedAt) : undefined;
     }
+  }
+
+  // Helper methods for Steam playtime
+  get hasSteamData(): boolean {
+    return !!this.steamAppId;
+  }
+
+  get steamTotalPlaytimeMinutes(): number {
+    return (this.steamPlaytimeWindowsMinutes || 0) + 
+           (this.steamPlaytimeLinuxMinutes || 0) + 
+           (this.steamPlaytimeMacMinutes || 0);
+  }
+
+  getSteamPlaytimeBreakdown(): { platform: string; minutes: number; hours: number; percentage: number }[] {
+    const total = this.steamTotalPlaytimeMinutes || 1; // Avoid division by zero
+    const breakdown = [];
+    
+    if (this.steamPlaytimeWindowsMinutes && this.steamPlaytimeWindowsMinutes > 0) {
+      breakdown.push({
+        platform: 'Windows',
+        minutes: this.steamPlaytimeWindowsMinutes,
+        hours: Math.round(this.steamPlaytimeWindowsMinutes / 60 * 10) / 10,
+        percentage: Math.round(this.steamPlaytimeWindowsMinutes / total * 100)
+      });
+    }
+    
+    /*if (this.steamPlaytimeLinuxMinutes && this.steamPlaytimeLinuxMinutes > 0) {
+      breakdown.push({
+        platform: 'Linux',
+        minutes: this.steamPlaytimeLinuxMinutes,
+        hours: Math.round(this.steamPlaytimeLinuxMinutes / 60 * 10) / 10,
+        percentage: Math.round(this.steamPlaytimeLinuxMinutes / total * 100)
+      });
+    }*/
+    
+    if (this.steamPlaytimeMacMinutes && this.steamPlaytimeMacMinutes > 0) {
+      breakdown.push({
+        platform: 'Mac',
+        minutes: this.steamPlaytimeMacMinutes,
+        hours: Math.round(this.steamPlaytimeMacMinutes / 60 * 10) / 10,
+        percentage: Math.round(this.steamPlaytimeMacMinutes / total * 100)
+      });
+    }
+    
+    if (this.steamPlaytimeDeckMinutes && this.steamPlaytimeDeckMinutes > 0) {
+      breakdown.push({
+        platform: 'Steam Deck',
+        minutes: this.steamPlaytimeDeckMinutes,
+        hours: Math.round(this.steamPlaytimeDeckMinutes / 60 * 10) / 10,
+        percentage: Math.round(this.steamPlaytimeDeckMinutes / total * 100)
+      });
+    }
+    
+    return breakdown.sort((a, b) => b.minutes - a.minutes);
   }
 }

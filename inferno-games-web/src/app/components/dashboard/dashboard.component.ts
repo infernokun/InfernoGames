@@ -5,7 +5,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
 import { MaterialModule } from '../../material.module';
-import { Game, GameStatus, GameStats, PlatformStats, GenreStats } from '../../models/game.model';
+import { Game, GameStatus, GameStats, PlatformStats, GenreStats, SteamLibraryStats, SteamStatus } from '../../models/game.model';
 import { GameService } from '../../services/game.service';
 import { ApiResponse } from '../../models/api-response.model';
 import { FADE_IN_UP, SLIDE_IN_UP, CARD_ANIMATION } from '../../utils/animations';
@@ -30,6 +30,22 @@ export class DashboardComponent implements OnInit, OnDestroy {
   genreStats: GenreStats[] = [];
   loading = true;
 
+  // Steam integration
+  steamStatus: SteamStatus | null = null;
+  steamStats: SteamLibraryStats | null = null;
+  steamLoading = false;
+
+  // Steam management dialog
+  showSteamManagement = false;
+  migrationRunning = false;
+  migrationResult: { success: boolean; message: string } | null = null;
+  syncAllRunning = false;
+  syncAllResult: { success: boolean; message: string } | null = null;
+  validateRunning = false;
+  validateResult: { success: boolean; message: string } | null = null;
+  refreshCacheRunning = false;
+  refreshCacheResult: { success: boolean; message: string } | null = null;
+
   // Quick filters
   inProgressGames: Game[] = [];
   recentlyCompletedGames: Game[] = [];
@@ -45,6 +61,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     this.loadDashboardData();
+    this.loadSteamData();
   }
 
   ngOnDestroy(): void {
@@ -98,6 +115,60 @@ export class DashboardComponent implements OnInit, OnDestroy {
           if (res.data) {
             this.genreStats = res.data;
           }
+        }
+      });
+  }
+
+  loadSteamData(): void {
+    this.steamLoading = true;
+
+    this.gameService.getSteamStatus()
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: (res: ApiResponse<SteamStatus>) => {
+          if (res.data) {
+            this.steamStatus = res.data;
+            if (res.data.configured) {
+              this.loadSteamStats();
+            } else {
+              this.steamLoading = false;
+            }
+          }
+        },
+        error: () => {
+          this.steamLoading = false;
+        }
+      });
+  }
+
+  loadSteamStats(): void {
+    this.gameService.getSteamLibraryStats()
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: (res: ApiResponse<SteamLibraryStats>) => {
+          if (res.data) {
+            this.steamStats = res.data;
+          }
+          this.steamLoading = false;
+        },
+        error: () => {
+          this.steamLoading = false;
+        }
+      });
+  }
+
+  refreshSteamData(): void {
+    this.steamLoading = true;
+    this.gameService.refreshSteamCache()
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: () => {
+          this.loadSteamStats();
+          this.snackBar.open('Steam data refreshed!', 'Close', { duration: 2000 });
+        },
+        error: () => {
+          this.steamLoading = false;
+          this.snackBar.open('Failed to refresh Steam data', 'Close', { duration: 3000 });
         }
       });
   }
@@ -207,6 +278,140 @@ export class DashboardComponent implements OnInit, OnDestroy {
         error: (error) => {
           console.error('Error updating game status:', error);
           this.snackBar.open('Error updating game status', 'Close', { duration: 3000 });
+        }
+      });
+  }
+
+  // Steam Management Dialog Methods
+  openSteamManagement(): void {
+    this.showSteamManagement = true;
+    // Reset results when opening
+    this.migrationResult = null;
+    this.syncAllResult = null;
+    this.validateResult = null;
+    this.refreshCacheResult = null;
+  }
+
+  closeSteamManagement(): void {
+    this.showSteamManagement = false;
+  }
+
+  runSteamMigration(): void {
+    this.migrationRunning = true;
+    this.migrationResult = null;
+
+    this.gameService.migrateSteamData()
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: (res) => {
+          this.migrationRunning = false;
+          if (res.data) {
+            this.migrationResult = {
+              success: true,
+              message: `${res.data.updatedGames} games updated`
+            };
+            // Refresh dashboard data
+            this.loadDashboardData();
+            this.loadSteamStats();
+          } else {
+            this.migrationResult = {
+              success: false,
+              message: res.message || 'Migration failed'
+            };
+          }
+        },
+        error: (error) => {
+          this.migrationRunning = false;
+          this.migrationResult = {
+            success: false,
+            message: 'Migration failed: ' + (error.message || 'Unknown error')
+          };
+        }
+      });
+  }
+
+  runSteamSyncAll(): void {
+    this.syncAllRunning = true;
+    this.syncAllResult = null;
+
+    this.gameService.triggerSteamSyncAll()
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: (res) => {
+          this.syncAllRunning = false;
+          this.syncAllResult = {
+            success: true,
+            message: 'Sync triggered successfully'
+          };
+          // Refresh data after a short delay to allow sync to complete
+          setTimeout(() => {
+            this.loadDashboardData();
+            this.loadSteamStats();
+          }, 2000);
+        },
+        error: (error) => {
+          this.syncAllRunning = false;
+          this.syncAllResult = {
+            success: false,
+            message: 'Sync failed: ' + (error.message || 'Unknown error')
+          };
+        }
+      });
+  }
+
+  runValidatePlatforms(): void {
+    this.validateRunning = true;
+    this.validateResult = null;
+
+    this.gameService.validateSteamPlatforms()
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: (res) => {
+          this.validateRunning = false;
+          if (res.data) {
+            this.validateResult = {
+              success: true,
+              message: `${res.data.updatedGames} games updated`
+            };
+            this.loadDashboardData();
+          } else {
+            this.validateResult = {
+              success: false,
+              message: res.message || 'Validation failed'
+            };
+          }
+        },
+        error: (error) => {
+          this.validateRunning = false;
+          this.validateResult = {
+            success: false,
+            message: 'Validation failed: ' + (error.message || 'Unknown error')
+          };
+        }
+      });
+  }
+
+  runRefreshCache(): void {
+    this.refreshCacheRunning = true;
+    this.refreshCacheResult = null;
+
+    this.gameService.refreshSteamCache()
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: () => {
+          this.refreshCacheRunning = false;
+          this.refreshCacheResult = {
+            success: true,
+            message: 'Cache refreshed successfully'
+          };
+          this.loadSteamStats();
+        },
+        error: (error) => {
+          this.refreshCacheRunning = false;
+          this.refreshCacheResult = {
+            success: false,
+            message: 'Refresh failed: ' + (error.message || 'Unknown error')
+          };
         }
       });
   }

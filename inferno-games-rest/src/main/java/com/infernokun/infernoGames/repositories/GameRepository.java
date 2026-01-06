@@ -89,4 +89,16 @@ public interface GameRepository extends JpaRepository<Game, Long> {
 
     // Check if game exists by IGDB ID
     boolean existsByIgdbId(Long igdbId);
+
+    // Find by Steam App ID
+    Optional<Game> findBySteamAppId(String steamAppId);
+
+    // Find all games with Steam App IDs
+    @Query("SELECT g FROM Game g WHERE g.steamAppId IS NOT NULL AND g.steamAppId <> ''")
+    List<Game> findAllWithSteamAppId();
+
+    // Find games needing Steam sync (not synced recently)
+    @Query("SELECT g FROM Game g WHERE g.steamAppId IS NOT NULL AND g.steamAppId <> '' " +
+            "AND (g.steamLastSynced IS NULL OR g.steamLastSynced < :threshold)")
+    List<Game> findGamesNeedingSteamSync(@Param("threshold") java.time.LocalDateTime threshold);
 }

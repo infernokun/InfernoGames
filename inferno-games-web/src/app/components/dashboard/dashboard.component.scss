@@ -560,6 +560,336 @@
   margin-bottom: 40px;
 }
 
+// Steam Stats Section
+.steam-stats-section {
+  background: var(--surface-color);
+  border: 1px solid var(--border-color);
+  border-radius: 20px;
+  padding: 24px;
+  margin-bottom: 40px;
+
+  .section-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 24px;
+
+    h2 {
+      font-size: 1.25rem;
+      font-weight: 600;
+      color: var(--text-primary);
+      margin: 0;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+
+      .steam-logo {
+        width: 28px;
+        height: 28px;
+        border-radius: 6px;
+      }
+    }
+
+    button {
+      mat-icon.spinning {
+        animation: spin 1s linear infinite;
+      }
+    }
+  }
+
+  .steam-stats-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+    gap: 16px;
+
+    @media (max-width: 600px) {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+
+  .steam-stat-card {
+    background: var(--background-color);
+    border: 1px solid var(--border-color);
+    border-radius: 14px;
+    padding: 18px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    position: relative;
+    overflow: hidden;
+    transition: all 0.2s ease;
+
+    &:hover {
+      transform: translateY(-2px);
+      box-shadow: var(--shadow-md);
+    }
+
+    &.library {
+      grid-column: span 2;
+      flex-direction: row;
+      align-items: center;
+      gap: 20px;
+
+      @media (max-width: 600px) {
+        grid-column: span 2;
+        flex-direction: column;
+        align-items: flex-start;
+      }
+
+      .steam-stat-icon mat-icon { color: #66c0f4; }
+    }
+
+    &.playtime {
+      .steam-stat-icon mat-icon { color: var(--accent-color); }
+    }
+
+    &.windows {
+      border-left: 3px solid #0078d4;
+      .steam-stat-icon mat-icon { color: #0078d4; }
+    }
+
+    &.deck {
+      border-left: 3px solid #1a9fff;
+      .steam-stat-icon mat-icon { color: #1a9fff; }
+    }
+
+    &.linux {
+      border-left: 3px solid #f7a41d;
+      .steam-stat-icon mat-icon { color: #f7a41d; }
+    }
+
+    &.percentage {
+      position: relative;
+
+      .steam-stat-icon mat-icon { color: var(--success-color); }
+
+      .progress-bar {
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        height: 4px;
+        background: var(--border-color);
+        border-radius: 0 0 14px 14px;
+
+        .progress-fill {
+          height: 100%;
+          background: linear-gradient(90deg, var(--primary-color), var(--success-color));
+          transition: width 0.5s ease;
+        }
+      }
+    }
+
+    .steam-stat-icon {
+      mat-icon {
+        font-size: 28px;
+        width: 28px;
+        height: 28px;
+      }
+    }
+
+    .steam-stat-info {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+
+      .steam-stat-value {
+        font-size: 1.5rem;
+        font-weight: 700;
+        color: var(--text-primary);
+        line-height: 1.2;
+      }
+
+      .steam-stat-label {
+        font-size: 0.8rem;
+        color: var(--text-secondary);
+      }
+    }
+
+    .steam-stat-sub {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      margin-left: auto;
+
+      @media (max-width: 600px) {
+        margin-left: 0;
+      }
+
+      .played {
+        color: var(--success-color);
+      }
+
+      .unplayed {
+        color: var(--text-muted);
+      }
+
+      .divider {
+        opacity: 0.5;
+      }
+    }
+  }
+}
+
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+// Steam Management Dialog
+.steam-management-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.6);
+  backdrop-filter: blur(4px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  padding: 20px;
+}
+
+.steam-management-dialog {
+  background: var(--surface-color);
+  border: 1px solid var(--border-color);
+  border-radius: 20px;
+  width: 100%;
+  max-width: 600px;
+  max-height: 90vh;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  box-shadow: var(--shadow-xl);
+
+  .dialog-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 20px 24px;
+    border-bottom: 1px solid var(--border-color);
+    background: var(--background-color);
+
+    h2 {
+      font-size: 1.25rem;
+      font-weight: 600;
+      color: var(--text-primary);
+      margin: 0;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+
+      .steam-logo {
+        width: 28px;
+        height: 28px;
+        border-radius: 6px;
+      }
+    }
+  }
+
+  .dialog-content {
+    padding: 24px;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+  }
+
+  .management-section {
+    background: var(--background-color);
+    border: 1px solid var(--border-color);
+    border-radius: 14px;
+    padding: 20px;
+
+    h3 {
+      font-size: 1rem;
+      font-weight: 600;
+      color: var(--text-primary);
+      margin: 0 0 8px 0;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+
+      mat-icon {
+        font-size: 20px;
+        width: 20px;
+        height: 20px;
+        color: var(--primary-color);
+      }
+    }
+
+    .section-description {
+      font-size: 0.875rem;
+      color: var(--text-secondary);
+      margin: 0 0 16px 0;
+      line-height: 1.5;
+    }
+
+    .action-row {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      flex-wrap: wrap;
+
+      button {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        min-width: 140px;
+
+        mat-spinner {
+          margin-right: 4px;
+        }
+
+        &[disabled] {
+          opacity: 0.7;
+        }
+      }
+
+      .result-message {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        font-size: 0.875rem;
+        color: var(--error-color);
+        padding: 8px 12px;
+        background: rgba(239, 68, 68, 0.1);
+        border-radius: 8px;
+
+        mat-icon {
+          font-size: 18px;
+          width: 18px;
+          height: 18px;
+        }
+
+        &.success {
+          color: var(--success-color);
+          background: rgba(16, 185, 129, 0.1);
+        }
+      }
+    }
+  }
+}
+
+// Update steam-stats-section header for new actions
+.steam-stats-section {
+  .section-header {
+    .steam-actions {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+
+      button[mat-stroked-button] {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        font-size: 0.875rem;
+      }
+    }
+  }
+}
+
 .insights-grid {
   display: grid;
   grid-template-columns: repeat(2, 1fr);

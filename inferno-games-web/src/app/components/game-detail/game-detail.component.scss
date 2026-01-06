@@ -421,6 +421,174 @@
   border-color: rgba(245, 158, 11, 0.2);
 }
 
+// Steam Section
+.steam-section {
+  background: var(--surface-color);
+  border: 1px solid var(--border-color);
+  border-radius: 16px;
+  padding: 24px;
+
+  .section-header-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 20px;
+    flex-wrap: wrap;
+    gap: 12px;
+
+    h3 {
+      font-size: 1.1rem;
+      font-weight: 600;
+      color: var(--text-primary);
+      margin: 0;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+
+      .steam-icon {
+        width: 24px;
+        height: 24px;
+        border-radius: 4px;
+      }
+    }
+
+    .steam-actions {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+
+      .last-synced {
+        display: flex;
+        align-items: center;
+        gap: 4px;
+        font-size: 0.8rem;
+        color: var(--text-muted);
+
+        mat-icon {
+          font-size: 16px;
+          width: 16px;
+          height: 16px;
+        }
+      }
+
+      button {
+        mat-icon.spinning {
+          animation: spin 1s linear infinite;
+        }
+      }
+    }
+  }
+
+  .steam-playtime-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 16px;
+    margin-bottom: 16px;
+  }
+
+  .playtime-card {
+    background: var(--background-color);
+    border: 1px solid var(--border-color);
+    border-radius: 12px;
+    padding: 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    position: relative;
+    overflow: hidden;
+
+    &.windows {
+      border-left: 3px solid #0078d4;
+      .playtime-icon mat-icon { color: #0078d4; }
+      .playtime-fill { background: linear-gradient(90deg, #0078d4, #00a4ef); }
+    }
+
+    &.linux {
+      border-left: 3px solid #f7a41d;
+      .playtime-icon mat-icon { color: #f7a41d; }
+      .playtime-fill { background: linear-gradient(90deg, #f7a41d, #fbc02d); }
+    }
+
+    &.mac {
+      border-left: 3px solid #a3aaae;
+      .playtime-icon mat-icon { color: #a3aaae; }
+      .playtime-fill { background: linear-gradient(90deg, #a3aaae, #c5c5c5); }
+    }
+
+    &.steam-deck {
+      border-left: 3px solid #1a9fff;
+      .playtime-icon mat-icon { color: #1a9fff; }
+      .playtime-fill { background: linear-gradient(90deg, #1a9fff, #66c0f4); }
+    }
+
+    .playtime-icon {
+      mat-icon {
+        font-size: 28px;
+        width: 28px;
+        height: 28px;
+      }
+    }
+
+    .playtime-info {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+
+      .platform-name {
+        font-size: 0.9rem;
+        color: var(--text-secondary);
+        font-weight: 500;
+      }
+
+      .playtime-value {
+        font-size: 1.25rem;
+        font-weight: 700;
+        color: var(--text-primary);
+      }
+    }
+
+    .playtime-bar {
+      height: 6px;
+      background: var(--border-color);
+      border-radius: 3px;
+      overflow: hidden;
+
+      .playtime-fill {
+        height: 100%;
+        transition: width 0.5s ease;
+      }
+    }
+
+    .playtime-percentage {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      text-align: right;
+    }
+  }
+
+  .steam-last-played {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding-top: 12px;
+    border-top: 1px solid var(--border-color);
+    color: var(--text-secondary);
+    font-size: 0.9rem;
+
+    mat-icon {
+      font-size: 18px;
+      width: 18px;
+      height: 18px;
+      color: var(--text-muted);
+    }
+  }
+}
+
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
 // Not Found
 .not-found {
   display: flex;

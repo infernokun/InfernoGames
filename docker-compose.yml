@@ -38,6 +38,8 @@ services:
     environment:
       IGDB_CLIENT_ID: "${IGDB_CLIENT_ID}"
       IGDB_CLIENT_SECRET: "${IGDB_CLIENT_SECRET}"
+      STEAM_CLIENT_ID: "${STEAM_CLIENT_ID}"
+      STEAM_CLIENT_SECRET: "${STEAM_CLIENT_SECRET}"
       DOCKER_COMPOSE_PATH: "${DOCKER_COMPOSE_PATH:-/var/tmp/inferno-games}"
       DB_IP: "${POSTGRES_IP:-inferno-games-db}"
       DB_NAME: "${POSTGRES_DB:-inferno-games}"

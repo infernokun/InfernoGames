@@ -173,6 +173,19 @@
             </div>
 
             <div class="card-actions">
+              @if (game.steamAppId) {
+                <a 
+                  mat-stroked-button 
+                  color="warn" 
+                  class="steam-btn"
+                  [href]="'https://store.steampowered.com/app/' + game.steamAppId"
+                  target="_blank"
+                  rel="noopener"
+                >
+                  <mat-icon>steam</mat-icon>
+                  In Steam Library
+                </a>
+              }
               @if (isGameAdded(game)) {
                 <button 
                   mat-flat-button 

@@ -134,6 +134,28 @@ public class Game {
     @Column(name = "updated_at")
     private LocalDateTime updatedAt;
 
+    @Column(name = "steam_app_id")
+    private String steamAppId;
+
+    // Steam-specific playtime tracking
+    @Column(name = "steam_playtime_windows_minutes")
+    private Integer steamPlaytimeWindowsMinutes;
+
+    @Column(name = "steam_playtime_linux_minutes")
+    private Integer steamPlaytimeLinuxMinutes;
+
+    @Column(name = "steam_playtime_mac_minutes")
+    private Integer steamPlaytimeMacMinutes;
+
+    @Column(name = "steam_playtime_deck_minutes")
+    private Integer steamPlaytimeDeckMinutes;
+
+    @Column(name = "steam_last_played")
+    private LocalDateTime steamLastPlayed;
+
+    @Column(name = "steam_last_synced")
+    private LocalDateTime steamLastSynced;
+
     @PrePersist
     protected void onCreate() {
         createdAt = LocalDateTime.now();

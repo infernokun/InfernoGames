@@ -6,6 +6,7 @@ import com.infernokun.infernoGames.models.enums.GamePlatform;
 import com.infernokun.infernoGames.models.enums.GameStatus;
 import com.infernokun.infernoGames.repositories.GameRepository;
 import com.infernokun.infernoGames.services.IGDBService.IGDBGameDto;
+import com.infernokun.infernoGames.services.SteamService.SteamGameInfo;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.cache.annotation.CacheEvict;
@@ -13,7 +14,9 @@ import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.Instant;
 import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -25,6 +28,7 @@ public class GameService {
 
     private final GameRepository gameRepository;
     private final IGDBService igdbService;
+    private final SteamService steamService;
 
     // ─── CRUD Operations ────────────────────────────────────────────────────────
 
@@ -45,6 +49,24 @@ public class GameService {
 
     @CacheEvict(value = {"games", "gameStats"}, allEntries = true)
     public Game createGame(GameRequest request) {
+        // Check Steam ownership and get playtime data if Steam App ID is provided
+        SteamGameInfo steamInfo = null;
+        GamePlatform platform = request.getPlatform();
+
+        if (request.getSteamAppId() != null && !request.getSteamAppId().isEmpty()) {
+            Optional<SteamGameInfo> steamOwnership = steamService.checkOwnership(request.getSteamAppId());
+            if (steamOwnership.isPresent()) {
+                steamInfo = steamOwnership.get();
+                // Auto-set platform to PC if game is owned on Steam and no platform specified
+                if (platform == null) {
+                    platform = GamePlatform.PC;
+                    log.info("Auto-setting platform to PC for Steam-owned game: {}", request.getTitle());
+                }
+            } else {
+                log.debug("Game with Steam App ID {} not found in user's Steam library", request.getSteamAppId());
+            }
+        }
+
         Game game = Game.builder()
                 .title(request.getTitle())
                 .description(request.getDescription())
@@ -55,7 +77,7 @@ public class GameService {
                 .genres(request.getGenres() != null ? request.getGenres() : new ArrayList<>())
                 .coverImageUrl(request.getCoverImageUrl())
                 .screenshotUrls(request.getScreenshotUrls() != null ? request.getScreenshotUrls() : new ArrayList<>())
-                .platform(request.getPlatform())
+                .platform(platform)
                 .platforms(request.getPlatforms() != null ? request.getPlatforms() : new ArrayList<>())
                 .status(request.getStatus() != null ? request.getStatus() : GameStatus.NOT_STARTED)
                 .rating(request.getRating())
@@ -68,10 +90,49 @@ public class GameService {
                 .achievements(request.getAchievements() != null ? request.getAchievements() : 0)
                 .totalAchievements(request.getTotalAchievements() != null ? request.getTotalAchievements() : 0)
                 .igdbId(request.getIgdbId())
+                .steamAppId(request.getSteamAppId())
                 .build();
+
+        // Populate Steam data if available
+        if (steamInfo != null) {
+            populateFromSteam(game, steamInfo);
+        }
 
         log.info("Creating new game: {}", game.getTitle());
         return gameRepository.save(game);
+    }
+
+    /**
+     * Populate game fields from Steam data
+     */
+    private void populateFromSteam(Game game, SteamGameInfo steamInfo) {
+        // Set playtime from Steam (convert minutes to hours)
+        double playtimeHours = steamInfo.getPlaytimeForever() / 60.0;
+        if (game.getPlaytimeHours() == null || game.getPlaytimeHours() == 0.0) {
+            game.setPlaytimeHours(playtimeHours);
+        }
+
+        // Set platform-specific playtimes
+        game.setSteamPlaytimeWindowsMinutes(steamInfo.getPlaytimeWindowsForever());
+        game.setSteamPlaytimeLinuxMinutes(steamInfo.getPlaytimeLinuxForever());
+        game.setSteamPlaytimeMacMinutes(steamInfo.getPlaytimeMacForever());
+        game.setSteamPlaytimeDeckMinutes(steamInfo.getPlaytimeDeckForever());
+
+        // Set last played timestamp
+        if (steamInfo.getRtimeLastPlayed() > 0) {
+            game.setSteamLastPlayed(LocalDateTime.ofInstant(
+                    Instant.ofEpochSecond(steamInfo.getRtimeLastPlayed()),
+                    ZoneId.systemDefault()
+            ));
+        }
+
+        game.setSteamLastSynced(LocalDateTime.now());
+
+        log.debug("Populated Steam data for '{}': {} hours total, {} deck, {} windows",
+                game.getTitle(),
+                String.format("%.1f", playtimeHours),
+                steamInfo.getPlaytimeDeckForever(),
+                steamInfo.getPlaytimeWindowsForever());
     }
 
     @CacheEvict(value = {"games", "game", "gameStats"}, allEntries = true)
@@ -248,6 +309,20 @@ public class GameService {
 
         IGDBGameDto dto = igdbGame.get();
 
+        // Check Steam ownership and get playtime data
+        SteamGameInfo steamInfo = null;
+        GamePlatform platform = null;
+
+        if (dto.getSteamAppId() != null && !dto.getSteamAppId().isEmpty()) {
+            Optional<SteamGameInfo> steamOwnership = steamService.checkOwnership(dto.getSteamAppId());
+            if (steamOwnership.isPresent()) {
+                steamInfo = steamOwnership.get();
+                platform = GamePlatform.PC;
+                log.info("Steam ownership verified for IGDB game '{}' (Steam App ID: {})",
+                        dto.getName(), dto.getSteamAppId());
+            }
+        }
+
         Game game = Game.builder()
                 .title(dto.getName())
                 .description(dto.getSummary())
@@ -255,10 +330,11 @@ public class GameService {
                 .publisher(dto.getPublisher())
                 .releaseYear(dto.getReleaseYear())
                 .releaseDate(dto.getReleaseDate())
-                .genre(dto.getGenres() != null && !dto.getGenres().isEmpty() ? dto.getGenres().get(0) : null)
+                .genre(dto.getGenres() != null && !dto.getGenres().isEmpty() ? dto.getGenres().getFirst() : null)
                 .genres(dto.getGenres() != null ? dto.getGenres() : new ArrayList<>())
                 .coverImageUrl(dto.getCoverUrl())
                 .screenshotUrls(dto.getScreenshotUrls() != null ? dto.getScreenshotUrls() : new ArrayList<>())
+                .platform(platform)
                 .status(GameStatus.NOT_STARTED)
                 .igdbId(dto.getIgdbId())
                 .igdbUrl(dto.getUrl())
@@ -269,7 +345,13 @@ public class GameService {
                 .completionPercentage(0)
                 .achievements(0)
                 .totalAchievements(0)
+                .steamAppId(dto.getSteamAppId())
                 .build();
+
+        // Populate Steam data if available
+        if (steamInfo != null) {
+            populateFromSteam(game, steamInfo);
+        }
 
         log.info("Creating game from IGDB: {} (IGDB ID: {})", game.getTitle(), igdbId);
         return gameRepository.save(game);
@@ -296,7 +378,7 @@ public class GameService {
         game.setPublisher(dto.getPublisher());
         game.setReleaseYear(dto.getReleaseYear());
         game.setReleaseDate(dto.getReleaseDate());
-        game.setGenre(dto.getGenres() != null && !dto.getGenres().isEmpty() ? dto.getGenres().get(0) : null);
+        game.setGenre(dto.getGenres() != null && !dto.getGenres().isEmpty() ? dto.getGenres().getFirst() : null);
         game.setGenres(dto.getGenres() != null ? dto.getGenres() : game.getGenres());
         game.setCoverImageUrl(dto.getCoverUrl());
         game.setScreenshotUrls(dto.getScreenshotUrls() != null ? dto.getScreenshotUrls() : game.getScreenshotUrls());
@@ -313,5 +395,135 @@ public class GameService {
     @CacheEvict(value = {"games", "game", "gameStats"}, allEntries = true)
     public void clearAllCaches() {
         log.info("Cleared all game caches");
+    }
+
+    // ─── Steam Integration ───────────────────────────────────────────────────────
+
+    /**
+     * Check if a Steam App ID corresponds to a game owned by the user
+     */
+    public boolean checkSteamOwnership(String steamAppId) {
+        return steamService.isGameOwned(steamAppId);
+    }
+
+    /**
+     * Get Steam game info by app ID
+     */
+    public Optional<SteamGameInfo> getSteamGameInfo(String steamAppId) {
+        return steamService.getGameInfo(steamAppId);
+    }
+
+    /**
+     * Get all Steam owned games
+     */
+    public List<SteamGameInfo> getSteamOwnedGames() {
+        return steamService.getOwnedGames();
+    }
+
+    /**
+     * Search owned Steam games by name
+     */
+    public List<SteamGameInfo> searchSteamGames(String query) {
+        return steamService.searchOwnedGames(query);
+    }
+
+    /**
+     * Get recently played Steam games
+     */
+    public List<SteamGameInfo> getRecentlyPlayedSteamGames(int count) {
+        return steamService.getRecentlyPlayedGames(count);
+    }
+
+    /**
+     * Get most played Steam games
+     */
+    public List<SteamGameInfo> getMostPlayedSteamGames(int limit) {
+        return steamService.getMostPlayedGames(limit);
+    }
+
+    /**
+     * Get Steam library statistics
+     */
+    public SteamService.SteamLibraryStats getSteamLibraryStats() {
+        return steamService.getLibraryStats();
+    }
+
+    /**
+     * Refresh Steam owned games cache
+     */
+    public void refreshSteamCache() {
+        steamService.refreshOwnedGamesCache();
+    }
+
+    /**
+     * Sync a single game's Steam data
+     */
+    @CacheEvict(value = {"games", "game"}, allEntries = true)
+    public Game syncGameSteamData(Long gameId) {
+        Game game = getGameById(gameId);
+
+        if (game.getSteamAppId() == null || game.getSteamAppId().isEmpty()) {
+            throw new IllegalArgumentException("Game has no Steam App ID");
+        }
+
+        Optional<SteamGameInfo> steamInfo = steamService.checkOwnership(game.getSteamAppId());
+        if (steamInfo.isEmpty()) {
+            throw new IllegalArgumentException("Game not found in Steam library");
+        }
+
+        populateFromSteam(game, steamInfo.get());
+        log.info("Synced Steam data for game '{}' (ID: {})", game.getTitle(), gameId);
+        return gameRepository.save(game);
+    }
+
+    /**
+     * Check Steam API configuration status
+     */
+    public boolean isSteamConfigured() {
+        return steamService.isConfigured();
+    }
+
+    /**
+     * Migrate existing games with Steam App IDs to populate Steam data
+     */
+    @CacheEvict(value = {"games", "game", "gameStats"}, allEntries = true)
+    public int migrateExistingSteamData() {
+        if (!steamService.isConfigured()) {
+            log.warn("Steam API not configured - cannot migrate");
+            return 0;
+        }
+
+        // Refresh Steam cache first
+        steamService.refreshOwnedGamesCache();
+
+        // Find all games that have a Steam App ID but haven't been synced
+        List<Game> gamesToMigrate = gameRepository.findAll().stream()
+                .filter(g -> g.getSteamAppId() != null && !g.getSteamAppId().isEmpty())
+                .filter(g -> g.getSteamLastSynced() == null) // Only migrate unsynced games
+                .toList();
+
+        int updatedCount = 0;
+        for (Game game : gamesToMigrate) {
+            try {
+                Optional<SteamGameInfo> steamInfo = steamService.checkOwnership(game.getSteamAppId());
+                if (steamInfo.isPresent()) {
+                    populateFromSteam(game, steamInfo.get());
+
+                    // Also set platform to PC if not already set
+                    if (game.getPlatform() == null) {
+                        game.setPlatform(GamePlatform.PC);
+                    }
+
+                    gameRepository.save(game);
+                    updatedCount++;
+                    log.info("Migrated Steam data for: {} ({})", game.getTitle(), game.getSteamAppId());
+                }
+            } catch (Exception e) {
+                log.warn("Failed to migrate Steam data for game {}: {}", game.getTitle(), e.getMessage());
+            }
+        }
+
+        log.info("Steam migration completed: {} games updated", updatedCount);
+        return updatedCount;
     }
 }
