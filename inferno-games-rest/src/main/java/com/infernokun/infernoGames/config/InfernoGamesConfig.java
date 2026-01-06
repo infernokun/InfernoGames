@@ -22,9 +22,4 @@ public class InfernoGamesConfig {
     // Steam Integration (Steam API)
     private String steamClientSecret;
     private String steamClientId;
-
-    // AI Description Generation (optional)
-    private String groqAPIKey;
-    private String groqModel = "llama-3.1-8b-instant";
-    private boolean descriptionGeneration = false;
 }

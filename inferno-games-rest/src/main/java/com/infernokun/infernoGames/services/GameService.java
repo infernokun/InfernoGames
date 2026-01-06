@@ -7,6 +7,7 @@ import com.infernokun.infernoGames.models.enums.GameStatus;
 import com.infernokun.infernoGames.repositories.GameRepository;
 import com.infernokun.infernoGames.services.IGDBService.IGDBGameDto;
 import com.infernokun.infernoGames.services.SteamService.SteamGameInfo;
+import com.infernokun.infernoGames.services.SteamService.SteamUserProfile;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.cache.annotation.CacheEvict;
@@ -481,6 +482,13 @@ public class GameService {
      */
     public boolean isSteamConfigured() {
         return steamService.isConfigured();
+    }
+
+    /**
+     * Get Steam user profile
+     */
+    public Optional<SteamUserProfile> getSteamUserProfile() {
+        return steamService.getUserProfile();
     }
 
     /**

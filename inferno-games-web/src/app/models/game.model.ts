@@ -120,6 +120,25 @@ export interface SteamStatus {
   message: string;
 }
 
+export interface SteamUserProfile {
+  steamId: string;
+  personaName: string;
+  profileUrl: string;
+  avatar: string;           // 32x32
+  avatarMedium: string;     // 64x64
+  avatarFull: string;       // 184x184
+  avatarHash: string;
+  personaState: number;     // 0=Offline, 1=Online, 2=Busy, 3=Away, 4=Snooze, 5=Looking to trade, 6=Looking to play
+  communityVisibilityState: number;
+  profileState: number;
+  lastLogoff: number;
+  realName?: string;
+  countryCode?: string;
+  stateCode?: string;
+  cityId?: number;
+  timeCreated: number;
+}
+
 export class Game {
   id?: number;
   title?: string;

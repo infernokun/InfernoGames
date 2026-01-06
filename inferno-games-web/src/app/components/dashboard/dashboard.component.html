@@ -1,23 +1,5 @@
 <div class="dashboard-container">
-  <!-- Hero Section -->
-  <section class="hero-section" [@fadeInUp]>
-    <div class="hero-content">
-      <div class="hero-text">
-        <h1 class="hero-title">
-          <span class="title-icon">🎮</span>
-          Inferno Games
-        </h1>
-        <p class="hero-subtitle">Track your gaming adventures. Conquer your backlog.</p>
-      </div>
-      <div class="hero-actions">
-        <button mat-raised-button class="btn-add-game" routerLink="/games/search">
-          <mat-icon>add</mat-icon>
-          Add Game
-        </button>
-      </div>
-    </div>
-  </section>
-
+  
   <!-- Stats Overview -->
   @if (!loading && stats) {
     <section class="stats-section" [@slideInUp]>
@@ -134,7 +116,7 @@
             <span class="steam-stat-label">Steam Deck</span>
           </div>
         </div>
-        
+
         <!--
         <div class="steam-stat-card linux">
           <div class="steam-stat-icon">

@@ -28,6 +28,7 @@ public class SteamService {
 
     private static final String STEAM_API_URL = "https://api.steampowered.com";
     private static final String PLAYER_SERVICE = "/IPlayerService";
+    private static final String STEAM_USER_SERVICE = "/ISteamUser";
     private static final String STORE_API_URL = "https://store.steampowered.com/api";
 
     private final InfernoGamesConfig config;
@@ -351,7 +352,117 @@ public class SteamService {
         return String.format("https://cdn.cloudflare.steamstatic.com/steam/apps/%s/header.jpg", appId);
     }
 
+    /**
+     * Get Steam user profile information using ISteamUser API
+     */
+    @Cacheable(value = "steamUserProfile", key = "#root.method.name")
+    public Optional<SteamUserProfile> getUserProfile() {
+        if (!isConfigured()) {
+            log.warn("Cannot get Steam user profile - API not configured");
+            return Optional.empty();
+        }
+
+        try {
+            String url = String.format(
+                    "%s%s/GetPlayerSummaries/v2?key=%s&steamids=%s",
+                    STEAM_API_URL, STEAM_USER_SERVICE,
+                    config.getSteamClientSecret(),
+                    config.getSteamClientId()
+            );
+
+            ResponseEntity<String> response = restTemplate.getForEntity(url, String.class);
+
+            if (response.getBody() != null) {
+                JsonNode root = objectMapper.readTree(response.getBody());
+                JsonNode playersNode = root.path("response").path("players");
+
+                if (playersNode.isArray() && playersNode.size() > 0) {
+                    JsonNode playerNode = playersNode.get(0);
+                    
+                    SteamUserProfile profile = SteamUserProfile.builder()
+                            .steamId(playerNode.path("steamid").asText())
+                            .personaName(playerNode.path("personaname").asText())
+                            .profileUrl(playerNode.path("profileurl").asText())
+                            .avatar(playerNode.path("avatar").asText())
+                            .avatarMedium(playerNode.path("avatarmedium").asText())
+                            .avatarFull(playerNode.path("avatarfull").asText())
+                            .avatarHash(playerNode.path("avatarhash").asText())
+                            .personaState(playerNode.path("personastate").asInt(0))
+                            .communityVisibilityState(playerNode.path("communityvisibilitystate").asInt(0))
+                            .profileState(playerNode.path("profilestate").asInt(0))
+                            .lastLogoff(playerNode.path("lastlogoff").asLong(0))
+                            .realName(playerNode.path("realname").asText(null))
+                            .countryCode(playerNode.path("loccountrycode").asText(null))
+                            .stateCode(playerNode.path("locstatecode").asText(null))
+                            .cityId(playerNode.path("loccityid").asInt(0))
+                            .timeCreated(playerNode.path("timecreated").asLong(0))
+                            .build();
+                    
+                    log.info("Steam user profile loaded: {}", profile.getPersonaName());
+                    return Optional.of(profile);
+                }
+            }
+        } catch (Exception e) {
+            log.error("Failed to get Steam user profile: {}", e.getMessage());
+        }
+
+        return Optional.empty();
+    }
+
+    /**
+     * Clear user profile cache
+     */
+    @CacheEvict(value = "steamUserProfile", allEntries = true)
+    public void clearUserProfileCache() {
+        log.info("Steam user profile cache cleared");
+    }
+
     // ─── DTOs ────────────────────────────────────────────────────────────────────
+
+    @Data
+    @Builder
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class SteamUserProfile {
+        private String steamId;
+        private String personaName;
+        private String profileUrl;
+        private String avatar;           // 32x32
+        private String avatarMedium;     // 64x64
+        private String avatarFull;       // 184x184
+        private String avatarHash;
+        private int personaState;        // 0=Offline, 1=Online, 2=Busy, 3=Away, 4=Snooze, 5=Looking to trade, 6=Looking to play
+        private int communityVisibilityState;  // 1=Private, 3=Public
+        private int profileState;        // 0=Not configured, 1=Configured
+        private long lastLogoff;         // Unix timestamp
+        private String realName;
+        private String countryCode;
+        private String stateCode;
+        private int cityId;
+        private long timeCreated;        // Unix timestamp of account creation
+
+        public String getPersonaStateString() {
+            return switch (personaState) {
+                case 1 -> "Online";
+                case 2 -> "Busy";
+                case 3 -> "Away";
+                case 4 -> "Snooze";
+                case 5 -> "Looking to Trade";
+                case 6 -> "Looking to Play";
+                default -> "Offline";
+            };
+        }
+
+        public LocalDateTime getLastLogoffDateTime() {
+            if (lastLogoff <= 0) return null;
+            return LocalDateTime.ofInstant(Instant.ofEpochSecond(lastLogoff), ZoneId.systemDefault());
+        }
+
+        public LocalDateTime getAccountCreatedDateTime() {
+            if (timeCreated <= 0) return null;
+            return LocalDateTime.ofInstant(Instant.ofEpochSecond(timeCreated), ZoneId.systemDefault());
+        }
+    }
 
     @Data
     @Builder

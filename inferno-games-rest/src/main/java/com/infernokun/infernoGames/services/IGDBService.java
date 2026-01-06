@@ -123,7 +123,7 @@ public class IGDBService {
         String body = String.format(
                 "fields id,name,summary,cover.url,first_release_date,genres.name,platforms.name," +
                         "involved_companies.company.name,involved_companies.developer,involved_companies.publisher," +
-                        "rating,rating_count,screenshots.url,url; " +
+                        "rating,rating_count,screenshots.url,url,external_games.category,external_games.uid,external_games.name; " +
                         "sort rating desc; " +
                         "where rating_count > 100; " +
                         "limit %d;",
@@ -144,7 +144,7 @@ public class IGDBService {
         String body = String.format(
                 "fields id,name,summary,cover.url,first_release_date,genres.name,platforms.name," +
                         "involved_companies.company.name,involved_companies.developer,involved_companies.publisher," +
-                        "rating,rating_count,screenshots.url,url; " +
+                        "rating,rating_count,screenshots.url,url,external_games.category,external_games.uid,external_games.name; " +
                         "sort first_release_date desc; " +
                         "where first_release_date < %d & first_release_date != null; " +
                         "limit %d;",
@@ -165,7 +165,7 @@ public class IGDBService {
         String body = String.format(
                 "fields id,name,summary,cover.url,first_release_date,genres.name,platforms.name," +
                         "involved_companies.company.name,involved_companies.developer,involved_companies.publisher," +
-                        "rating,rating_count,screenshots.url,url; " +
+                        "rating,rating_count,screenshots.url,url,external_games.category,external_games.uid,external_games.name; " +
                         "sort first_release_date asc; " +
                         "where first_release_date > %d; " +
                         "limit %d;",

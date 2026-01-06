@@ -9,6 +9,7 @@ import com.infernokun.infernoGames.services.GameService;
 import com.infernokun.infernoGames.services.IGDBService.IGDBGameDto;
 import com.infernokun.infernoGames.services.SteamService.SteamGameInfo;
 import com.infernokun.infernoGames.services.SteamService.SteamLibraryStats;
+import com.infernokun.infernoGames.services.SteamService.SteamUserProfile;
 import com.infernokun.infernoGames.services.SteamSyncScheduler;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -173,6 +174,13 @@ public class GameController extends BaseController {
                         "Steam API is not configured - set STEAM_CLIENT_ID and STEAM_CLIENT_SECRET"
         );
         return createSuccessResponse(status);
+    }
+
+    @GetMapping("/steam/user")
+    public ResponseEntity<ApiResponse<SteamUserProfile>> getSteamUserProfile() {
+        return gameService.getSteamUserProfile()
+                .map(this::createSuccessResponse)
+                .orElse(ResponseEntity.notFound().build());
     }
 
     @GetMapping("/steam/library")

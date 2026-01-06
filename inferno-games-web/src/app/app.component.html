@@ -25,6 +25,17 @@
       </button>
     </nav>
 
+    <!-- Steam User Profile -->
+    @if (steamUser) {
+      <a [href]="steamUser.profileUrl" target="_blank" class="steam-user-profile" [matTooltip]="getPersonaStateText()">
+        <div class="steam-avatar-wrapper">
+          <img [src]="steamUser.avatarMedium" [alt]="steamUser.personaName" class="steam-avatar">
+          <span class="steam-status-indicator" [class]="getPersonaStateClass()"></span>
+        </div>
+        <span class="steam-username">{{ steamUser.personaName }}</span>
+      </a>
+    }
+
     <!-- Theme Toggle (always visible) -->
     <button mat-icon-button class="icon-btn theme-toggle" (click)="toggleTheme()"
             [attr.aria-label]="(isDarkMode$ | async) ? 'Switch to light mode' : 'Switch to dark mode'">
@@ -37,6 +48,16 @@
     </button>
 
     <mat-menu #mobileMenu="matMenu" class="mobile-nav-menu">
+      @if (steamUser) {
+        <div class="mobile-steam-profile">
+          <img [src]="steamUser.avatarMedium" [alt]="steamUser.personaName" class="steam-avatar">
+          <div class="steam-info">
+            <span class="steam-username">{{ steamUser.personaName }}</span>
+            <span class="steam-status" [class]="getPersonaStateClass()">{{ getPersonaStateText() }}</span>
+          </div>
+        </div>
+        <mat-divider></mat-divider>
+      }
       <a mat-menu-item routerLink="/dashboard" routerLinkActive="active-menu-item">
         <mat-icon>dashboard</mat-icon>
         <span>Dashboard</span>

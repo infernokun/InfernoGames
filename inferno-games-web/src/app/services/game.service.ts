@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable, map, catchError, of } from 'rxjs';
 import { ApiResponse } from '../models/api-response.model';
-import { Game, GameStats, PlatformStats, GenreStats, GameStatus, GamePlatform, IGDBGame, SteamGameInfo, SteamLibraryStats, SteamStatus } from '../models/game.model';
+import { Game, GameStats, PlatformStats, GenreStats, GameStatus, GamePlatform, IGDBGame, SteamGameInfo, SteamLibraryStats, SteamStatus, SteamUserProfile } from '../models/game.model';
 import { EnvironmentService } from './environment.service';
 import { BaseService } from './base.service';
 
@@ -375,6 +375,15 @@ export class GameService extends BaseService {
       catchError(error => {
         console.error('Error getting Steam status:', error);
         return of({ code: 500, data: { configured: false, message: 'Failed to get Steam status' }, message: 'Failed to get Steam status', type: 'ERROR' as any, timeMs: 0 });
+      })
+    );
+  }
+
+  getSteamUserProfile(): Observable<ApiResponse<SteamUserProfile>> {
+    return this.get<ApiResponse<SteamUserProfile>>(`${this.apiUrl}/steam/user`).pipe(
+      catchError(error => {
+        console.error('Error getting Steam user profile:', error);
+        return of({ code: 404, data: undefined as any, message: 'Failed to get Steam user profile', type: 'ERROR' as any, timeMs: 0 });
       })
     );
   }
