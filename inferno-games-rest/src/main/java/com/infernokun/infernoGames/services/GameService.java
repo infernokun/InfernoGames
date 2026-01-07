@@ -8,6 +8,7 @@ import com.infernokun.infernoGames.repositories.GameRepository;
 import com.infernokun.infernoGames.services.IGDBService.IGDBGameDto;
 import com.infernokun.infernoGames.services.SteamService.SteamGameInfo;
 import com.infernokun.infernoGames.services.SteamService.SteamUserProfile;
+import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.cache.annotation.CacheEvict;
@@ -19,6 +20,7 @@ import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -391,6 +393,56 @@ public class GameService {
         return gameRepository.save(game);
     }
 
+    /**
+     * Batch refresh all games from IGDB to populate missing genres
+     * This is useful for existing games that were imported before genres were tracked
+     */
+    @CacheEvict(value = {"games", "game", "gameStats"}, allEntries = true)
+    public Map<String, Object> refreshAllGenresFromIGDB() {
+        List<Game> gamesWithIgdbId = gameRepository.findAll().stream()
+                .filter(g -> g.getIgdbId() != null)
+                .filter(g -> g.getGenres() == null || g.getGenres().isEmpty())
+                .toList();
+
+        int successCount = 0;
+        int failCount = 0;
+        List<String> failedGames = new ArrayList<>();
+
+        for (Game game : gamesWithIgdbId) {
+            try {
+                Optional<IGDBGameDto> igdbGame = igdbService.getGameById(game.getIgdbId());
+                if (igdbGame.isPresent() && igdbGame.get().getGenres() != null) {
+                    IGDBGameDto dto = igdbGame.get();
+                    game.setGenres(dto.getGenres());
+                    if (game.getGenre() == null && !dto.getGenres().isEmpty()) {
+                        game.setGenre(dto.getGenres().getFirst());
+                    }
+                    gameRepository.save(game);
+                    successCount++;
+                    log.info("Updated genres for: {} -> {}", game.getTitle(), dto.getGenres());
+                } else {
+                    failCount++;
+                    failedGames.add(game.getTitle());
+                }
+                // Add a small delay to avoid rate limiting
+                Thread.sleep(250);
+            } catch (Exception e) {
+                failCount++;
+                failedGames.add(game.getTitle() + " (" + e.getMessage() + ")");
+                log.warn("Failed to refresh genres for {}: {}", game.getTitle(), e.getMessage());
+            }
+        }
+
+        log.info("Genre refresh completed: {} succeeded, {} failed", successCount, failCount);
+
+        Map<String, Object> result = new HashMap<>();
+        result.put("totalProcessed", gamesWithIgdbId.size());
+        result.put("successCount", successCount);
+        result.put("failCount", failCount);
+        result.put("failedGames", failedGames);
+        return result;
+    }
+
     // ─── Cache Management ───────────────────────────────────────────────────────
 
     @CacheEvict(value = {"games", "game", "gameStats"}, allEntries = true)
@@ -419,6 +471,161 @@ public class GameService {
      */
     public List<SteamGameInfo> getSteamOwnedGames() {
         return steamService.getOwnedGames();
+    }
+
+    /**
+     * Get Steam library with genres - returns immediately with available data
+     * Background scheduler handles IGDB enrichment for non-backlog games
+     */
+    public List<SteamGameInfo> getSteamLibraryWithGenres() {
+        List<SteamGameInfo> steamGames = new ArrayList<>(steamService.getOwnedGames());
+
+        // Create a map of Steam App ID to backlog games for quick lookup
+        Map<String, Game> steamAppIdToGame = gameRepository.findAll().stream()
+                .filter(g -> g.getSteamAppId() != null && !g.getSteamAppId().isEmpty())
+                .collect(Collectors.toMap(
+                        Game::getSteamAppId,
+                        g -> g,
+                        (existing, replacement) -> existing
+                ));
+
+        // Get cached IGDB genres
+        Map<String, List<String>> cachedGenres = getCachedSteamGenres();
+
+        for (SteamGameInfo steamGame : steamGames) {
+            Game backlogGame = steamAppIdToGame.get(steamGame.getAppId());
+
+            if (backlogGame != null) {
+                // Game is in backlog - use backlog data
+                steamGame.setInBacklog(true);
+                steamGame.setBacklogGameId(backlogGame.getId());
+                if (backlogGame.getGenres() != null && !backlogGame.getGenres().isEmpty()) {
+                    steamGame.setGenres(new ArrayList<>(backlogGame.getGenres()));
+                }
+            } else {
+                // Check if we have cached IGDB genres
+                List<String> cached = cachedGenres.get(steamGame.getAppId());
+                if (cached != null && !cached.isEmpty()) {
+                    steamGame.setGenres(new ArrayList<>(cached));
+                }
+            }
+        }
+
+        return steamGames;
+    }
+
+    // In-memory cache for IGDB genre lookups (appId -> genres)
+    private final Map<String, List<String>> igdbGenreCache = new ConcurrentHashMap<>();
+    @Getter
+    private volatile boolean enrichmentInProgress = false;
+
+    public Map<String, List<String>> getCachedSteamGenres() {
+        return new HashMap<>(igdbGenreCache);
+    }
+
+    public int getCachedGenreCount() {
+        return igdbGenreCache.size();
+    }
+
+    /**
+     * Background task to enrich Steam games with IGDB genres
+     * Called by scheduler - processes games gradually to avoid rate limits
+     */
+    public void enrichSteamLibraryGenresInBackground() {
+        if (enrichmentInProgress) {
+            log.debug("Genre enrichment already in progress, skipping");
+            return;
+        }
+
+        enrichmentInProgress = true;
+
+        try {
+            List<SteamGameInfo> steamGames = steamService.getOwnedGames();
+
+            // Get games already in backlog (they have genres)
+            Set<String> backlogAppIds = gameRepository.findAll().stream()
+                    .filter(g -> g.getSteamAppId() != null && !g.getSteamAppId().isEmpty())
+                    .map(Game::getSteamAppId)
+                    .collect(Collectors.toSet());
+
+            // Find games that need IGDB lookup (not in backlog, not already cached)
+            List<SteamGameInfo> gamesNeedingLookup = steamGames.stream()
+                    .filter(g -> !backlogAppIds.contains(g.getAppId()))
+                    .filter(g -> !igdbGenreCache.containsKey(g.getAppId()))
+                    .toList();
+
+            if (gamesNeedingLookup.isEmpty()) {
+                log.debug("No games need IGDB genre enrichment");
+                return;
+            }
+
+            log.info("Starting background IGDB genre enrichment for {} games", gamesNeedingLookup.size());
+
+            int processed = 0;
+            int enriched = 0;
+
+            for (SteamGameInfo game : gamesNeedingLookup) {
+                // Rate limit: 3 requests per second
+                if (processed > 0 && processed % 3 == 0) {
+                    Thread.sleep(1000);
+                }
+
+                try {
+                    List<IGDBGameDto> igdbResults = igdbService.searchGames(game.getName());
+                    processed++;
+
+                    if (!igdbResults.isEmpty()) {
+                        IGDBGameDto match = igdbResults.stream()
+                                .filter(g -> game.getAppId().equals(g.getSteamAppId()))
+                                .findFirst()
+                                .orElseGet(() -> igdbResults.stream()
+                                        .filter(g -> game.getName().equalsIgnoreCase(g.getName()))
+                                        .findFirst()
+                                        .orElse(igdbResults.getFirst()));
+
+                        if (match.getGenres() != null && !match.getGenres().isEmpty()) {
+                            igdbGenreCache.put(game.getAppId(), new ArrayList<>(match.getGenres()));
+                            enriched++;
+                        } else {
+                            // Cache empty list to avoid re-fetching
+                            igdbGenreCache.put(game.getAppId(), new ArrayList<>());
+                        }
+                    } else {
+                        igdbGenreCache.put(game.getAppId(), new ArrayList<>());
+                    }
+                } catch (Exception e) {
+                    String msg = e.getMessage() != null ? e.getMessage() : "";
+                    if (msg.contains("authentication failed")) {
+                        log.warn("IGDB authentication failed - stopping enrichment");
+                        break;
+                    } else if (msg.contains("429") || msg.contains("Too Many Requests")) {
+                        log.warn("IGDB rate limit hit - pausing enrichment");
+                        Thread.sleep(5000);
+                    } else {
+                        log.debug("Failed to fetch IGDB data for {}: {}", game.getName(), msg);
+                        igdbGenreCache.put(game.getAppId(), new ArrayList<>());
+                    }
+                }
+            }
+
+            log.info("Background genre enrichment complete: {}/{} games enriched", enriched, processed);
+
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+            log.warn("Genre enrichment interrupted");
+        } catch (Exception e) {
+            log.error("Error during genre enrichment: {}", e.getMessage());
+        } finally {
+            enrichmentInProgress = false;
+        }
+    }
+
+    /**
+     * Clear the IGDB genre cache
+     */
+    public void clearIgdbGenreCache() {
+        igdbGenreCache.clear();
+        log.info("Cleared IGDB genre cache");
     }
 
     /**

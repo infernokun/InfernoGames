@@ -22,9 +22,10 @@ import java.util.Optional;
 public class SteamSyncScheduler {
     private final SteamService steamService;
     private final GameRepository gameRepository;
+    private final GameService gameService;
 
     /**
-     * Sync Steam playtime data every 30 minutes
+     * Sync Steam playtime data every 6 hours
      * This updates playtime information for all games that have a Steam App ID
      */
     @Scheduled(fixedRateString = "PT6H", initialDelayString = "PT1M")
@@ -199,5 +200,28 @@ public class SteamSyncScheduler {
 
         log.info("Steam platform validation completed: {} games updated", updatedCount);
         return updatedCount;
+    }
+
+    /**
+     * Enrich Steam library with IGDB genres in background
+     * Runs every 1 day, but only processes if not already running
+     */
+    @Scheduled(fixedRateString = "PT24H", initialDelayString = "PT30S")
+    public void enrichSteamGenres() {
+        if (!steamService.isConfigured()) {
+            log.debug("Steam genre enrichment skipped - Steam API not configured");
+            return;
+        }
+
+        log.debug("Starting scheduled Steam genre enrichment...");
+        gameService.enrichSteamLibraryGenresInBackground();
+    }
+
+    /**
+     * Manually trigger genre enrichment
+     */
+    public void triggerGenreEnrichment() {
+        log.info("Manually triggering Steam genre enrichment");
+        gameService.enrichSteamLibraryGenresInBackground();
     }
 }

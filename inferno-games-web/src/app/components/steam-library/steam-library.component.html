@@ -104,7 +104,96 @@
           Not Added
         </button>
       </div>
+
+      <!-- Genre Filter Toggle -->
+      <div class="filter-group">
+        <button class="filter-chip genre-toggle" [class.active]="showGenrePanel || selectedGenres.size > 0"
+          (click)="toggleGenrePanel()">
+          <mat-icon>category</mat-icon>
+          Genres
+          @if (selectedGenres.size > 0) {
+          <span class="genre-count-badge">{{ selectedGenres.size }}</span>
+          }
+          <mat-icon class="expand-icon">{{ showGenrePanel ? 'expand_less' : 'expand_more' }}</mat-icon>
+        </button>
+      </div>
     </div>
+
+    <!-- Genre Visualization Panel -->
+    @if (showGenrePanel) {
+    <div class="genre-panel" @fadeInUp>
+      <div class="genre-panel-header">
+        <div class="genre-panel-title">
+          <mat-icon>category</mat-icon>
+          <h3>Genre Distribution</h3>
+          <span class="genre-info-text">{{ gamesWithGenreDataCount }} games with genre data</span>
+        </div>
+        <div class="genre-panel-actions">
+          <div class="genre-sort-options">
+            <span class="sort-label">Sort:</span>
+            <button class="sort-chip" [class.active]="genreSortBy === 'count'" (click)="onGenreSortChange('count')">
+              Games
+            </button>
+            <button class="sort-chip" [class.active]="genreSortBy === 'playtime'"
+              (click)="onGenreSortChange('playtime')">
+              Playtime
+            </button>
+            <button class="sort-chip" [class.active]="genreSortBy === 'name'" (click)="onGenreSortChange('name')">
+              A-Z
+            </button>
+          </div>
+          @if (selectedGenres.size > 0) {
+          <button mat-stroked-button class="clear-genres-btn" (click)="clearGenreFilters()">
+            <mat-icon>clear</mat-icon>
+            Clear ({{ selectedGenres.size }})
+          </button>
+          }
+        </div>
+      </div>
+
+      @if (genres.length === 0) {
+      <div class="genre-empty-state">
+        <mat-icon>info</mat-icon>
+        <p>No genre data available. Add games to your backlog to see genre statistics.</p>
+      </div>
+      } @else {
+      <div class="genre-chart">
+        @for (genre of genres; track genre.name; let i = $index) {
+        <div class="genre-bar-item" [class.selected]="isGenreSelected(genre.name)" (click)="toggleGenre(genre.name)">
+          <div class="genre-bar-label">
+            <span class="genre-name">{{ genre.name }}</span>
+            <span class="genre-stats">
+              {{ genre.count }} {{ genre.count === 1 ? 'game' : 'games' }}
+              <span class="genre-playtime">• {{ genre.playtimeFormatted }}</span>
+            </span>
+          </div>
+          <div class="genre-bar-track">
+            <div class="genre-bar-fill" [style.width.%]="getGenreBarWidth(genre)" [style.background]="getGenreColor(i)">
+            </div>
+          </div>
+          @if (isGenreSelected(genre.name)) {
+          <mat-icon class="genre-check">check_circle</mat-icon>
+          }
+        </div>
+        }
+      </div>
+      }
+    </div>
+    }
+
+    <!-- Selected Genres Tags -->
+    @if (selectedGenres.size > 0 && !showGenrePanel) {
+    <div class="selected-genres-bar">
+      <span class="selected-label">Filtering by:</span>
+      @for (genre of selectedGenres; track genre) {
+      <button class="selected-genre-chip" (click)="toggleGenre(genre)">
+        {{ genre }}
+        <mat-icon>close</mat-icon>
+      </button>
+      }
+      <button class="clear-all-btn" (click)="clearGenreFilters()">Clear all</button>
+    </div>
+    }
   </div>
 
   <!-- Results Summary -->
@@ -150,6 +239,21 @@
       <div class="card-content">
         <h3 class="game-title">{{ game.name }}</h3>
 
+        <!-- Genre Tags -->
+        @if (game.genres && game.genres.length > 0) {
+        <div class="game-genres">
+          @for (genre of game.genres.slice(0, 3); track genre) {
+          <span class="genre-tag" (click)="toggleGenre(genre); $event.stopPropagation()"
+            [class.active]="isGenreSelected(genre)">
+            {{ genre }}
+          </span>
+          }
+          @if (game.genres.length > 3) {
+          <span class="genre-more">+{{ game.genres.length - 3 }}</span>
+          }
+        </div>
+        }
+
         <div class="game-meta">
           @if (game.rtimeLastPlayed > 0) {
           <span class="meta-item">
@@ -172,10 +276,10 @@
             </span>
             }
             <!--@if (game.playtimeLinuxForever > 0) {
-                    <span class="platform-chip linux" matTooltip="Linux: {{ formatPlaytime(game.playtimeLinuxForever) }}">
-                      🐧 {{ formatPlaytime(game.playtimeLinuxForever) }}
-                    </span>
-                  }-->
+                      <span class="platform-chip linux" matTooltip="Linux: {{ formatPlaytime(game.playtimeLinuxForever) }}">
+                        🐧 {{ formatPlaytime(game.playtimeLinuxForever) }}
+                      </span>
+                    }-->
           </div>
           }
         </div>

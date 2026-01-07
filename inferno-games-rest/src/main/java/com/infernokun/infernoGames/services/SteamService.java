@@ -110,6 +110,8 @@ public class SteamService {
                                 .hasCommunityVisibleStats(gameNode.path("has_community_visible_stats").asBoolean(false))
                                 .rtimeLastPlayed(gameNode.path("rtime_last_played").asLong(0))
                                 .playtimeDisconnected(gameNode.path("playtime_disconnected").asInt(0))
+                                .genres(new ArrayList<>())
+                                .inBacklog(false)
                                 .build();
 
                         ownedGamesCache.put(gameInfo.getAppId(), gameInfo);
@@ -196,6 +198,8 @@ public class SteamService {
                             .name(data.path("name").asText())
                             .imgIconUrl(null) // Store API doesn't provide icon URL in same format
                             .playtimeForever(0)
+                            .genres(new ArrayList<>())
+                            .inBacklog(false)
                             .build());
                 }
             }
@@ -376,9 +380,9 @@ public class SteamService {
                 JsonNode root = objectMapper.readTree(response.getBody());
                 JsonNode playersNode = root.path("response").path("players");
 
-                if (playersNode.isArray() && playersNode.size() > 0) {
+                if (playersNode.isArray() && !playersNode.isEmpty()) {
                     JsonNode playerNode = playersNode.get(0);
-                    
+
                     SteamUserProfile profile = SteamUserProfile.builder()
                             .steamId(playerNode.path("steamid").asText())
                             .personaName(playerNode.path("personaname").asText())
@@ -397,7 +401,7 @@ public class SteamService {
                             .cityId(playerNode.path("loccityid").asInt(0))
                             .timeCreated(playerNode.path("timecreated").asLong(0))
                             .build();
-                    
+
                     log.info("Steam user profile loaded: {}", profile.getPersonaName());
                     return Optional.of(profile);
                 }
@@ -480,6 +484,12 @@ public class SteamService {
         private boolean hasCommunityVisibleStats;
         private long rtimeLastPlayed;         // Unix timestamp of last played
         private int playtimeDisconnected;     // Offline playtime in minutes
+
+        // Enrichment fields (populated when cross-referenced with backlog)
+        @Builder.Default
+        private List<String> genres = new ArrayList<>();
+        private boolean inBacklog;
+        private Long backlogGameId;
 
         public double getPlaytimeForeverHours() {
             return playtimeForever / 60.0;
