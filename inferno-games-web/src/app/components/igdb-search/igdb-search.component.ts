@@ -2,10 +2,10 @@ import { Component, OnInit, OnDestroy } from '@angular/core';
 import { Router, RouterModule } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { Subject, debounceTime, distinctUntilChanged } from 'rxjs';
+import { Subject, debounceTime, distinctUntilChanged, forkJoin } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import { MaterialModule } from '../../material.module';
-import { IGDBGame } from '../../models/game.model';
+import { IGDBGame, Game } from '../../models/game.model';
 import { GameService } from '../../services/game.service';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { FADE_IN_UP, CARD_ANIMATION } from '../../utils/animations';
@@ -32,7 +32,9 @@ export class IgdbSearchComponent implements OnInit, OnDestroy {
   loading = false;
   searching = false;
   importingId: number | null = null;
-  addedGameIds: Set<number> = new Set(); // Track games that have been added
+  addedGameIds: Set<number> = new Set(); // Track games that have been added in this session
+  backlogGameIgdbIds: Set<number> = new Set(); // Track games already in the backlog
+  showSteamOnly = false; // Filter toggle for Steam library games
   
   activeTab: 'search' | 'popular' | 'recent' | 'upcoming' = 'search';
   
@@ -46,6 +48,9 @@ export class IgdbSearchComponent implements OnInit, OnDestroy {
   ) {}
 
   ngOnInit(): void {
+    // Load existing backlog games to check for duplicates
+    this.loadBacklogGames();
+    
     // Setup debounced search
     this.searchSubject.pipe(
       debounceTime(400),
@@ -63,6 +68,25 @@ export class IgdbSearchComponent implements OnInit, OnDestroy {
   ngOnDestroy(): void {
     this.destroy$.next();
     this.destroy$.complete();
+  }
+
+  loadBacklogGames(): void {
+    this.gameService.getAllGames()
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: (res) => {
+          if (res.data) {
+            res.data.forEach(game => {
+              if (game.igdbId) {
+                this.backlogGameIgdbIds.add(game.igdbId);
+              }
+            });
+          }
+        },
+        error: (error) => {
+          console.error('Error loading backlog games:', error);
+        }
+      });
   }
 
   onSearchInput(): void {
@@ -154,6 +178,10 @@ export class IgdbSearchComponent implements OnInit, OnDestroy {
     }
   }
 
+  toggleSteamFilter(): void {
+    this.showSteamOnly = !this.showSteamOnly;
+  }
+
   importGame(game: IGDBGame): void {
     if (!game.igdbId) return;
     
@@ -165,12 +193,14 @@ export class IgdbSearchComponent implements OnInit, OnDestroy {
           this.importingId = null;
           if (res.data?.id) {
             this.addedGameIds.add(game.igdbId!); // Mark as added
+            this.backlogGameIgdbIds.add(game.igdbId!); // Also add to backlog set
             this.snackBar.open(`${game.name} added to your library!`, 'View', { duration: 5000 })
               .onAction().subscribe(() => {
                 this.router.navigate(['/games', res.data!.id]);
               });
           } else {
             this.addedGameIds.add(game.igdbId!); // Mark as added even without ID
+            this.backlogGameIgdbIds.add(game.igdbId!);
             this.snackBar.open('Game added to your library!', 'Close', { duration: 3000 });
           }
         },
@@ -186,19 +216,45 @@ export class IgdbSearchComponent implements OnInit, OnDestroy {
     return game.igdbId ? this.addedGameIds.has(game.igdbId) : false;
   }
 
+  isGameInBacklog(game: IGDBGame): boolean {
+    // Check if game is in backlog but wasn't just added in this session
+    if (!game.igdbId) return false;
+    return this.backlogGameIgdbIds.has(game.igdbId) && !this.addedGameIds.has(game.igdbId);
+  }
+
   getDisplayGames(): IGDBGame[] {
+    let games: IGDBGame[];
+    
     switch (this.activeTab) {
       case 'search':
-        return this.searchResults;
+        games = this.searchResults;
+        break;
       case 'popular':
-        return this.popularGames;
+        games = this.popularGames;
+        break;
       case 'recent':
-        return this.recentReleases;
+        games = this.recentReleases;
+        break;
       case 'upcoming':
-        return this.upcomingGames;
+        games = this.upcomingGames;
+        break;
       default:
-        return [];
+        games = [];
     }
+    
+    // Apply Steam filter if enabled
+    if (this.showSteamOnly) {
+      games = games.filter(g => g.steamAppId);
+    }
+    
+    return games;
+  }
+
+  getFilteredCount(games: IGDBGame[]): number {
+    if (this.showSteamOnly) {
+      return games.filter(g => g.steamAppId).length;
+    }
+    return games.length;
   }
 
   formatRating(rating: number | undefined): string {

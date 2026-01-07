@@ -192,8 +192,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
       .slice(0, 4);
 
     this.backlogGames = this.games
-      .filter(g => g.status === GameStatus.NOT_STARTED)
-      .slice(0, 6);
+      .filter(g => g.status === GameStatus.NOT_STARTED);
   }
 
   getStatusColor(status: GameStatus | undefined): string {

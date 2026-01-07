@@ -112,6 +112,21 @@ mat-toolbar {
       height: 20px;
     }
   }
+  
+  .steam-menu-btn {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    
+    .steam-nav-icon {
+      margin-right: 4px;
+    }
+    
+    mat-icon[fontIcon="arrow_drop_down"] {
+      margin-right: 0;
+      margin-left: -4px;
+    }
+  }
 }
 
 .icon-btn {

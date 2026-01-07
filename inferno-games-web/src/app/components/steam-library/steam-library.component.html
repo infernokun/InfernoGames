@@ -1,0 +1,312 @@
+<div class="steam-library-container" @fadeInUp>
+  <!-- Header -->
+  <div class="page-header">
+    <button mat-icon-button routerLink="/games" class="back-btn">
+      <mat-icon>arrow_back</mat-icon>
+    </button>
+    <div class="header-content">
+      <h1>
+        <svg class="steam-icon-large" viewBox="0 0 24 24" width="32" height="32">
+          <path fill="currentColor" d="M11.979 0C5.678 0 .511 4.86.022 11.037l6.432 2.658c.545-.371 1.203-.59 1.912-.59.063 0 .125.004.188.006l2.861-4.142V8.91c0-2.495 2.028-4.524 4.524-4.524 2.494 0 4.524 2.031 4.524 4.527s-2.03 4.525-4.524 4.525h-.105l-4.076 2.911c0 .052.004.105.004.159 0 1.875-1.515 3.396-3.39 3.396-1.635 0-3.016-1.173-3.331-2.727L.436 15.27C1.862 20.307 6.486 24 11.979 24c6.627 0 11.999-5.373 11.999-12S18.605 0 11.979 0zM7.54 18.21l-1.473-.61c.262.543.714.999 1.314 1.25 1.297.539 2.793-.076 3.332-1.375.263-.63.264-1.319.005-1.949s-.75-1.121-1.377-1.383c-.624-.26-1.29-.249-1.878-.03l1.523.63c.956.4 1.409 1.5 1.009 2.455-.397.957-1.497 1.41-2.454 1.012H7.54zm11.415-9.303c0-1.662-1.353-3.015-3.015-3.015-1.665 0-3.015 1.353-3.015 3.015 0 1.665 1.35 3.015 3.015 3.015 1.663 0 3.015-1.35 3.015-3.015zm-5.273-.005c0-1.252 1.013-2.266 2.265-2.266 1.249 0 2.266 1.014 2.266 2.266 0 1.251-1.017 2.265-2.266 2.265-1.253 0-2.265-1.014-2.265-2.265z"/>
+        </svg>
+        Steam Library
+      </h1>
+      <p>Browse your Steam games with IGDB enrichment</p>
+    </div>
+    <div class="header-stats">
+      <div class="stat">
+        <span class="stat-value">{{ steamGames.length }}</span>
+        <span class="stat-label">Total Games</span>
+      </div>
+      <div class="stat">
+        <span class="stat-value">{{ playedCount }}</span>
+        <span class="stat-label">Played</span>
+      </div>
+      <div class="stat">
+        <span class="stat-value">{{ inBacklogCount }}</span>
+        <span class="stat-label">In Backlog</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Search & Filters -->
+  <div class="controls-section">
+    <div class="search-bar">
+      <mat-icon class="search-icon">search</mat-icon>
+      <input
+        type="text"
+        [(ngModel)]="searchQuery"
+        (input)="onSearchInput()"
+        placeholder="Search your Steam library..."
+        class="search-input"
+      />
+      @if (searchQuery) {
+        <button mat-icon-button class="clear-btn" (click)="clearSearch()">
+          <mat-icon>close</mat-icon>
+        </button>
+      }
+    </div>
+    
+    <div class="filters-row">
+      <!-- Sort Options -->
+      <div class="filter-group">
+        <span class="filter-label">Sort by:</span>
+        <button 
+          class="filter-chip" 
+          [class.active]="sortBy === 'playtime'"
+          (click)="onSortChange('playtime')"
+        >
+          <mat-icon>schedule</mat-icon>
+          Playtime
+          @if (sortBy === 'playtime') {
+            <mat-icon class="sort-icon">{{ sortOrder === 'desc' ? 'arrow_downward' : 'arrow_upward' }}</mat-icon>
+          }
+        </button>
+        <button 
+          class="filter-chip" 
+          [class.active]="sortBy === 'recent'"
+          (click)="onSortChange('recent')"
+        >
+          <mat-icon>history</mat-icon>
+          Recent
+          @if (sortBy === 'recent') {
+            <mat-icon class="sort-icon">{{ sortOrder === 'desc' ? 'arrow_downward' : 'arrow_upward' }}</mat-icon>
+          }
+        </button>
+        <button 
+          class="filter-chip" 
+          [class.active]="sortBy === 'name'"
+          (click)="onSortChange('name')"
+        >
+          <mat-icon>sort_by_alpha</mat-icon>
+          Name
+          @if (sortBy === 'name') {
+            <mat-icon class="sort-icon">{{ sortOrder === 'desc' ? 'arrow_downward' : 'arrow_upward' }}</mat-icon>
+          }
+        </button>
+      </div>
+      
+      <!-- Played Filter -->
+      <div class="filter-group">
+        <span class="filter-label">Status:</span>
+        <button 
+          class="filter-chip" 
+          [class.active]="filterPlayed === 'all'"
+          (click)="onFilterPlayedChange('all')"
+        >
+          All
+        </button>
+        <button 
+          class="filter-chip" 
+          [class.active]="filterPlayed === 'played'"
+          (click)="onFilterPlayedChange('played')"
+        >
+          <mat-icon>play_arrow</mat-icon>
+          Played ({{ playedCount }})
+        </button>
+        <button 
+          class="filter-chip" 
+          [class.active]="filterPlayed === 'unplayed'"
+          (click)="onFilterPlayedChange('unplayed')"
+        >
+          <mat-icon>pause</mat-icon>
+          Unplayed ({{ unplayedCount }})
+        </button>
+      </div>
+      
+      <!-- Backlog Filter -->
+      <div class="filter-group">
+        <span class="filter-label">Backlog:</span>
+        <button 
+          class="filter-chip" 
+          [class.active]="filterInBacklog === 'all'"
+          (click)="onFilterBacklogChange('all')"
+        >
+          All
+        </button>
+        <button 
+          class="filter-chip" 
+          [class.active]="filterInBacklog === 'inBacklog'"
+          (click)="onFilterBacklogChange('inBacklog')"
+        >
+          <mat-icon>library_add_check</mat-icon>
+          In Backlog ({{ inBacklogCount }})
+        </button>
+        <button 
+          class="filter-chip" 
+          [class.active]="filterInBacklog === 'notInBacklog'"
+          (click)="onFilterBacklogChange('notInBacklog')"
+        >
+          <mat-icon>add_circle_outline</mat-icon>
+          Not Added
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Results Summary -->
+  <div class="results-summary">
+    <span>Showing {{ displayedGames.length }} of {{ filteredGames.length }} games</span>
+  </div>
+
+  <!-- Loading State -->
+  @if (loading) {
+    <div class="loading-state">
+      <mat-spinner diameter="48"></mat-spinner>
+      <p>Loading Steam library...</p>
+    </div>
+  } @else if (filteredGames.length === 0) {
+    <div class="empty-state">
+      <mat-icon>search_off</mat-icon>
+      <h3>No Games Found</h3>
+      <p>Try adjusting your filters or search query</p>
+    </div>
+  } @else {
+    <!-- Games Grid -->
+    <div class="games-grid">
+      @for (game of displayedGames; track trackByAppId($index, game)) {
+        <div class="game-card" @cardAnimation>
+          <div class="card-header">
+            <img 
+              [src]="getGameHeader(game.appId)" 
+              [alt]="game.name" 
+              loading="lazy"
+              (error)="$any($event.target).style.display='none'"
+            />
+            <div class="card-header-overlay">
+              @if (game.playtimeForever > 0) {
+                <div class="playtime-badge">
+                  <mat-icon>schedule</mat-icon>
+                  {{ formatPlaytime(game.playtimeForever) }}
+                </div>
+              }
+              @if (game.inBacklog) {
+                <div class="backlog-badge">
+                  <mat-icon>library_add_check</mat-icon>
+                </div>
+              }
+            </div>
+          </div>
+          
+          <div class="card-content">
+            <h3 class="game-title">{{ game.name }}</h3>
+            
+            <div class="game-meta">
+              @if (game.rtimeLastPlayed > 0) {
+                <span class="meta-item">
+                  <mat-icon>history</mat-icon>
+                  {{ formatLastPlayed(game.rtimeLastPlayed) }}
+                </span>
+              }
+              
+              <!-- Platform breakdown -->
+              @if (game.playtimeForever > 0) {
+                <div class="platform-breakdown">
+                  @if (game.playtimeDeckForever > 0) {
+                    <span class="platform-chip deck" matTooltip="Steam Deck: {{ formatPlaytime(game.playtimeDeckForever) }}">
+                      🎮 {{ formatPlaytime(game.playtimeDeckForever) }}
+                    </span>
+                  }
+                  @if ((game.playtimeForever - game.playtimeDeckForever) > 0) {
+                    <span class="platform-chip windows" matTooltip="Windows: {{ formatPlaytime(game.playtimeWindowsForever) }}">
+                      🖥️ {{ formatPlaytime(game.playtimeForever - game.playtimeDeckForever) }}
+                    </span>
+                  }
+                  <!--@if (game.playtimeLinuxForever > 0) {
+                    <span class="platform-chip linux" matTooltip="Linux: {{ formatPlaytime(game.playtimeLinuxForever) }}">
+                      🐧 {{ formatPlaytime(game.playtimeLinuxForever) }}
+                    </span>
+                  }-->
+                </div>
+              }
+            </div>
+          </div>
+          
+          <div class="card-actions">
+            @if (game.inBacklog) {
+              <button 
+                mat-flat-button 
+                class="view-backlog-btn"
+                (click)="viewInBacklog(game)"
+              >
+                <mat-icon>visibility</mat-icon>
+                View in Backlog
+              </button>
+            } @else {
+              <button 
+                mat-flat-button 
+                color="primary"
+                class="add-btn"
+                (click)="importToBacklog(game)"
+                [disabled]="importingAppId === game.appId"
+              >
+                @if (importingAppId === game.appId) {
+                  <mat-spinner diameter="18"></mat-spinner>
+                  <span>Adding...</span>
+                } @else {
+                  <ng-container>
+                    <mat-icon>add</mat-icon>
+                    <span>Add to Backlog</span>
+                  </ng-container>
+                }
+              </button>
+            }
+            <button 
+              mat-icon-button 
+              class="steam-link-btn"
+              (click)="openInSteam(game.appId)"
+              matTooltip="View on Steam"
+            >
+              <svg class="steam-icon" viewBox="0 0 24 24" width="20" height="20">
+                <path fill="currentColor" d="M11.979 0C5.678 0 .511 4.86.022 11.037l6.432 2.658c.545-.371 1.203-.59 1.912-.59.063 0 .125.004.188.006l2.861-4.142V8.91c0-2.495 2.028-4.524 4.524-4.524 2.494 0 4.524 2.031 4.524 4.527s-2.03 4.525-4.524 4.525h-.105l-4.076 2.911c0 .052.004.105.004.159 0 1.875-1.515 3.396-3.39 3.396-1.635 0-3.016-1.173-3.331-2.727L.436 15.27C1.862 20.307 6.486 24 11.979 24c6.627 0 11.999-5.373 11.999-12S18.605 0 11.979 0zM7.54 18.21l-1.473-.61c.262.543.714.999 1.314 1.25 1.297.539 2.793-.076 3.332-1.375.263-.63.264-1.319.005-1.949s-.75-1.121-1.377-1.383c-.624-.26-1.29-.249-1.878-.03l1.523.63c.956.4 1.409 1.5 1.009 2.455-.397.957-1.497 1.41-2.454 1.012H7.54zm11.415-9.303c0-1.662-1.353-3.015-3.015-3.015-1.665 0-3.015 1.353-3.015 3.015 0 1.665 1.35 3.015 3.015 3.015 1.663 0 3.015-1.35 3.015-3.015zm-5.273-.005c0-1.252 1.013-2.266 2.265-2.266 1.249 0 2.266 1.014 2.266 2.266 0 1.251-1.017 2.265-2.266 2.265-1.253 0-2.265-1.014-2.265-2.265z"/>
+              </svg>
+            </button>
+          </div>
+        </div>
+      }
+    </div>
+
+    <!-- Pagination -->
+    @if (totalPages > 1) {
+      <div class="pagination">
+        <button 
+          mat-icon-button 
+          [disabled]="currentPage === 0"
+          (click)="onPageChange(0)"
+          matTooltip="First page"
+        >
+          <mat-icon>first_page</mat-icon>
+        </button>
+        <button 
+          mat-icon-button 
+          [disabled]="currentPage === 0"
+          (click)="onPageChange(currentPage - 1)"
+          matTooltip="Previous page"
+        >
+          <mat-icon>chevron_left</mat-icon>
+        </button>
+        
+        <span class="page-info">
+          Page {{ currentPage + 1 }} of {{ totalPages }}
+        </span>
+        
+        <button 
+          mat-icon-button 
+          [disabled]="currentPage >= totalPages - 1"
+          (click)="onPageChange(currentPage + 1)"
+          matTooltip="Next page"
+        >
+          <mat-icon>chevron_right</mat-icon>
+        </button>
+        <button 
+          mat-icon-button 
+          [disabled]="currentPage >= totalPages - 1"
+          (click)="onPageChange(totalPages - 1)"
+          matTooltip="Last page"
+        >
+          <mat-icon>last_page</mat-icon>
+        </button>
+      </div>
+    }
+  }
+</div>

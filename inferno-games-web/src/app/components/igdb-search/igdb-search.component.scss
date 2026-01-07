@@ -94,6 +94,54 @@
       margin-right: 0.5rem;
     }
   }
+  
+  .filter-section {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    margin-top: 0.75rem;
+    
+    .filter-btn {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.5rem 0.875rem;
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 8px;
+      color: rgba(255, 255, 255, 0.7);
+      font-size: 0.8rem;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      
+      .steam-icon {
+        flex-shrink: 0;
+      }
+      
+      .filter-check {
+        font-size: 16px;
+        width: 16px;
+        height: 16px;
+        color: #4ade80;
+      }
+      
+      &:hover {
+        background: rgba(255, 255, 255, 0.08);
+        border-color: rgba(255, 255, 255, 0.2);
+      }
+      
+      &.active {
+        background: rgba(102, 153, 204, 0.15);
+        border-color: rgba(102, 153, 204, 0.4);
+        color: #99ccff;
+        
+        .steam-icon {
+          color: #99ccff;
+        }
+      }
+    }
+  }
 }
 
 // Tabs
@@ -320,6 +368,7 @@
       line-height: 1.3;
       display: -webkit-box;
       -webkit-line-clamp: 2;
+      line-clamp: 2;
       -webkit-box-orient: vertical;
       overflow: hidden;
     }
@@ -386,6 +435,7 @@
       color: rgba(255, 255, 255, 0.5);
       display: -webkit-box;
       -webkit-line-clamp: 3;
+      line-clamp: 3;
       -webkit-box-orient: vertical;
       overflow: hidden;
     }
@@ -393,15 +443,54 @@
   
   .card-actions {
     padding: 0 1rem 1rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
 
-    .steam-btn {
-      width: 100%;
+    .steam-library-badge {
       display: flex;
       align-items: center;
-      justify-content: center;
       gap: 0.5rem;
-      padding: 0.625rem;
+      padding: 0.5rem 0.75rem;
+      background: linear-gradient(135deg, rgba(102, 153, 204, 0.15), rgba(30, 60, 90, 0.25));
+      border: 1px solid rgba(102, 153, 204, 0.3);
+      border-radius: 8px;
+      font-size: 0.75rem;
       font-weight: 500;
+      color: #99ccff;
+      
+      .steam-icon {
+        flex-shrink: 0;
+        width: 16px;
+        height: 16px;
+        color: #99ccff;
+      }
+      
+      span {
+        flex: 1;
+      }
+      
+      .steam-link {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 24px;
+        height: 24px;
+        border-radius: 4px;
+        color: rgba(255, 255, 255, 0.6);
+        transition: all 0.2s ease;
+        
+        mat-icon {
+          font-size: 16px;
+          width: 16px;
+          height: 16px;
+        }
+        
+        &:hover {
+          background: rgba(255, 255, 255, 0.1);
+          color: #fff;
+        }
+      }
     }
     
     .add-btn {
@@ -413,8 +502,18 @@
       padding: 0.625rem;
       font-weight: 500;
       
+      mat-icon {
+        font-size: 20px;
+        width: 20px;
+        height: 20px;
+      }
+      
       mat-spinner {
-        margin-right: 0.25rem;
+        margin: 0;
+      }
+      
+      span {
+        line-height: 1;
       }
     }
     
@@ -431,7 +530,30 @@
       border: 1px solid rgba(34, 197, 94, 0.3);
       
       mat-icon {
+        font-size: 20px;
+        width: 20px;
+        height: 20px;
         color: #4ade80;
+      }
+    }
+    
+    .already-in-backlog-btn {
+      width: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+      padding: 0.625rem;
+      font-weight: 500;
+      background: rgba(251, 191, 36, 0.15) !important;
+      color: #fbbf24 !important;
+      border: 1px solid rgba(251, 191, 36, 0.3);
+      
+      mat-icon {
+        font-size: 20px;
+        width: 20px;
+        height: 20px;
+        color: #fbbf24;
       }
     }
   }

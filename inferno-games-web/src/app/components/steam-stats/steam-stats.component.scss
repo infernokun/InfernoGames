@@ -1,0 +1,729 @@
+.steam-stats-container {
+  padding: 1.5rem;
+  max-width: 1400px;
+  margin: 0 auto;
+}
+
+// Header
+.page-header {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 2rem;
+  
+  .back-btn {
+    background: rgba(255, 255, 255, 0.05);
+    
+    &:hover {
+      background: rgba(255, 255, 255, 0.1);
+    }
+  }
+  
+  .header-content {
+    flex: 1;
+    
+    h1 {
+      margin: 0;
+      font-size: 1.75rem;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      
+      mat-icon {
+        color: var(--accent-primary, #6366f1);
+      }
+    }
+    
+    p {
+      margin: 0.25rem 0 0;
+      color: rgba(255, 255, 255, 0.6);
+      font-size: 0.9rem;
+    }
+  }
+  
+  .user-card {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.5rem 1rem 0.5rem 0.5rem;
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 50px;
+    
+    .user-avatar {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+    }
+    
+    .user-name {
+      font-weight: 500;
+      color: rgba(255, 255, 255, 0.9);
+    }
+  }
+}
+
+// Loading State
+.loading-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 4rem 2rem;
+  text-align: center;
+  color: rgba(255, 255, 255, 0.6);
+  
+  p {
+    margin-top: 1rem;
+  }
+}
+
+// Filter Section
+.filter-section {
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 12px;
+  padding: 1rem 1.25rem;
+  margin-bottom: 1.5rem;
+  
+  .filter-header {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-bottom: 0.75rem;
+    color: rgba(255, 255, 255, 0.8);
+    font-size: 0.9rem;
+    font-weight: 500;
+    
+    mat-icon {
+      font-size: 18px;
+      width: 18px;
+      height: 18px;
+      color: var(--accent-primary, #6366f1);
+    }
+    
+    .filter-hint {
+      font-size: 0.8rem;
+      font-weight: 400;
+      color: rgba(255, 255, 255, 0.4);
+      margin-left: auto;
+    }
+  }
+  
+  .filter-chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    
+    .filter-chip {
+      padding: 0.5rem 1rem;
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 20px;
+      color: rgba(255, 255, 255, 0.7);
+      font-size: 0.85rem;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      
+      &:hover {
+        background: rgba(255, 255, 255, 0.08);
+        border-color: rgba(255, 255, 255, 0.2);
+      }
+      
+      &.active {
+        background: var(--accent-primary, #6366f1);
+        border-color: var(--accent-primary, #6366f1);
+        color: #fff;
+      }
+    }
+  }
+  
+  .excluded-games-notice {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-start;
+    gap: 0.5rem;
+    margin-top: 1rem;
+    padding: 0.75rem 1rem;
+    background: rgba(251, 191, 36, 0.1);
+    border: 1px solid rgba(251, 191, 36, 0.2);
+    border-radius: 8px;
+    font-size: 0.8rem;
+    color: rgba(255, 255, 255, 0.7);
+    
+    mat-icon {
+      font-size: 16px;
+      width: 16px;
+      height: 16px;
+      color: #fbbf24;
+      flex-shrink: 0;
+      margin-top: 2px;
+    }
+    
+    .excluded-games-list {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.375rem;
+      width: 100%;
+      margin-top: 0.25rem;
+      
+      .excluded-game {
+        padding: 0.25rem 0.5rem;
+        background: rgba(0, 0, 0, 0.2);
+        border-radius: 4px;
+        font-size: 0.75rem;
+        color: rgba(255, 255, 255, 0.6);
+        cursor: pointer;
+        transition: all 0.2s ease;
+        
+        &:hover {
+          background: rgba(0, 0, 0, 0.3);
+          color: #fff;
+        }
+      }
+    }
+  }
+}
+
+// Overview Section
+.overview-section {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 1rem;
+  margin-bottom: 2rem;
+}
+
+.overview-card {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 1.25rem;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 12px;
+  transition: all 0.2s ease;
+  
+  &:hover {
+    border-color: rgba(255, 255, 255, 0.15);
+    transform: translateY(-2px);
+  }
+  
+  .card-icon {
+    width: 48px;
+    height: 48px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 12px;
+    
+    mat-icon {
+      font-size: 24px;
+      width: 24px;
+      height: 24px;
+    }
+  }
+  
+  &.total-games .card-icon {
+    background: rgba(99, 102, 241, 0.2);
+    mat-icon { color: #a5b4fc; }
+  }
+  
+  &.total-playtime .card-icon {
+    background: rgba(34, 197, 94, 0.2);
+    mat-icon { color: #86efac; }
+  }
+  
+  &.played-games .card-icon {
+    background: rgba(59, 130, 246, 0.2);
+    mat-icon { color: #93c5fd; }
+  }
+  
+  &.unplayed-games .card-icon {
+    background: rgba(251, 146, 60, 0.2);
+    mat-icon { color: #fed7aa; }
+  }
+  
+  .card-content {
+    display: flex;
+    flex-direction: column;
+    
+    .card-value {
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: #fff;
+    }
+    
+    .card-label {
+      font-size: 0.8rem;
+      color: rgba(255, 255, 255, 0.6);
+    }
+    
+    .card-sub {
+      font-size: 0.7rem;
+      color: rgba(255, 255, 255, 0.4);
+      margin-top: 0.125rem;
+    }
+  }
+}
+
+// Section Styles
+.section {
+  margin-bottom: 2.5rem;
+}
+
+.section-title {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin: 0 0 1.25rem;
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.9);
+  
+  mat-icon {
+    color: var(--accent-primary, #6366f1);
+  }
+  
+  &.deck-title {
+    .deck-icon {
+      font-size: 1.25rem;
+    }
+  }
+  
+  .section-subtitle {
+    font-size: 0.8rem;
+    font-weight: 400;
+    color: rgba(255, 255, 255, 0.5);
+    margin-left: 0.5rem;
+  }
+}
+
+// Platform Cards
+.platform-cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  gap: 1rem;
+}
+
+.platform-card {
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 12px;
+  padding: 1.25rem;
+  
+  .platform-header {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    margin-bottom: 0.75rem;
+    
+    .platform-icon {
+      font-size: 1.5rem;
+    }
+    
+    .platform-info {
+      flex: 1;
+      
+      .platform-name {
+        display: block;
+        font-weight: 600;
+        color: #fff;
+      }
+      
+      .platform-playtime {
+        display: block;
+        font-size: 0.8rem;
+        color: rgba(255, 255, 255, 0.5);
+      }
+    }
+    
+    .platform-percentage {
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: var(--platform-color);
+    }
+  }
+  
+  .platform-bar {
+    height: 6px;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 3px;
+    overflow: hidden;
+    margin-bottom: 1rem;
+    
+    .platform-bar-fill {
+      height: 100%;
+      background: var(--platform-color);
+      border-radius: 3px;
+      transition: width 0.3s ease;
+    }
+  }
+  
+  .platform-top-games {
+    .top-games-label {
+      display: block;
+      font-size: 0.75rem;
+      color: rgba(255, 255, 255, 0.5);
+      margin-bottom: 0.5rem;
+    }
+    
+    .top-games-list {
+      display: flex;
+      flex-direction: column;
+      gap: 0.375rem;
+    }
+    
+    .mini-game {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.375rem 0.5rem;
+      background: rgba(255, 255, 255, 0.03);
+      border-radius: 6px;
+      cursor: pointer;
+      transition: background 0.2s ease;
+      
+      &:hover {
+        background: rgba(255, 255, 255, 0.08);
+      }
+      
+      .mini-rank {
+        font-size: 0.7rem;
+        font-weight: 600;
+        color: rgba(255, 255, 255, 0.4);
+        width: 20px;
+      }
+      
+      .mini-name {
+        flex: 1;
+        font-size: 0.8rem;
+        color: rgba(255, 255, 255, 0.8);
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+      
+      .mini-time {
+        font-size: 0.75rem;
+        color: rgba(255, 255, 255, 0.5);
+      }
+    }
+  }
+}
+
+// Top Games Grid
+.top-games-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 1rem;
+}
+
+.top-game-card {
+  position: relative;
+  aspect-ratio: 460/215;
+  border-radius: 8px;
+  overflow: hidden;
+  cursor: pointer;
+  
+  &:hover {
+    img {
+      transform: scale(1.05);
+    }
+    
+    .top-game-overlay {
+      background: linear-gradient(to top, rgba(0, 0, 0, 0.9) 0%, rgba(0, 0, 0, 0.4) 100%);
+    }
+  }
+  
+  .rank-badge {
+    position: absolute;
+    top: 0.5rem;
+    left: 0.5rem;
+    padding: 0.25rem 0.5rem;
+    background: rgba(0, 0, 0, 0.8);
+    border-radius: 4px;
+    font-size: 0.75rem;
+    font-weight: 700;
+    color: rgba(255, 255, 255, 0.7);
+    z-index: 2;
+    
+    &.gold {
+      background: linear-gradient(135deg, #fbbf24, #d97706);
+      color: #000;
+    }
+    
+    &.silver {
+      background: linear-gradient(135deg, #d1d5db, #9ca3af);
+      color: #000;
+    }
+    
+    &.bronze {
+      background: linear-gradient(135deg, #f97316, #c2410c);
+      color: #fff;
+    }
+  }
+  
+  img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.3s ease;
+  }
+  
+  .top-game-overlay {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    padding: 1rem 0.75rem 0.75rem;
+    background: linear-gradient(to top, rgba(0, 0, 0, 0.8) 0%, transparent 100%);
+    transition: background 0.3s ease;
+    
+    .top-game-name {
+      display: block;
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: #fff;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    
+    .top-game-playtime {
+      display: block;
+      font-size: 0.75rem;
+      color: #a5b4fc;
+      margin-top: 0.125rem;
+    }
+  }
+}
+
+// Horizontal Games List
+.horizontal-games-list {
+  display: flex;
+  gap: 1rem;
+  overflow-x: auto;
+  padding-bottom: 0.5rem;
+  
+  &::-webkit-scrollbar {
+    height: 6px;
+  }
+  
+  &::-webkit-scrollbar-track {
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 3px;
+  }
+  
+  &::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.2);
+    border-radius: 3px;
+  }
+}
+
+.horizontal-game-card {
+  flex-shrink: 0;
+  width: 200px;
+  border-radius: 8px;
+  overflow: hidden;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  cursor: pointer;
+  transition: all 0.2s ease;
+  
+  &:hover {
+    border-color: rgba(255, 255, 255, 0.15);
+    transform: translateY(-2px);
+  }
+  
+  img {
+    width: 100%;
+    aspect-ratio: 460/215;
+    object-fit: cover;
+  }
+  
+  .horizontal-game-info {
+    padding: 0.75rem;
+    
+    .horizontal-rank {
+      display: inline-block;
+      font-size: 0.7rem;
+      font-weight: 600;
+      color: var(--accent-primary, #6366f1);
+      margin-right: 0.25rem;
+    }
+    
+    .horizontal-name {
+      display: block;
+      font-size: 0.85rem;
+      font-weight: 500;
+      color: #fff;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    
+    .horizontal-time {
+      display: block;
+      font-size: 0.75rem;
+      color: rgba(255, 255, 255, 0.5);
+      margin-top: 0.25rem;
+    }
+  }
+}
+
+// Shame Section
+.shame-section {
+  .section-title {
+    mat-icon {
+      color: #f97316;
+    }
+  }
+}
+
+.shame-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+  gap: 1rem;
+}
+
+.shame-card {
+  position: relative;
+  border-radius: 8px;
+  overflow: hidden;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  cursor: pointer;
+  transition: all 0.2s ease;
+  
+  &:hover {
+    border-color: rgba(255, 255, 255, 0.15);
+    
+    img {
+      filter: grayscale(0);
+    }
+  }
+  
+  img {
+    width: 100%;
+    aspect-ratio: 460/215;
+    object-fit: cover;
+    filter: grayscale(0.5);
+    transition: filter 0.3s ease;
+  }
+  
+  .shame-name {
+    display: block;
+    padding: 0.5rem 0.75rem;
+    font-size: 0.8rem;
+    font-weight: 500;
+    color: rgba(255, 255, 255, 0.8);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  
+  .shame-badge {
+    display: block;
+    padding: 0 0.75rem 0.5rem;
+    font-size: 0.7rem;
+    color: rgba(255, 255, 255, 0.4);
+  }
+}
+
+// Fun Stats
+.fun-stats-section {
+  .section-title mat-icon {
+    color: #fbbf24;
+  }
+}
+
+.fun-stats-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 1rem;
+}
+
+.fun-stat-card {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 1.25rem;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 12px;
+  
+  &.highlight {
+    background: linear-gradient(135deg, rgba(99, 102, 241, 0.15), rgba(139, 92, 246, 0.15));
+    border-color: rgba(99, 102, 241, 0.3);
+  }
+  
+  .fun-stat-icon {
+    font-size: 2rem;
+  }
+  
+  .fun-stat-content {
+    display: flex;
+    flex-direction: column;
+    
+    .fun-stat-value {
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: #fff;
+    }
+    
+    .fun-stat-label {
+      font-size: 0.8rem;
+      color: rgba(255, 255, 255, 0.6);
+    }
+    
+    .fun-stat-sub {
+      font-size: 0.7rem;
+      color: rgba(255, 255, 255, 0.4);
+      margin-top: 0.125rem;
+    }
+  }
+}
+
+// Responsive
+@media (max-width: 768px) {
+  .steam-stats-container {
+    padding: 1rem;
+  }
+  
+  .page-header {
+    flex-wrap: wrap;
+    
+    .header-content {
+      flex-basis: calc(100% - 56px);
+      
+      h1 {
+        font-size: 1.5rem;
+      }
+    }
+    
+    .user-card {
+      width: 100%;
+      justify-content: center;
+      margin-top: 0.5rem;
+    }
+  }
+  
+  .overview-section {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  
+  .top-games-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 480px) {
+  .overview-section {
+    grid-template-columns: 1fr;
+  }
+  
+  .platform-cards {
+    grid-template-columns: 1fr;
+  }
+}

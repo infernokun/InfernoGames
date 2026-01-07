@@ -19,6 +19,14 @@
         <mat-icon>sports_esports</mat-icon>
         Library
       </button>
+      <button mat-button routerLink="/steam/library" routerLinkActive="active-link" [routerLinkActiveOptions]="{exact: true}">
+        <mat-icon>library_books</mat-icon>
+        Steam Library
+      </button>
+      <button mat-button routerLink="/steam/stats" routerLinkActive="active-link" [routerLinkActiveOptions]="{exact: true}">
+        <mat-icon>analytics</mat-icon>
+        Steam Stats
+      </button>
       <button mat-flat-button color="accent" routerLink="/games/search" routerLinkActive="active-link" class="add-game-btn">
         <mat-icon>add</mat-icon>
         Add Game
@@ -65,6 +73,15 @@
       <a mat-menu-item routerLink="/games" routerLinkActive="active-menu-item" [routerLinkActiveOptions]="{exact: true}">
         <mat-icon>sports_esports</mat-icon>
         <span>Game Library</span>
+      </a>
+      <mat-divider></mat-divider>
+      <a mat-menu-item routerLink="/steam/library" routerLinkActive="active-menu-item">
+        <mat-icon>library_books</mat-icon>
+        <span>Steam Library</span>
+      </a>
+      <a mat-menu-item routerLink="/steam/stats" routerLinkActive="active-menu-item">
+        <mat-icon>analytics</mat-icon>
+        <span>Steam Statistics</span>
       </a>
       <mat-divider></mat-divider>
       <a mat-menu-item routerLink="/games/search" routerLinkActive="active-menu-item">

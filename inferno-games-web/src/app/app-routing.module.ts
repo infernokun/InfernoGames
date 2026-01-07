@@ -5,6 +5,8 @@ import { GamesListComponent } from './components/games-list/games-list.component
 import { GameDetailComponent } from './components/game-detail/game-detail.component';
 import { GameFormComponent } from './components/game-form/game-form.component';
 import { IgdbSearchComponent } from './components/igdb-search/igdb-search.component';
+import { SteamLibraryComponent } from './components/steam-library/steam-library.component';
+import { SteamStatsComponent } from './components/steam-stats/steam-stats.component';
 
 const routes: Routes = [
   { path: '', redirectTo: '/dashboard', pathMatch: 'full' },
@@ -14,6 +16,8 @@ const routes: Routes = [
   { path: 'games/search', component: IgdbSearchComponent },
   { path: 'games/:id', component: GameDetailComponent },
   { path: 'games/:id/edit', component: GameFormComponent },
+  { path: 'steam/library', component: SteamLibraryComponent },
+  { path: 'steam/stats', component: SteamStatsComponent },
   { path: '**', redirectTo: '/dashboard' }
 ];
 
