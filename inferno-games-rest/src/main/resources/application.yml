@@ -13,6 +13,6 @@ springdoc:
 
 spring:
   application:
-    name: inferno-comics-rest
+    name: inferno-games-rest
   profiles:
     active: local
