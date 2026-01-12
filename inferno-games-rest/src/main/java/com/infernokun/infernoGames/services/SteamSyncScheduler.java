@@ -24,7 +24,7 @@ public class SteamSyncScheduler {
     private final GameRepository gameRepository;
 
     /**
-     * Sync Steam playtime data every 30 minutes
+     * Sync Steam playtime data every 6 hours
      * This updates playtime information for all games that have a Steam App ID
      */
     @Scheduled(fixedRateString = "PT6H", initialDelayString = "PT1M")
