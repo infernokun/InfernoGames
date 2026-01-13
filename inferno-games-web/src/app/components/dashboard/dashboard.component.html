@@ -2,70 +2,70 @@
 
   <!-- Steam Library Stats -->
   @if (steamStatus?.configured && steamStats) {
-    <section class="steam-stats-section" [@fadeInUp]>
-      <div class="section-header">
-        <h2>
-          <img src="https://store.steampowered.com/favicon.ico" alt="Steam" class="steam-logo">
-          Steam Library
-        </h2>
-        <div class="steam-actions">
-          <button mat-stroked-button (click)="openSteamManagement()" matTooltip="Steam Settings">
-            <mat-icon>settings</mat-icon>
-            Manage
-          </button>
-          <button mat-icon-button (click)="refreshSteamData()" [disabled]="steamLoading" matTooltip="Refresh Steam Data">
-            <mat-icon [class.spinning]="steamLoading">refresh</mat-icon>
-          </button>
+  <section class="steam-stats-section" [@fadeInUp]>
+    <div class="section-header">
+      <h2>
+        <img src="https://store.steampowered.com/favicon.ico" alt="Steam" class="steam-logo">
+        Steam Library
+      </h2>
+      <div class="steam-actions">
+        <button mat-stroked-button (click)="openSteamManagement()" matTooltip="Steam Settings">
+          <mat-icon>settings</mat-icon>
+          Manage
+        </button>
+        <button mat-icon-button (click)="refreshSteamData()" [disabled]="steamLoading" matTooltip="Refresh Steam Data">
+          <mat-icon [class.spinning]="steamLoading">refresh</mat-icon>
+        </button>
+      </div>
+    </div>
+
+    <div class="steam-stats-grid">
+      <div class="steam-stat-card library">
+        <div class="steam-stat-icon">
+          <mat-icon>videogame_asset</mat-icon>
+        </div>
+        <div class="steam-stat-info">
+          <span class="steam-stat-value">{{ steamStats.totalGames }}</span>
+          <span class="steam-stat-label">Total Games</span>
+        </div>
+        <div class="steam-stat-sub">
+          <span class="played">{{ steamStats.playedGames }} played</span>
+          <span class="divider">•</span>
+          <span class="unplayed">{{ steamStats.unplayedGames }} unplayed</span>
         </div>
       </div>
-      
-      <div class="steam-stats-grid">
-        <div class="steam-stat-card library">
-          <div class="steam-stat-icon">
-            <mat-icon>videogame_asset</mat-icon>
-          </div>
-          <div class="steam-stat-info">
-            <span class="steam-stat-value">{{ steamStats.totalGames }}</span>
-            <span class="steam-stat-label">Total Games</span>
-          </div>
-          <div class="steam-stat-sub">
-            <span class="played">{{ steamStats.playedGames }} played</span>
-            <span class="divider">•</span>
-            <span class="unplayed">{{ steamStats.unplayedGames }} unplayed</span>
-          </div>
-        </div>
 
-        <div class="steam-stat-card playtime">
-          <div class="steam-stat-icon">
-            <mat-icon>schedule</mat-icon>
-          </div>
-          <div class="steam-stat-info">
-            <span class="steam-stat-value">{{ steamStats.totalPlaytimeHours | number:'1.0-0' }}h</span>
-            <span class="steam-stat-label">Total Playtime</span>
-          </div>
+      <div class="steam-stat-card playtime">
+        <div class="steam-stat-icon">
+          <mat-icon>schedule</mat-icon>
         </div>
-
-        <div class="steam-stat-card windows">
-          <div class="steam-stat-icon">
-            <mat-icon>desktop_windows</mat-icon>
-          </div>
-          <div class="steam-stat-info">
-            <span class="steam-stat-value">{{ steamStats.windowsPlaytimeHours | number:'1.0-0' }}h</span>
-            <span class="steam-stat-label">Windows</span>
-          </div>
+        <div class="steam-stat-info">
+          <span class="steam-stat-value">{{ steamStats.totalPlaytimeHours | number:'1.0-0' }}h</span>
+          <span class="steam-stat-label">Total Playtime</span>
         </div>
+      </div>
 
-        <div class="steam-stat-card deck">
-          <div class="steam-stat-icon">
-            <mat-icon>sports_esports</mat-icon>
-          </div>
-          <div class="steam-stat-info">
-            <span class="steam-stat-value">{{ steamStats.deckPlaytimeHours | number:'1.0-0' }}h</span>
-            <span class="steam-stat-label">Steam Deck</span>
-          </div>
+      <div class="steam-stat-card windows">
+        <div class="steam-stat-icon">
+          <mat-icon>desktop_windows</mat-icon>
         </div>
+        <div class="steam-stat-info">
+          <span class="steam-stat-value">{{ steamStats.windowsPlaytimeHours | number:'1.0-0' }}h</span>
+          <span class="steam-stat-label">Windows</span>
+        </div>
+      </div>
 
-        <!--
+      <div class="steam-stat-card deck">
+        <div class="steam-stat-icon">
+          <mat-icon>sports_esports</mat-icon>
+        </div>
+        <div class="steam-stat-info">
+          <span class="steam-stat-value">{{ steamStats.deckPlaytimeHours | number:'1.0-0' }}h</span>
+          <span class="steam-stat-label">Steam Deck</span>
+        </div>
+      </div>
+
+      <!--
         <div class="steam-stat-card linux">
           <div class="steam-stat-icon">
             <mat-icon>terminal</mat-icon>
@@ -76,436 +76,417 @@
           </div>
         </div>-->
 
-        <div class="steam-stat-card percentage">
-          <div class="steam-stat-icon">
-            <mat-icon>pie_chart</mat-icon>
-          </div>
-          <div class="steam-stat-info">
-            <span class="steam-stat-value">{{ steamStats.playedPercentage | number:'1.0-0' }}%</span>
-            <span class="steam-stat-label">Library Played</span>
-          </div>
-          <div class="progress-bar">
-            <div class="progress-fill" [style.width.%]="steamStats.playedPercentage"></div>
-          </div>
+      <div class="steam-stat-card percentage">
+        <div class="steam-stat-icon">
+          <mat-icon>pie_chart</mat-icon>
+        </div>
+        <div class="steam-stat-info">
+          <span class="steam-stat-value">{{ steamStats.playedPercentage | number:'1.0-0' }}%</span>
+          <span class="steam-stat-label">Library Played</span>
+        </div>
+        <div class="progress-bar">
+          <div class="progress-fill" [style.width.%]="steamStats.playedPercentage"></div>
         </div>
       </div>
-    </section>
+    </div>
+  </section>
   }
-  
+
   <!-- Stats Overview -->
   @if (!loading && stats) {
-    <section class="stats-section" [@slideInUp]>
-      <div class="stats-grid">
-        <div class="stat-card total">
-          <div class="stat-glow"></div>
-          <div class="stat-icon-wrapper">
-            <mat-icon>library_books</mat-icon>
-          </div>
-          <div class="stat-info">
-            <span class="stat-value">{{ stats.totalGames }}</span>
-            <span class="stat-label">Total Games</span>
-          </div>
+  <section class="stats-section" [@slideInUp]>
+    <div class="stats-grid">
+      <div class="stat-card total">
+        <div class="stat-glow"></div>
+        <div class="stat-icon-wrapper">
+          <mat-icon>library_books</mat-icon>
         </div>
-
-        <div class="stat-card completed">
-          <div class="stat-glow"></div>
-          <div class="stat-icon-wrapper">
-            <mat-icon>emoji_events</mat-icon>
-          </div>
-          <div class="stat-info">
-            <span class="stat-value">{{ stats.completedGames }}</span>
-            <span class="stat-label">Completed</span>
-          </div>
-          <div class="stat-badge">{{ stats.completionRate }}%</div>
-        </div>
-
-        <div class="stat-card playing">
-          <div class="stat-glow"></div>
-          <div class="stat-icon-wrapper">
-            <mat-icon>play_circle</mat-icon>
-          </div>
-          <div class="stat-info">
-            <span class="stat-value">{{ stats.inProgressGames }}</span>
-            <span class="stat-label">Playing Now</span>
-          </div>
-        </div>
-
-        <div class="stat-card playtime">
-          <div class="stat-glow"></div>
-          <div class="stat-icon-wrapper">
-            <mat-icon>schedule</mat-icon>
-          </div>
-          <div class="stat-info">
-            <span class="stat-value">{{ stats.totalPlaytime | number:'1.2-2' }}h</span>
-            <span class="stat-label">Backlog Playtime</span>
-          </div>
+        <div class="stat-info">
+          <span class="stat-value">{{ stats.totalGames }}</span>
+          <span class="stat-label">Total Games</span>
         </div>
       </div>
-    </section>
+
+      <div class="stat-card completed">
+        <div class="stat-glow"></div>
+        <div class="stat-icon-wrapper">
+          <mat-icon>emoji_events</mat-icon>
+        </div>
+        <div class="stat-info">
+          <span class="stat-value">{{ stats.completedGames }}</span>
+          <span class="stat-label">Completed</span>
+        </div>
+        <div class="stat-badge">{{ stats.completionRate }}%</div>
+      </div>
+
+      <div class="stat-card playing">
+        <div class="stat-glow"></div>
+        <div class="stat-icon-wrapper">
+          <mat-icon>play_circle</mat-icon>
+        </div>
+        <div class="stat-info">
+          <span class="stat-value">{{ stats.inProgressGames }}</span>
+          <span class="stat-label">Playing Now</span>
+        </div>
+      </div>
+
+      <div class="stat-card playtime">
+        <div class="stat-glow"></div>
+        <div class="stat-icon-wrapper">
+          <mat-icon>schedule</mat-icon>
+        </div>
+        <div class="stat-info">
+          <span class="stat-value">{{ stats.totalPlaytime | number:'1.2-2' }}h</span>
+          <span class="stat-label">Backlog Playtime</span>
+        </div>
+      </div>
+    </div>
+  </section>
   }
 
   <!-- Steam Management Dialog -->
   @if (showSteamManagement) {
-    <div class="steam-management-overlay" (click)="closeSteamManagement()">
-      <div class="steam-management-dialog" (click)="$event.stopPropagation()" [@fadeInUp]>
-        <div class="dialog-header">
-          <h2>
-            <img src="https://store.steampowered.com/favicon.ico" alt="Steam" class="steam-logo">
-            Steam Management
-          </h2>
-          <button mat-icon-button (click)="closeSteamManagement()">
-            <mat-icon>close</mat-icon>
-          </button>
+  <div class="steam-management-overlay" (click)="closeSteamManagement()">
+    <div class="steam-management-dialog" (click)="$event.stopPropagation()" [@fadeInUp]>
+      <div class="dialog-header">
+        <h2>
+          <img src="https://store.steampowered.com/favicon.ico" alt="Steam" class="steam-logo">
+          Steam Management
+        </h2>
+        <button mat-icon-button (click)="closeSteamManagement()">
+          <mat-icon>close</mat-icon>
+        </button>
+      </div>
+
+      <div class="dialog-content">
+        <!-- Migration Section -->
+        <div class="management-section">
+          <h3>
+            <mat-icon>sync</mat-icon>
+            Data Migration
+          </h3>
+          <p class="section-description">
+            Populate Steam playtime data for existing games in your library that have a Steam App ID.
+            This only affects games that haven't been synced yet.
+          </p>
+          <div class="action-row">
+            <button mat-raised-button color="primary" (click)="runSteamMigration()" [disabled]="migrationRunning">
+              @if (migrationRunning) {
+              <mat-spinner diameter="20"></mat-spinner>
+              <span>Migrating...</span>
+              } @else {
+              <ng-container>
+                <mat-icon>cloud_sync</mat-icon>
+                <span>Run Migration</span>
+              </ng-container>
+              }
+            </button>
+            @if (migrationResult) {
+            <span class="result-message" [class.success]="migrationResult.success">
+              <mat-icon>{{ migrationResult.success ? 'check_circle' : 'error' }}</mat-icon>
+              {{ migrationResult.message }}
+            </span>
+            }
+          </div>
         </div>
 
-        <div class="dialog-content">
-          <!-- Migration Section -->
-          <div class="management-section">
-            <h3>
-              <mat-icon>sync</mat-icon>
-              Data Migration
-            </h3>
-            <p class="section-description">
-              Populate Steam playtime data for existing games in your library that have a Steam App ID.
-              This only affects games that haven't been synced yet.
-            </p>
-            <div class="action-row">
-              <button 
-                mat-raised-button 
-                color="primary" 
-                (click)="runSteamMigration()"
-                [disabled]="migrationRunning"
-              >
-                @if (migrationRunning) {
-                  <mat-spinner diameter="20"></mat-spinner>
-                  <span>Migrating...</span>
-                } @else {
-                  <ng-container>
-                    <mat-icon>cloud_sync</mat-icon>
-                    <span>Run Migration</span>
-                  </ng-container>
-                }
-              </button>
-              @if (migrationResult) {
-                <span class="result-message" [class.success]="migrationResult.success">
-                  <mat-icon>{{ migrationResult.success ? 'check_circle' : 'error' }}</mat-icon>
-                  {{ migrationResult.message }}
-                </span>
-              }
-            </div>
-          </div>
+        <!-- Sync All Section -->
+        <div class="management-section">
+          <h3>
+            <mat-icon>refresh</mat-icon>
+            Sync All Games
+          </h3>
+          <p class="section-description">
+            Update playtime data for all games with Steam App IDs. This refreshes data from Steam's servers.
+          </p>
+          <div class="action-row">
+            <button mat-raised-button (click)="runSteamSyncAll()" [disabled]="syncAllRunning">
+              @if (syncAllRunning) {
+              <mat-spinner diameter="20"></mat-spinner>
+              <span>Syncing...</span>
+              } @else {
+              <ng-container>
+                <mat-icon>sync</mat-icon>
+                <span>Sync All</span>
+              </ng-container>
 
-          <!-- Sync All Section -->
-          <div class="management-section">
-            <h3>
-              <mat-icon>refresh</mat-icon>
-              Sync All Games
-            </h3>
-            <p class="section-description">
-              Update playtime data for all games with Steam App IDs. This refreshes data from Steam's servers.
-            </p>
-            <div class="action-row">
-              <button 
-                mat-raised-button 
-                (click)="runSteamSyncAll()"
-                [disabled]="syncAllRunning"
-              >
-                @if (syncAllRunning) {
-                  <mat-spinner diameter="20"></mat-spinner>
-                  <span>Syncing...</span>
-                } @else {
-                  <ng-container>
-                    <mat-icon>sync</mat-icon>
-                    <span>Sync All</span>
-                  </ng-container>
-                  
-                }
-              </button>
-              @if (syncAllResult) {
-                <span class="result-message" [class.success]="syncAllResult.success">
-                  <mat-icon>{{ syncAllResult.success ? 'check_circle' : 'error' }}</mat-icon>
-                  {{ syncAllResult.message }}
-                </span>
               }
-            </div>
+            </button>
+            @if (syncAllResult) {
+            <span class="result-message" [class.success]="syncAllResult.success">
+              <mat-icon>{{ syncAllResult.success ? 'check_circle' : 'error' }}</mat-icon>
+              {{ syncAllResult.message }}
+            </span>
+            }
           </div>
+        </div>
 
-          <!-- Validate Platforms Section -->
-          <div class="management-section">
-            <h3>
-              <mat-icon>computer</mat-icon>
-              Validate Platforms
-            </h3>
-            <p class="section-description">
-              Automatically set platform to "PC" for all games that are verified in your Steam library.
-            </p>
-            <div class="action-row">
-              <button 
-                mat-raised-button 
-                (click)="runValidatePlatforms()"
-                [disabled]="validateRunning"
-              >
-                @if (validateRunning) {
-                  <mat-spinner diameter="20"></mat-spinner>
-                  <span>Validating...</span>
-                } @else {
-                  <ng-container>
-                    <mat-icon>check_circle</mat-icon>
-                    <span>Validate Platforms</span>
-                  </ng-container>
-                }
-              </button>
-              @if (validateResult) {
-                <span class="result-message" [class.success]="validateResult.success">
-                  <mat-icon>{{ validateResult.success ? 'check_circle' : 'error' }}</mat-icon>
-                  {{ validateResult.message }}
-                </span>
+        <!-- Validate Platforms Section -->
+        <div class="management-section">
+          <h3>
+            <mat-icon>computer</mat-icon>
+            Validate Platforms
+          </h3>
+          <p class="section-description">
+            Automatically set platform to "PC" for all games that are verified in your Steam library.
+          </p>
+          <div class="action-row">
+            <button mat-raised-button (click)="runValidatePlatforms()" [disabled]="validateRunning">
+              @if (validateRunning) {
+              <mat-spinner diameter="20"></mat-spinner>
+              <span>Validating...</span>
+              } @else {
+              <ng-container>
+                <mat-icon>check_circle</mat-icon>
+                <span>Validate Platforms</span>
+              </ng-container>
               }
-            </div>
+            </button>
+            @if (validateResult) {
+            <span class="result-message" [class.success]="validateResult.success">
+              <mat-icon>{{ validateResult.success ? 'check_circle' : 'error' }}</mat-icon>
+              {{ validateResult.message }}
+            </span>
+            }
           </div>
+        </div>
 
-          <!-- Refresh Cache Section -->
-          <div class="management-section">
-            <h3>
-              <mat-icon>cached</mat-icon>
-              Refresh Steam Cache
-            </h3>
-            <p class="section-description">
-              Clear and reload your Steam library data from Steam's API. Use this if games are missing.
-            </p>
-            <div class="action-row">
-              <button 
-                mat-raised-button 
-                (click)="runRefreshCache()"
-                [disabled]="refreshCacheRunning"
-              >
-                @if (refreshCacheRunning) {
-                  <mat-spinner diameter="20"></mat-spinner>
-                  <span>Refreshing...</span>
-                } @else {
-                  <ng-container>
-                    <mat-icon>refresh</mat-icon>
-                    <span>Refresh Cache</span>
-                  </ng-container>
-                }
-              </button>
-              @if (refreshCacheResult) {
-                <span class="result-message" [class.success]="refreshCacheResult.success">
-                  <mat-icon>{{ refreshCacheResult.success ? 'check_circle' : 'error' }}</mat-icon>
-                  {{ refreshCacheResult.message }}
-                </span>
+        <!-- Refresh Cache Section -->
+        <div class="management-section">
+          <h3>
+            <mat-icon>cached</mat-icon>
+            Refresh Steam Cache
+          </h3>
+          <p class="section-description">
+            Clear and reload your Steam library data from Steam's API. Use this if games are missing.
+          </p>
+          <div class="action-row">
+            <button mat-raised-button (click)="runRefreshCache()" [disabled]="refreshCacheRunning">
+              @if (refreshCacheRunning) {
+              <mat-spinner diameter="20"></mat-spinner>
+              <span>Refreshing...</span>
+              } @else {
+              <ng-container>
+                <mat-icon>refresh</mat-icon>
+                <span>Refresh Cache</span>
+              </ng-container>
               }
-            </div>
+            </button>
+            @if (refreshCacheResult) {
+            <span class="result-message" [class.success]="refreshCacheResult.success">
+              <mat-icon>{{ refreshCacheResult.success ? 'check_circle' : 'error' }}</mat-icon>
+              {{ refreshCacheResult.message }}
+            </span>
+            }
           </div>
         </div>
       </div>
     </div>
+  </div>
   }
 
   <!-- Platform & Genre Stats -->
   @if (!loading) {
-    <section class="insights-section" [@fadeInUp]>
-      <div class="insights-grid">
-        <!-- Platform Breakdown -->
-        <div class="insight-card platforms">
-          <h3>
-            <mat-icon>devices</mat-icon>
-            Platforms
-          </h3>
-          <div class="platform-list">
-            @for (platform of platformStats; track platform.platform) {
-              <div class="platform-item">
-                <div class="platform-info">
-                  <mat-icon>{{ getPlatformIcon(platform.platform) }}</mat-icon>
-                  <span class="platform-name">{{ getPlatformLabel(platform.platform) }}</span>
-                </div>
-                <div class="platform-stats">
-                  <span class="game-count">{{ platform.gameCount }} games</span>
-                  <div class="progress-bar">
-                    <div class="progress-fill" [style.width.%]="platform.percentage"></div>
-                  </div>
-                </div>
+  <section class="insights-section" [@fadeInUp]>
+    <div class="insights-grid">
+      <!-- Platform Breakdown -->
+      <div class="insight-card platforms">
+        <h3>
+          <mat-icon>devices</mat-icon>
+          Platforms
+        </h3>
+        <div class="platform-list">
+          @for (platform of platformStats; track platform.platform) {
+          <div class="platform-item">
+            <div class="platform-info">
+              <mat-icon>{{ getPlatformIcon(platform.platform) }}</mat-icon>
+              <span class="platform-name">{{ getPlatformLabel(platform.platform) }}</span>
+            </div>
+            <div class="platform-stats">
+              <span class="game-count">{{ platform.gameCount }} games</span>
+              <div class="progress-bar">
+                <div class="progress-fill" [style.width.%]="platform.percentage"></div>
               </div>
-            }
+            </div>
           </div>
-        </div>
-
-        <!-- Genre Breakdown -->
-        <div class="insight-card genres">
-          <h3>
-            <mat-icon>category</mat-icon>
-            Genres
-          </h3>
-          <div class="genre-tags">
-            @for (genre of genreStats; track genre.genre) {
-              <div class="genre-tag" [style.--size]="genre.percentage">
-                <span class="genre-name">{{ genre.genre }}</span>
-                <span class="genre-count">{{ genre.gameCount }}</span>
-              </div>
-            }
-          </div>
+          }
         </div>
       </div>
-    </section>
+
+      <!-- Genre Breakdown -->
+      <div class="insight-card genres">
+        <h3>
+          <mat-icon>category</mat-icon>
+          Genres
+        </h3>
+        <div class="genre-tags">
+          @for (genre of genreStats; track genre.genre) {
+          <div class="genre-tag" [style.--size]="genre.percentage">
+            <span class="genre-name">{{ genre.genre }}</span>
+            <span class="genre-count">{{ genre.gameCount }}</span>
+          </div>
+          }
+        </div>
+      </div>
+    </div>
+  </section>
   }
 
   <!-- Currently Playing Section -->
   @if (!loading && inProgressGames.length > 0) {
-    <section class="games-section currently-playing" [@fadeInUp]>
-      <div class="section-header">
-        <h2>
-          <mat-icon>play_circle</mat-icon>
-          Currently Playing
-        </h2>
-        <a mat-button routerLink="/games" [queryParams]="{status: 'IN_PROGRESS'}" class="view-all-btn">
-          View All (Playing) <mat-icon>arrow_forward</mat-icon>
-        </a>
-      </div>
-      <div class="games-grid featured">
-        @for (game of inProgressGames; track trackByGame($index, game)) {
-          <div class="game-card featured" [@cardAnimation] [routerLink]="['/games', game.id]">
-            <div class="game-cover">
-              @if (game.coverImageUrl) {
-                <img [src]="game.coverImageUrl" [alt]="game.title" loading="lazy">
-              } @else {
-                <div class="cover-placeholder">
-                  <mat-icon>videogame_asset</mat-icon>
-                </div>
-              }
-              <div class="status-badge" [class]="getStatusColor(game.status)">
-                {{ getStatusLabel(game.status) }}
-              </div>
-            </div>
-            <div class="game-info">
-              <h3 class="game-title">{{ game.title }}</h3>
-              <div class="game-meta">
-                <span class="platform">
-                  <mat-icon>{{ getPlatformIcon(game.platform || '') }}</mat-icon>
-                  {{ getPlatformLabel(game.platform || '') }}
-                </span>
-                <span class="playtime">
-                  <mat-icon>schedule</mat-icon>
-                  {{ formatPlaytime(game.playtimeHours) }}
-                </span>
-              </div>
-            </div>
+  <section class="games-section currently-playing" [@fadeInUp]>
+    <div class="section-header">
+      <h2>
+        <mat-icon>play_circle</mat-icon>
+        Currently Playing
+      </h2>
+      <a mat-button routerLink="/games" [queryParams]="{status: 'IN_PROGRESS'}" class="view-all-btn">
+        View All (Playing) <mat-icon>arrow_forward</mat-icon>
+      </a>
+    </div>
+    <div class="games-grid featured">
+      @for (game of inProgressGames; track trackByGame($index, game)) {
+      <div class="game-card featured" [@cardAnimation] [routerLink]="['/games', game.id]">
+        <div class="game-cover">
+          @if (game.coverImageUrl) {
+          <img [src]="game.coverImageUrl" [alt]="game.title" loading="lazy">
+          } @else {
+          <div class="cover-placeholder">
+            <mat-icon>videogame_asset</mat-icon>
           </div>
-        }
+          }
+          <div class="status-badge" [class]="getStatusColor(game.status)">
+            {{ getStatusLabel(game.status) }}
+          </div>
+        </div>
+        <div class="game-info">
+          <h3 class="game-title">{{ game.title }}</h3>
+          <div class="game-meta">
+            <span class="platform">
+              <mat-icon>{{ getPlatformIcon(game.platform || '') }}</mat-icon>
+              {{ getPlatformLabel(game.platform || '') }}
+            </span>
+            <span class="playtime">
+              <mat-icon>schedule</mat-icon>
+              {{ formatPlaytime(game.playtimeHours) }}
+            </span>
+          </div>
+        </div>
       </div>
-    </section>
+      }
+    </div>
+  </section>
   }
 
   <!-- Favorites Section -->
   @if (!loading && favoriteGames.length > 0) {
-    <section class="games-section favorites" [@fadeInUp]>
-      <div class="section-header">
-        <h2>
-          <mat-icon>favorite</mat-icon>
-          Favorites
-        </h2>
-        <a mat-button routerLink="/games" [queryParams]="{favorites: true}" class="view-all-btn">
-          View All (Favorite) <mat-icon>arrow_forward</mat-icon>
-        </a>
-      </div>
-      <div class="games-grid">
-        @for (game of favoriteGames; track trackByGame($index, game)) {
-          <div class="game-card" [@cardAnimation] [routerLink]="['/games', game.id]">
-            <div class="game-cover">
-              @if (game.coverImageUrl) {
-                <img [src]="game.coverImageUrl" [alt]="game.title" loading="lazy">
-              } @else {
-                <div class="cover-placeholder">
-                  <mat-icon>videogame_asset</mat-icon>
-                </div>
-              }
-              <div class="favorite-badge">
-                <mat-icon>favorite</mat-icon>
-              </div>
-              @if (game.rating) {
-                <div class="rating-badge">
-                  <mat-icon>star</mat-icon>
-                  {{ game.rating }}
-                </div>
-              }
-            </div>
-            <div class="game-info">
-              <h3 class="game-title">{{ game.title }}</h3>
-              <div class="game-meta">
-                <span class="status-chip" [class]="getStatusColor(game.status)">
-                  {{ getStatusLabel(game.status) }}
-                </span>
-              </div>
-            </div>
+  <section class="games-section favorites" [@fadeInUp]>
+    <div class="section-header">
+      <h2>
+        <mat-icon>favorite</mat-icon>
+        Favorites
+      </h2>
+      <a mat-button routerLink="/games" [queryParams]="{favorites: true}" class="view-all-btn">
+        View All (Favorite) <mat-icon>arrow_forward</mat-icon>
+      </a>
+    </div>
+    <div class="games-grid">
+      @for (game of favoriteGames; track trackByGame($index, game)) {
+      <div class="game-card" [@cardAnimation] [routerLink]="['/games', game.id]">
+        <div class="game-cover">
+          @if (game.coverImageUrl) {
+          <img [src]="game.coverImageUrl" [alt]="game.title" loading="lazy">
+          } @else {
+          <div class="cover-placeholder">
+            <mat-icon>videogame_asset</mat-icon>
           </div>
-        }
+          }
+          <div class="favorite-badge">
+            <mat-icon>favorite</mat-icon>
+          </div>
+          @if (game.rating) {
+          <div class="rating-badge">
+            <mat-icon>star</mat-icon>
+            {{ game.rating }}
+          </div>
+          }
+        </div>
+        <div class="game-info">
+          <h3 class="game-title">{{ game.title }}</h3>
+          <div class="game-meta">
+            <span class="status-chip" [class]="getStatusColor(game.status)">
+              {{ getStatusLabel(game.status) }}
+            </span>
+          </div>
+        </div>
       </div>
-    </section>
+      }
+    </div>
+  </section>
   }
 
   <!-- Backlog Section -->
   @if (!loading && backlogGames.length > 0) {
-    <section class="games-section backlog" [@fadeInUp]>
-      <div class="section-header">
-        <h2>
-          <mat-icon>inventory_2</mat-icon>
-          Your Backlog
-        </h2>
-        <a mat-button routerLink="/games" [queryParams]="{status: 'NOT_STARTED'}" class="view-all-btn">
-          View All (Backlog) <mat-icon>arrow_forward</mat-icon>
-        </a>
-      </div>
-      <div class="games-grid compact">
-        @for (game of backlogGames; track trackByGame($index, game)) {
-          <div class="game-card compact" [@cardAnimation] [routerLink]="['/games', game.id]">
-            <div class="game-cover">
-              @if (game.coverImageUrl) {
-                <img [src]="game.coverImageUrl" [alt]="game.title" loading="lazy">
-              } @else {
-                <div class="cover-placeholder">
-                  <mat-icon>videogame_asset</mat-icon>
-                </div>
-              }
-              <button class="quick-start-btn" mat-mini-fab color="primary" 
-                (click)="startPlaying($event, game)"
-                matTooltip="Start Playing">
-                <mat-icon>play_arrow</mat-icon>
-              </button>
-            </div>
-            <div class="game-info">
-              <h4 class="game-title">{{ game.title }}</h4>
-              <span class="game-genre">{{ game.genre }}</span>
-            </div>
+  <section class="games-section backlog" [@fadeInUp]>
+    <div class="section-header">
+      <h2>
+        <mat-icon>inventory_2</mat-icon>
+        Your Backlog
+      </h2>
+      <a mat-button routerLink="/games" [queryParams]="{status: 'NOT_STARTED'}" class="view-all-btn">
+        View All (Backlog) <mat-icon>arrow_forward</mat-icon>
+      </a>
+    </div>
+    <div class="games-grid compact">
+      @for (game of backlogGames; track trackByGame($index, game)) {
+      <div class="game-card compact" [@cardAnimation] [routerLink]="['/games', game.id]">
+        <div class="game-cover">
+          @if (game.coverImageUrl) {
+          <img [src]="game.coverImageUrl" [alt]="game.title" loading="lazy">
+          } @else {
+          <div class="cover-placeholder">
+            <mat-icon>videogame_asset</mat-icon>
           </div>
-        }
+          }
+          <button class="quick-start-btn" mat-mini-fab color="primary" (click)="startPlaying($event, game)"
+            matTooltip="Start Playing">
+            <mat-icon>play_arrow</mat-icon>
+          </button>
+        </div>
+        <div class="game-info">
+          <h4 class="game-title">{{ game.title }}</h4>
+          <span class="game-genre">{{ game.genre }}</span>
+        </div>
       </div>
-    </section>
+      }
+    </div>
+  </section>
   }
 
   <!-- Loading State -->
   @if (loading) {
-    <div class="loading-container">
-      <div class="loading-content">
-        <div class="loading-spinner">
-          <mat-spinner diameter="48"></mat-spinner>
-        </div>
-        <h3>Loading your collection...</h3>
-        <p>Gathering your game data</p>
+  <div class="loading-container">
+    <div class="loading-content">
+      <div class="loading-spinner">
+        <mat-spinner diameter="48"></mat-spinner>
       </div>
+      <h3>Loading your collection...</h3>
+      <p>Gathering your game data</p>
     </div>
+  </div>
   }
 
   <!-- Empty State -->
   @if (!loading && games.length === 0) {
-    <div class="empty-state" [@fadeInUp]>
-      <div class="empty-content">
-        <mat-icon>sports_esports</mat-icon>
-        <h2>Welcome to Inferno Games!</h2>
-        <p>Start building your game collection by adding your first game.</p>
-        <button mat-raised-button class="btn-add-game" routerLink="/games/search">
-          <mat-icon>add</mat-icon>
-          Add Your First Game
-        </button>
-      </div>
+  <div class="empty-state" [@fadeInUp]>
+    <div class="empty-content">
+      <mat-icon>sports_esports</mat-icon>
+      <h2>Welcome to Inferno Games!</h2>
+      <p>Start building your game collection by adding your first game.</p>
+      <button mat-raised-button class="btn-add-game" routerLink="/games/search">
+        Add Your First Game
+      </button>
     </div>
+  </div>
   }
 </div>

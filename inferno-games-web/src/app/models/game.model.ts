@@ -86,6 +86,11 @@ export interface SteamGameInfo {
   hasCommunityVisibleStats: boolean;
   rtimeLastPlayed: number;        // Unix timestamp
   playtimeDisconnected: number;   // Offline playtime in minutes
+
+  // Enrichment fields (populated by with-genres endpoint)
+  genres?: string[];
+  inBacklog?: boolean;
+  backlogGameId?: number;
 }
 
 export interface SteamPlaytimeInfo {
@@ -164,7 +169,7 @@ export class Game {
   dlcOwned?: string[];
   achievements?: number;
   totalAchievements?: number;
-  
+
   // IGDB Integration fields
   igdbId?: number;
   igdbUrl?: string;
@@ -179,7 +184,7 @@ export class Game {
   steamPlaytimeDeckMinutes?: number;
   steamLastPlayed?: Date;
   steamLastSynced?: Date;
-  
+
   createdAt?: Date;
   updatedAt?: Date;
 
@@ -209,7 +214,7 @@ export class Game {
       this.dlcOwned = data.dlcOwned || [];
       this.achievements = data.achievements || 0;
       this.totalAchievements = data.totalAchievements || 0;
-      
+
       // IGDB fields
       this.igdbId = data.igdbId;
       this.igdbUrl = data.igdbUrl;
@@ -224,7 +229,7 @@ export class Game {
       this.steamPlaytimeDeckMinutes = data.steamPlaytimeDeckMinutes;
       this.steamLastPlayed = data.steamLastPlayed ? DateUtils.parseDateTimeArray(data.steamLastPlayed) : undefined;
       this.steamLastSynced = data.steamLastSynced ? DateUtils.parseDateTimeArray(data.steamLastSynced) : undefined;
-      
+
       this.createdAt = data.createdAt ? DateUtils.parseDateTimeArray(data.createdAt) : undefined;
       this.updatedAt = data.updatedAt ? DateUtils.parseDateTimeArray(data.updatedAt) : undefined;
     }
@@ -236,15 +241,15 @@ export class Game {
   }
 
   get steamTotalPlaytimeMinutes(): number {
-    return (this.steamPlaytimeWindowsMinutes || 0) + 
-           (this.steamPlaytimeLinuxMinutes || 0) + 
-           (this.steamPlaytimeMacMinutes || 0);
+    return (this.steamPlaytimeWindowsMinutes || 0) +
+      (this.steamPlaytimeLinuxMinutes || 0) +
+      (this.steamPlaytimeMacMinutes || 0);
   }
 
   getSteamPlaytimeBreakdown(): { platform: string; minutes: number; hours: number; percentage: number }[] {
     const total = this.steamTotalPlaytimeMinutes || 1; // Avoid division by zero
     const breakdown = [];
-    
+
     if (this.steamPlaytimeWindowsMinutes && this.steamPlaytimeWindowsMinutes > 0) {
       breakdown.push({
         platform: 'Windows',
@@ -253,7 +258,7 @@ export class Game {
         percentage: Math.round(this.steamPlaytimeWindowsMinutes / total * 100)
       });
     }
-    
+
     /*if (this.steamPlaytimeLinuxMinutes && this.steamPlaytimeLinuxMinutes > 0) {
       breakdown.push({
         platform: 'Linux',
@@ -262,7 +267,7 @@ export class Game {
         percentage: Math.round(this.steamPlaytimeLinuxMinutes / total * 100)
       });
     }*/
-    
+
     /*if (this.steamPlaytimeMacMinutes && this.steamPlaytimeMacMinutes > 0) {
       breakdown.push({
         platform: 'Mac',
@@ -271,7 +276,7 @@ export class Game {
         percentage: Math.round(this.steamPlaytimeMacMinutes / total * 100)
       });
     }*/
-    
+
     if (this.steamPlaytimeDeckMinutes && this.steamPlaytimeDeckMinutes > 0) {
       breakdown.push({
         platform: 'Steam Deck',
@@ -280,7 +285,7 @@ export class Game {
         percentage: Math.round(this.steamPlaytimeDeckMinutes / total * 100)
       });
     }
-    
+
     return breakdown.sort((a, b) => b.minutes - a.minutes);
   }
 }

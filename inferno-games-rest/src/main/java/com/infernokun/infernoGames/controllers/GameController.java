@@ -163,6 +163,11 @@ public class GameController extends BaseController {
         return createSuccessResponse(gameService.refreshFromIGDB(id), "Game refreshed from IGDB successfully");
     }
 
+    @PostMapping("/igdb/refresh-genres")
+    public ResponseEntity<ApiResponse<Map<String, Object>>> refreshAllGenresFromIGDB() {
+        return createSuccessResponse(gameService.refreshAllGenresFromIGDB(), "Genre refresh completed");
+    }
+
     // ─── Steam Integration ───────────────────────────────────────────────────────
 
     @GetMapping("/steam/status")
@@ -186,6 +191,27 @@ public class GameController extends BaseController {
     @GetMapping("/steam/library")
     public ResponseEntity<ApiResponse<List<SteamGameInfo>>> getSteamLibrary() {
         return createSuccessResponse(gameService.getSteamOwnedGames());
+    }
+
+    @GetMapping("/steam/library/with-genres")
+    public ResponseEntity<ApiResponse<List<SteamGameInfo>>> getSteamLibraryWithGenres() {
+        return createSuccessResponse(gameService.getSteamLibraryWithGenres());
+    }
+
+    @GetMapping("/steam/library/genre-status")
+    public ResponseEntity<ApiResponse<Map<String, Object>>> getSteamGenreEnrichmentStatus() {
+        Map<String, Object> status = Map.of(
+                "cachedGenreCount", gameService.getCachedGenreCount(),
+                "enrichmentInProgress", gameService.isEnrichmentInProgress()
+        );
+        return createSuccessResponse(status);
+    }
+
+    @PostMapping("/steam/library/refresh-genres")
+    public ResponseEntity<ApiResponse<Void>> refreshSteamLibraryGenres() {
+        gameService.clearIgdbGenreCache();
+        steamSyncScheduler.triggerGenreEnrichment();
+        return createSuccessResponse("Genre enrichment triggered - check status endpoint for progress");
     }
 
     @GetMapping("/steam/library/stats")

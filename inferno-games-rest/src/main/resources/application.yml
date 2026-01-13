@@ -1,5 +1,5 @@
 app:
-  version: 0.1.1
+  version: 0.1.2
 
 server:
   servlet:
@@ -13,6 +13,6 @@ springdoc:
 
 spring:
   application:
-    name: inferno-comics-rest
+    name: inferno-games-rest
   profiles:
     active: local

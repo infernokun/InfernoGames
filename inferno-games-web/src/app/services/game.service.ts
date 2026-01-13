@@ -397,12 +397,21 @@ export class GameService extends BaseService {
     );
   }
 
+  getSteamLibraryWithGenres(): Observable<ApiResponse<SteamGameInfo[]>> {
+    return this.get<ApiResponse<SteamGameInfo[]>>(`${this.apiUrl}/steam/library/with-genres`).pipe(
+      catchError(error => {
+        console.error('Error fetching Steam library with genres:', error);
+        return of({ code: 500, data: [], message: 'Failed to fetch Steam library with genres', type: 'ERROR' as any, timeMs: 0 });
+      })
+    );
+  }
+
   getSteamLibraryStats(): Observable<ApiResponse<SteamLibraryStats>> {
     return this.get<ApiResponse<SteamLibraryStats>>(`${this.apiUrl}/steam/library/stats`).pipe(
       catchError(error => {
         console.error('Error fetching Steam library stats:', error);
-        return of({ 
-          code: 500, 
+        return of({
+          code: 500,
           data: {
             totalGames: 0,
             playedGames: 0,
@@ -416,10 +425,10 @@ export class GameService extends BaseService {
             linuxPlaytimeMinutes: 0,
             linuxPlaytimeHours: 0,
             playedPercentage: 0
-          }, 
-          message: 'Failed to fetch Steam library stats', 
-          type: 'ERROR' as any, 
-          timeMs: 0 
+          },
+          message: 'Failed to fetch Steam library stats',
+          type: 'ERROR' as any,
+          timeMs: 0
         });
       })
     );

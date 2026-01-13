@@ -47,26 +47,19 @@
 }
 
 .btn-add-game {
-  background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%) !important;
-  color: white !important;
-  font-weight: 600 !important;
-  padding: 10px 20px !important;
-  border-radius: 10px !important;
-  display: inline-flex !important;
-  align-items: center !important;
-  gap: 8px !important;
-  box-shadow: 0 4px 16px rgba(59, 130, 246, 0.25) !important;
+  background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
+  color: white;
+  font-weight: 600;
+  padding: 10px 20px;
+  border-radius: 10px;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  box-shadow: 0 4px 16px rgba(59, 130, 246, 0.25);
 
   &:hover {
     transform: translateY(-2px);
     box-shadow: 0 6px 20px rgba(59, 130, 246, 0.35) !important;
-  }
-
-  mat-icon {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    line-height: 1;
   }
 }
 
@@ -679,7 +672,7 @@
         align-items: center;
         justify-content: center;
         line-height: 1;
-        
+
         &.favorited {
           color: var(--error-color);
         }

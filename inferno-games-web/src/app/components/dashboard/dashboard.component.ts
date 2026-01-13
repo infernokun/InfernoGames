@@ -57,7 +57,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
   constructor(
     private gameService: GameService,
     private snackBar: MatSnackBar
-  ) {}
+  ) { }
 
   ngOnInit(): void {
     this.loadDashboardData();
@@ -256,9 +256,9 @@ export class DashboardComponent implements OnInit, OnDestroy {
   startPlaying(event: Event, game: Game): void {
     event.stopPropagation();
     event.preventDefault();
-    
+
     if (!game.id) return;
-    
+
     this.gameService.updateGameStatus(game.id, GameStatus.IN_PROGRESS)
       .pipe(takeUntil(this.destroy$))
       .subscribe({
