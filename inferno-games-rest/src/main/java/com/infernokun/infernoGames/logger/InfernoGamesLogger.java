@@ -224,11 +224,11 @@ public class InfernoGamesLogger implements Filter {
 
     @Override
     public void init(FilterConfig filterConfig) {
-        log.info("🚀 InfernoComics initialized | Excluded URLs: {}", excludedUrls);
+        log.info("InfernoGames initialized | Excluded URLs: {}", excludedUrls);
     }
 
     @Override
     public void destroy() {
-        log.info("🛑 InfernoComics destroyed");
+        log.info("🛑 InfernoGames destroyed");
     }
 }
