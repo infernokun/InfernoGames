@@ -4,13 +4,13 @@ import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
-import { MaterialModule } from '../../material.module';
-import { Game, GameStatus, GamePlatform } from '../../models/game.model';
-import { GameService } from '../../services/game.service';
-import { ApiResponse } from '../../models/api-response.model';
 import { MatSnackBar } from '@angular/material/snack-bar';
-import { FADE_IN_UP } from '../../utils/animations';
-
+import { MaterialModule } from '../../../material.module';
+import { ApiResponse } from '../../../models/api-response.model';
+import { GamePlatform, GameStatus, Game } from '../../../models/game.model';
+import { GameService } from '../../../services/game.service';
+import { FADE_IN_UP } from '../../../utils/animations';
+import { InfernoGamesHelpers } from '../../../utils/helpers';
 @Component({
   selector: 'app-game-form',
   templateUrl: './game-form.component.html',
@@ -24,6 +24,8 @@ import { FADE_IN_UP } from '../../utils/animations';
   animations: [FADE_IN_UP]
 })
 export class GameFormComponent implements OnInit, OnDestroy {
+  helpers: typeof InfernoGamesHelpers = InfernoGamesHelpers;
+
   gameForm!: FormGroup;
   isEditMode = false;
   gameId: number | null = null;
@@ -162,30 +164,6 @@ export class GameFormComponent implements OnInit, OnDestroy {
       this.router.navigate(['/games', this.gameId]);
     } else {
       this.router.navigate(['/games']);
-    }
-  }
-
-  getPlatformLabel(platform: string): string {
-    switch (platform) {
-      case 'PC': return 'PC';
-      case 'PLAYSTATION_5': return 'PlayStation 5';
-      case 'PLAYSTATION_4': return 'PlayStation 4';
-      case 'XBOX_SERIES': return 'Xbox Series X|S';
-      case 'XBOX_ONE': return 'Xbox One';
-      case 'NINTENDO_SWITCH': return 'Nintendo Switch';
-      case 'STEAM_DECK': return 'Steam Deck';
-      case 'MOBILE': return 'Mobile';
-      default: return 'Other';
-    }
-  }
-
-  getStatusLabel(status: string): string {
-    switch (status) {
-      case 'COMPLETED': return 'Completed';
-      case 'IN_PROGRESS': return 'Playing';
-      case 'ON_HOLD': return 'On Hold';
-      case 'DROPPED': return 'Dropped';
-      default: return 'Backlog';
     }
   }
 }

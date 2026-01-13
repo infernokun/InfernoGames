@@ -4,14 +4,15 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
-import { MaterialModule } from '../../material.module';
-import { Game, GameStatus } from '../../models/game.model';
-import { GameService } from '../../services/game.service';
-import { ApiResponse } from '../../models/api-response.model';
-import { FADE_IN_UP, SLIDE_IN_UP } from '../../utils/animations';
+import { MaterialModule } from '../../../material.module';
+import { Game, GameStatus } from '../../../models/game.model';
+import { GameService } from '../../../services/game.service';
+import { ApiResponse } from '../../../models/api-response.model';
+import { FADE_IN_UP, SLIDE_IN_UP } from '../../../utils/animations';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { MatDialog } from '@angular/material/dialog';
-import { ConfirmationDialogComponent, ConfirmationDialogData } from '../common/dialog/confirmation-dialog/confirmation-dialog.component';
+import { ConfirmationDialogComponent, ConfirmationDialogData } from '../../common/dialog/confirmation-dialog/confirmation-dialog.component';
+import { InfernoGamesHelpers } from '../../../utils/helpers';
 
 @Component({
   selector: 'app-game-detail',
@@ -26,6 +27,8 @@ import { ConfirmationDialogComponent, ConfirmationDialogData } from '../common/d
   animations: [FADE_IN_UP, SLIDE_IN_UP]
 })
 export class GameDetailComponent implements OnInit, OnDestroy {
+  helpers: typeof InfernoGamesHelpers = InfernoGamesHelpers;
+
   game: Game | null = null;
   loading = true;
   gameId: number | null = null;
@@ -130,54 +133,6 @@ export class GameDetailComponent implements OnInit, OnDestroy {
         });
       }
     });
-  }
-
-  getStatusColor(status: GameStatus | undefined): string {
-    switch (status) {
-      case GameStatus.COMPLETED: return 'completed';
-      case GameStatus.IN_PROGRESS: return 'in-progress';
-      case GameStatus.ON_HOLD: return 'on-hold';
-      case GameStatus.DROPPED: return 'dropped';
-      default: return 'not-started';
-    }
-  }
-
-  getStatusLabel(status: GameStatus | undefined): string {
-    switch (status) {
-      case GameStatus.COMPLETED: return 'Completed';
-      case GameStatus.IN_PROGRESS: return 'Playing';
-      case GameStatus.ON_HOLD: return 'On Hold';
-      case GameStatus.DROPPED: return 'Dropped';
-      default: return 'Backlog';
-    }
-  }
-
-  getPlatformIcon(platform: string): string {
-    switch (platform) {
-      case 'PC': return 'computer';
-      case 'PLAYSTATION_5':
-      case 'PLAYSTATION_4': return 'sports_esports';
-      case 'XBOX_SERIES':
-      case 'XBOX_ONE': return 'gamepad';
-      case 'NINTENDO_SWITCH': return 'videogame_asset';
-      case 'STEAM_DECK': return 'tablet_android';
-      case 'MOBILE': return 'phone_android';
-      default: return 'devices';
-    }
-  }
-
-  getPlatformLabel(platform: string): string {
-    switch (platform) {
-      case 'PC': return 'PC';
-      case 'PLAYSTATION_5': return 'PlayStation 5';
-      case 'PLAYSTATION_4': return 'PlayStation 4';
-      case 'XBOX_SERIES': return 'Xbox Series X|S';
-      case 'XBOX_ONE': return 'Xbox One';
-      case 'NINTENDO_SWITCH': return 'Nintendo Switch';
-      case 'STEAM_DECK': return 'Steam Deck';
-      case 'MOBILE': return 'Mobile';
-      default: return 'Other';
-    }
   }
 
   formatPlaytime(hours: number | undefined): string {

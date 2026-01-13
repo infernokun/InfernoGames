@@ -2,13 +2,13 @@ import { Component, OnInit, OnDestroy } from '@angular/core';
 import { Router, RouterModule } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { Subject, debounceTime, distinctUntilChanged, forkJoin } from 'rxjs';
+import { Subject, debounceTime, distinctUntilChanged } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
-import { MaterialModule } from '../../material.module';
-import { IGDBGame, Game } from '../../models/game.model';
-import { GameService } from '../../services/game.service';
 import { MatSnackBar } from '@angular/material/snack-bar';
-import { FADE_IN_UP, CARD_ANIMATION } from '../../utils/animations';
+import { MaterialModule } from '../../../material.module';
+import { IGDBGame } from '../../../models/game.model';
+import { GameService } from '../../../services/game.service';
+import { FADE_IN_UP, CARD_ANIMATION } from '../../../utils/animations';
 
 @Component({
   selector: 'app-igdb-search',

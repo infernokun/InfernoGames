@@ -1,8 +1,8 @@
 import { CommonModule } from '@angular/common';
-import { Component, Input, OnInit } from '@angular/core';
-import { MaterialModule } from '../../../material.module';
-import { FullVersions, VersionService } from '../../../services/version.service';
-import { ApiResponse } from '../../../models/api-response.model';
+import { Component, OnInit } from '@angular/core';
+import { MaterialModule } from '../../material.module';
+import { ApiResponse } from '../../models/api-response.model';
+import { VersionService, FullVersions } from '../../services/version.service';
 
 @Component({
   selector: 'app-version-info',

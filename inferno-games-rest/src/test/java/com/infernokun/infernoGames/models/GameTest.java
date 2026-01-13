@@ -158,10 +158,23 @@ class GameTest {
         void updateStatus_ToDropped_DoesNotAffectTimestamps() {
             game.setStartedAt(null);
             game.setCompletedAt(null);
-            
+
             game.updateStatus(GameStatus.DROPPED);
 
             assertThat(game.getStatus()).isEqualTo(GameStatus.DROPPED);
+            assertThat(game.getStartedAt()).isNull();
+            assertThat(game.getCompletedAt()).isNull();
+        }
+
+        @Test
+        @DisplayName("updateStatus to DLC should not affect timestamps")
+        void updateStatus_ToDLC_DoesNotAffectTimestamps() {
+            game.setStartedAt(null);
+            game.setCompletedAt(null);
+
+            game.updateStatus(GameStatus.DLC);
+
+            assertThat(game.getStatus()).isEqualTo(GameStatus.DLC);
             assertThat(game.getStartedAt()).isNull();
             assertThat(game.getCompletedAt()).isNull();
         }
@@ -418,39 +431,45 @@ class GameTest {
         @DisplayName("AllArgsConstructor should create game with all args")
         void allArgsConstructor_CreatesGameWithAllArgs() {
             LocalDateTime now = LocalDateTime.now();
-            
-            Game fullGame = new Game(
-                    1L,                                                    // id
-                    "Full Game",                                           // title
-                    "Description",                                         // description
-                    "Developer",                                           // developer
-                    "Publisher",                                           // publisher
-                    2024,                                                  // releaseYear
-                    now,                                                   // releaseDate
-                    "Action",                                              // genre
-                    List.of("Action"),                                     // genres
-                    "https://example.com/cover.jpg",                       // coverImageUrl
-                    List.of("https://example.com/ss.jpg"),                 // screenshotUrls
-                    GamePlatform.PC,                                       // platform
-                    List.of(GamePlatform.PC),                             // platforms
-                    GameStatus.IN_PROGRESS,                                // status
-                    9,                                                     // rating
-                    50.0,                                                  // playtimeHours
-                    75,                                                    // completionPercentage
-                    now,                                                   // startedAt
-                    null,                                                  // completedAt
-                    "Notes",                                               // notes
-                    true,                                                  // favorite
-                    25,                                                    // achievements
-                    50,                                                    // totalAchievements
-                    12345L,                                                // igdbId
-                    "https://igdb.com/games/12345",                        // igdbUrl
-                    90.0,                                                  // igdbRating
-                    1000,                                                  // igdbRatingCount
-                    now,                                                   // createdAt
-                    now,                                                   // updatedAt,
-                    "123"
-            );
+
+            Game fullGame = Game.builder()
+                    .id(1L)
+                    .title("Full Game")
+                    .description("Description")
+                    .developer("Developer")
+                    .publisher("Publisher")
+                    .releaseYear(2024)
+                    .releaseDate(now)
+                    .genre("Action")
+                    .genres(List.of("Action"))
+                    .coverImageUrl("https://example.com/cover.jpg")
+                    .screenshotUrls(List.of("https://example.com/ss.jpg"))
+                    .platform(GamePlatform.PC)
+                    .platforms(List.of(GamePlatform.PC))
+                    .status(GameStatus.IN_PROGRESS)
+                    .rating(9)
+                    .playtimeHours(50.0)
+                    .completionPercentage(75)
+                    .startedAt(now)
+                    .completedAt(null)
+                    .notes("Notes")
+                    .favorite(true)
+                    .achievements(25)
+                    .totalAchievements(50)
+                    .igdbId(12345L)
+                    .igdbUrl("https://igdb.com/games/12345")
+                    .igdbRating(90.0)
+                    .igdbRatingCount(1000)
+                    .createdAt(now)
+                    .updatedAt(now)
+                    .steamAppId("123")
+                    .steamPlaytimeWindowsMinutes(123)
+                    .steamPlaytimeLinuxMinutes(123)
+                    .steamPlaytimeMacMinutes(123)
+                    .steamPlaytimeDeckMinutes(123)
+                    .steamLastPlayed(now)
+                    .steamLastSynced(now)
+                    .build();
 
             assertThat(fullGame.getId()).isEqualTo(1L);
             assertThat(fullGame.getTitle()).isEqualTo("Full Game");

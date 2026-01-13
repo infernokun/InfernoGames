@@ -75,7 +75,7 @@
               <mat-select formControlName="platform">
                 <mat-option [value]="null">Select platform</mat-option>
                 @for (platform of platforms; track platform) {
-                  <mat-option [value]="platform">{{ getPlatformLabel(platform) }}</mat-option>
+                  <mat-option [value]="platform">{{ helpers.getPlatformLabel(platform) }}</mat-option>
                 }
               </mat-select>
             </mat-form-field>
@@ -84,7 +84,7 @@
               <mat-label>Status</mat-label>
               <mat-select formControlName="status">
                 @for (status of statuses; track status) {
-                  <mat-option [value]="status">{{ getStatusLabel(status) }}</mat-option>
+                  <mat-option [value]="status">{{ helpers.getStatusLabel(status) }}</mat-option>
                 }
               </mat-select>
             </mat-form-field>

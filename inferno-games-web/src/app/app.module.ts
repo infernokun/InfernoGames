@@ -7,7 +7,7 @@ import { AppComponent } from './app.component';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MaterialModule } from './material.module';
 import { CommonModule } from '@angular/common';
-import { VersionInfoComponent } from './components/common/version-info/version-info.component';
+import { VersionInfoComponent } from './components/version-info/version-info.component';
 import { dev_log } from './utils/utils';
 import { EnvironmentService } from './services/environment.service';
 import { ThemeService } from './services/theme.service';

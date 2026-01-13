@@ -1,0 +1,281 @@
+<div class="steam-stats-container" @fadeInUp>
+  <!-- Header -->
+  <div class="page-header">
+    <button mat-icon-button routerLink="/games" class="back-btn">
+      <mat-icon>arrow_back</mat-icon>
+    </button>
+    <div class="header-content">
+      <h1>
+        <mat-icon>analytics</mat-icon>
+        Steam Statistics
+      </h1>
+      <p>Detailed insights into your gaming habits</p>
+    </div>
+    @if (steamUser && isMobile) {
+    <div class="user-card">
+      <img [src]="steamUser.avatarMedium" [alt]="steamUser.personaName" class="user-avatar" />
+      <span class="user-name">{{ steamUser.personaName }}</span>
+    </div>
+    }
+  </div>
+
+  @if (loading) {
+  <div class="loading-state">
+    <mat-spinner diameter="48"></mat-spinner>
+    <p>Loading statistics...</p>
+  </div>
+  } @else {
+  <!-- Playtime Filter -->
+  <div class="filter-section">
+    <div class="filter-header">
+      <mat-icon>filter_list</mat-icon>
+      <span>Filter by Max Playtime</span>
+      <span class="filter-hint">Exclude high-playtime outliers from stats</span>
+    </div>
+    <div class="filter-chips">
+      @for (filter of playtimeFilters; track filter.label) {
+      <button class="filter-chip" [class.active]="selectedFilter === filter" (click)="onFilterChange(filter)">
+        {{ filter.label }}
+      </button>
+      }
+    </div>
+    @if (excludedGames.length > 0) {
+    <div class="excluded-games-notice">
+      <mat-icon>info</mat-icon>
+      <span>
+        Excluding {{ excludedGames.length }} game{{ excludedGames.length > 1 ? 's' : '' }}
+        ({{ formatPlaytime(getTotalExcludedPlaytime()) }} total):
+      </span>
+      <div class="excluded-games-list">
+        @for (game of excludedGames; track game.appId) {
+        <span class="excluded-game" (click)="openInSteam(game.appId)">
+          {{ game.name }} ({{ game.playtimeFormatted }})
+        </span>
+        }
+      </div>
+    </div>
+    }
+  </div>
+
+  <!-- Overview Cards -->
+  <div class="overview-section">
+    <div class="overview-card total-games">
+      <div class="card-icon">
+        <mat-icon>sports_esports</mat-icon>
+      </div>
+      <div class="card-content">
+        <span class="card-value">{{ libraryStats?.totalGames || 0 }}</span>
+        <span class="card-label">Total Games</span>
+      </div>
+    </div>
+
+    <div class="overview-card total-playtime">
+      <div class="card-icon">
+        <mat-icon>schedule</mat-icon>
+      </div>
+      <div class="card-content">
+        <span class="card-value">{{ formatPlaytime(filteredTotalPlaytime) }}</span>
+        <span class="card-label">Total Playtime{{ selectedFilter.maxHours ? ' (Filtered)' : '' }}</span>
+        <span class="card-sub">≈ {{ totalPlaytimeDays }} days</span>
+      </div>
+    </div>
+
+    <div class="overview-card played-games">
+      <div class="card-icon">
+        <mat-icon>play_circle</mat-icon>
+      </div>
+      <div class="card-content">
+        <span class="card-value">{{ filteredPlayedGames }}</span>
+        <span class="card-label">Games Played{{ selectedFilter.maxHours ? ' (Filtered)' : '' }}</span>
+        <span class="card-sub">{{ getFilteredPlayedPercentage() }}% of library</span>
+      </div>
+    </div>
+
+    <div class="overview-card unplayed-games">
+      <div class="card-icon">
+        <mat-icon>pause_circle</mat-icon>
+      </div>
+      <div class="card-content">
+        <span class="card-value">{{ libraryStats?.unplayedGames || 0 }}</span>
+        <span class="card-label">Unplayed</span>
+        <span class="card-sub">{{ getUnplayedPercentage() | number:'1.0-0' }}% of library</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Platform Breakdown -->
+  @if (platformStats.length > 0) {
+  <div class="section">
+    <h2 class="section-title">
+      <mat-icon>devices</mat-icon>
+      Platform Breakdown
+    </h2>
+    <div class="platform-cards">
+      @for (platform of platformStats; track platform.name) {
+      <div class="platform-card" [style.--platform-color]="platform.color">
+        <div class="platform-header">
+          <span class="platform-icon">{{ platform.icon }}</span>
+          <div class="platform-info">
+            <span class="platform-name">{{ platform.name }}</span>
+            <span class="platform-playtime">{{ platform.playtimeFormatted }}</span>
+          </div>
+          <span class="platform-percentage">{{ platform.percentage }}%</span>
+        </div>
+        <div class="platform-bar">
+          <div class="platform-bar-fill" [style.width.%]="platform.percentage"></div>
+        </div>
+        @if (platform.games.length > 0) {
+        <div class="platform-top-games">
+          <span class="top-games-label">Top Games:</span>
+          <div class="top-games-list">
+            @for (game of platform.games; track game.appId; let i = $index) {
+            <div class="mini-game" (click)="openInSteam(game.appId)">
+              <span class="mini-rank">#{{ i + 1 }}</span>
+              <span class="mini-name">{{ game.name }}</span>
+              <span class="mini-time">{{ game.playtimeFormatted }}</span>
+            </div>
+            }
+          </div>
+        </div>
+        }
+      </div>
+      }
+    </div>
+  </div>
+  }
+
+  <!-- Top Played Games -->
+  @if (topPlayedGames.length > 0) {
+  <div class="section">
+    <h2 class="section-title">
+      <mat-icon>emoji_events</mat-icon>
+      Most Played Games
+    </h2>
+    <div class="top-games-grid">
+      @for (game of topPlayedGames; track game.appId; let i = $index) {
+      <div class="top-game-card" (click)="openInSteam(game.appId)" @cardAnimation>
+        <div class="rank-badge" [class.gold]="i === 0" [class.silver]="i === 1" [class.bronze]="i === 2">
+          #{{ i + 1 }}
+        </div>
+        <img [src]="game.headerUrl" [alt]="game.name" loading="lazy" />
+        <div class="top-game-overlay">
+          <span class="top-game-name">{{ game.name }}</span>
+          <span class="top-game-playtime">{{ game.playtimeFormatted }}</span>
+        </div>
+      </div>
+      }
+    </div>
+  </div>
+  }
+
+  <!-- Steam Deck Games -->
+  @if (topDeckGames.length > 0) {
+  <div class="section">
+    <h2 class="section-title deck-title">
+      <span class="deck-icon">🎮</span>
+      Top Steam Deck Games
+    </h2>
+    <div class="horizontal-games-list">
+      @for (game of topDeckGames; track game.appId; let i = $index) {
+      <div class="horizontal-game-card" (click)="openInSteam(game.appId)">
+        <img [src]="game.headerUrl" [alt]="game.name" loading="lazy" />
+        <div class="horizontal-game-info">
+          <span class="horizontal-rank">#{{ i + 1 }}</span>
+          <span class="horizontal-name">{{ game.name }}</span>
+          <span class="horizontal-time">{{ game.playtimeFormatted }}</span>
+        </div>
+      </div>
+      }
+    </div>
+  </div>
+  }
+
+  <!-- Recently Played -->
+  @if (recentlyPlayed.length > 0) {
+  <div class="section">
+    <h2 class="section-title">
+      <mat-icon>history</mat-icon>
+      Recently Played
+    </h2>
+    <div class="horizontal-games-list">
+      @for (game of recentlyPlayed; track game.appId; let i = $index) {
+      <div class="horizontal-game-card" (click)="openInSteam(game.appId)">
+        <img [src]="game.headerUrl" [alt]="game.name" loading="lazy" />
+        <div class="horizontal-game-info">
+          <span class="horizontal-name">{{ game.name }}</span>
+          <span class="horizontal-time">{{ game.playtimeFormatted }} total</span>
+        </div>
+      </div>
+      }
+    </div>
+  </div>
+  }
+
+  <!-- Shame Pile (Never Played) -->
+  @if (neverPlayed.length > 0) {
+  <div class="section shame-section">
+    <h2 class="section-title">
+      <mat-icon>sentiment_dissatisfied</mat-icon>
+      The Shame Pile
+      <span class="section-subtitle">Games you own but never played</span>
+    </h2>
+    <div class="shame-grid">
+      @for (game of neverPlayed; track game.appId) {
+      <div class="shame-card" (click)="openInSteam(game.appId)">
+        <img [src]="game.headerUrl" [alt]="game.name" loading="lazy" />
+        <span class="shame-name">{{ game.name }}</span>
+        <span class="shame-badge">0h played 😔</span>
+      </div>
+      }
+    </div>
+  </div>
+  }
+
+  <!-- Fun Stats -->
+  <div class="section fun-stats-section">
+    <h2 class="section-title">
+      <mat-icon>star</mat-icon>
+      Fun Facts
+    </h2>
+    <div class="fun-stats-grid">
+      <div class="fun-stat-card">
+        <div class="fun-stat-icon">📅</div>
+        <div class="fun-stat-content">
+          <span class="fun-stat-value">{{ totalPlaytimeDays }}</span>
+          <span class="fun-stat-label">Days of Gaming</span>
+          <span class="fun-stat-sub">That's {{ (totalPlaytimeDays / 365) | number:'1.1-1' }} years!</span>
+        </div>
+      </div>
+
+      <div class="fun-stat-card">
+        <div class="fun-stat-icon">📊</div>
+        <div class="fun-stat-content">
+          <span class="fun-stat-value">{{ formatPlaytime(averagePlaytime) }}</span>
+          <span class="fun-stat-label">Avg Per Game</span>
+          <span class="fun-stat-sub">For games you've played</span>
+        </div>
+      </div>
+
+      @if (longestSession) {
+      <div class="fun-stat-card highlight">
+        <div class="fun-stat-icon">🏆</div>
+        <div class="fun-stat-content">
+          <span class="fun-stat-value">{{ longestSession.playtimeFormatted }}</span>
+          <span class="fun-stat-label">Most Played</span>
+          <span class="fun-stat-sub">{{ longestSession.name }}</span>
+        </div>
+      </div>
+      }
+
+      <div class="fun-stat-card">
+        <div class="fun-stat-icon">💰</div>
+        <div class="fun-stat-content">
+          <span class="fun-stat-value">{{ libraryStats?.unplayedGames || 0 }}</span>
+          <span class="fun-stat-label">Unplayed Games</span>
+          <span class="fun-stat-sub">Worth exploring!</span>
+        </div>
+      </div>
+    </div>
+  </div>
+  }
+</div>

@@ -5,7 +5,8 @@ export enum GameStatus {
   IN_PROGRESS = 'IN_PROGRESS',
   COMPLETED = 'COMPLETED',
   ON_HOLD = 'ON_HOLD',
-  DROPPED = 'DROPPED'
+  DROPPED = 'DROPPED',
+  DLC = 'DLC'
 }
 
 export enum GamePlatform {

@@ -37,12 +37,12 @@
           </div>
 
           <div class="meta-tags">
-            <span class="status-badge" [class]="getStatusColor(game.status)">
-              {{ getStatusLabel(game.status) }}
+            <span class="status-badge" [class]="helpers.getStatusColor(game.status)">
+              {{ helpers.getStatusLabel(game.status) }}
             </span>
             <span class="platform-tag">
-              <mat-icon>{{ getPlatformIcon(game.platform || '') }}</mat-icon>
-              {{ getPlatformLabel(game.platform || '') }}
+              <mat-icon>{{ helpers.getPlatformIcon(game.platform || '') }}</mat-icon>
+              {{ helpers.getPlatformLabel(game.platform || '') }}
             </span>
             <span class="genre-tag">{{ game.genre }}</span>
             <span class="year-tag">{{ game.releaseYear }}</span>
@@ -165,11 +165,11 @@
             <button
               mat-stroked-button
               class="status-option"
-              [class]="getStatusColor(status)"
+              [class]="helpers.getStatusColor(status)"
               [class.active]="game.status === status"
               (click)="updateStatus(status)"
             >
-              {{ getStatusLabel(status) }}
+              {{ helpers.getStatusLabel(status) }}
             </button>
           }
         </div>

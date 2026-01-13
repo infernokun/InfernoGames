@@ -395,6 +395,7 @@ class GameServiceTest {
             when(gameRepository.countByStatus(GameStatus.NOT_STARTED)).thenReturn(2L);
             when(gameRepository.countByStatus(GameStatus.ON_HOLD)).thenReturn(1L);
             when(gameRepository.countByStatus(GameStatus.DROPPED)).thenReturn(0L);
+            when(gameRepository.countByStatus(GameStatus.DLC)).thenReturn(0L);
             when(gameRepository.countByFavoriteTrue()).thenReturn(3L);
             when(gameRepository.getTotalPlaytime()).thenReturn(150.5);
             when(gameRepository.getAverageRating()).thenReturn(7.8);
@@ -409,6 +410,7 @@ class GameServiceTest {
             assertThat(stats.get("notStartedGames")).isEqualTo(2L);
             assertThat(stats.get("onHoldGames")).isEqualTo(1L);
             assertThat(stats.get("droppedGames")).isEqualTo(0L);
+            assertThat(stats.get("dlcGames")).isEqualTo(0L);
             assertThat(stats.get("favoriteGames")).isEqualTo(3L);
             assertThat(stats.get("totalPlaytime")).isEqualTo(150.5);
             assertThat(stats.get("averageRating")).isEqualTo(7.8);
