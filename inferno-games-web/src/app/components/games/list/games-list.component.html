@@ -34,7 +34,7 @@
           <mat-select [(ngModel)]="selectedStatus" (ngModelChange)="onFilterChange()">
             <mat-option value="">All Status</mat-option>
             @for (status of statuses; track status) {
-            <mat-option [value]="status">{{ getStatusLabel(status) }}</mat-option>
+            <mat-option [value]="status">{{ helpers.getStatusLabel(status) }}</mat-option>
             }
           </mat-select>
         </mat-form-field>
@@ -44,7 +44,7 @@
           <mat-select [(ngModel)]="selectedPlatform" (ngModelChange)="onFilterChange()">
             <mat-option value="">All Platforms</mat-option>
             @for (platform of platforms; track platform) {
-            <mat-option [value]="platform">{{ getPlatformLabel(platform) }}</mat-option>
+            <mat-option [value]="platform">{{ helpers.getPlatformLabel(platform) }}</mat-option>
             }
           </mat-select>
         </mat-form-field>
@@ -138,8 +138,8 @@
           </button>
         </div>
 
-        <div class="status-badge" [class]="getStatusColor(game.status)" [matTooltip]="getStatusTooltip(game.status)">
-          {{ getStatusLabel(game.status) }}
+        <div class="status-badge" [class]="helpers.getStatusColor(game.status)" [matTooltip]="helpers.getStatusTooltip(game.status)">
+          {{ helpers.getStatusLabel(game.status) }}
         </div>
 
         @if (game.rating) {
@@ -158,8 +158,8 @@
         </div>
         <div class="game-tags">
           <span class="platform-tag">
-            <mat-icon>{{ getPlatformIcon(game.platform || '') }}</mat-icon>
-            {{ getPlatformLabel(game.platform || '') }}
+            <mat-icon>{{ helpers.getPlatformIcon(game.platform || '') }}</mat-icon>
+            {{ helpers.getPlatformLabel(game.platform || '') }}
           </span>
           @if (game.playtimeHours) {
           <span class="playtime-tag">
@@ -203,8 +203,8 @@
 
         <div class="row-stats">
           <div class="stat-item">
-            <mat-icon>{{ getPlatformIcon(game.platform || '') }}</mat-icon>
-            <span>{{ getPlatformLabel(game.platform || '') }}</span>
+            <mat-icon>{{ helpers.getPlatformIcon(game.platform || '') }}</mat-icon>
+            <span>{{ helpers.getPlatformLabel(game.platform || '') }}</span>
           </div>
           @if (game.playtimeHours) {
           <div class="stat-item">
@@ -221,8 +221,8 @@
         </div>
 
         <div class="row-status">
-          <span class="status-chip" [class]="getStatusColor(game.status)">
-            {{ getStatusLabel(game.status) }}
+          <span class="status-chip" [class]="helpers.getStatusColor(game.status)">
+            {{ helpers.getStatusLabel(game.status) }}
           </span>
         </div>
       </div>
