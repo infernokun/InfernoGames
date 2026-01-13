@@ -1,8 +1,31 @@
 {
   "name": "inferno-games",
-  "version": "0.0.0",
+  "version": "0.1.0",
+  "description": "Monorepo for Inferno Games - Web and REST services",
   "scripts": {
     "start:web": "cd inferno-games-web && npm run start",
-    "push:git": "git push gitlab main && git push github main"
-  }
+    "start:rest": "cd inferno-games-rest && npm run start",
+    "build:web": "cd inferno-games-web && npm run build:prod",
+    "build:rest": "cd inferno-games-rest && npm run build",
+    "test:web": "cd inferno-games-web && npm run test",
+    "test:rest": "cd inferno-games-rest && npm run test",
+    "push:git": "git push gitlab main && git push github main",
+    "deploy:web": "cd inferno-games-web && npm run docker:build",
+    "deploy:rest": "cd inferno-games-rest && npm run docker:build"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/infernokun/InfernoGames.git"
+  },
+  "author": "InfernoKun",
+  "email": "infernokun@infernokun.com",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/infernokun/InfernoGames/issues"
+  },
+  "homepage": "https://github.com/infernokun/InfernoGames#readme",
+  "workspaces": [
+    "inferno-games-web",
+    "inferno-games-rest"
+  ]
 }
