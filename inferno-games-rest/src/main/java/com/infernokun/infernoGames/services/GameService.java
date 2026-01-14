@@ -199,8 +199,8 @@ public class GameService {
 
     public Game toggleDlc(Long id) {
         Game game = getGameById(id);
-        game.setIsDlc(!game.getIsDlc());
-        log.info("Toggled DLC for game '{}': {}", game.getTitle(), game.getIsDlc());
+        game.setDlc(!game.getDlc());
+        log.info("Toggled DLC for game '{}': {}", game.getTitle(), game.getDlc());
         return gameRepository.save(game);
     }
 
