@@ -197,6 +197,7 @@ public class GameService {
         return gameRepository.save(game);
     }
 
+    @CacheEvict(value = {"games", "game"}, allEntries = true)
     public Game toggleDlc(Long id) {
         Game game = getGameById(id);
         game.setDlc(!game.getDlc());
