@@ -404,7 +404,20 @@
       &.on-hold { background: #6b7280; color: white; }
       &.dropped { background: var(--error-color); color: white; }
       &.not-started { background: var(--border-color); color: var(--text-primary); }
-      &.dlc { background: var(--primary-color); color: #1a1a1a; }
+    }
+
+    .dlc-badge {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      padding: 5px 10px;
+      border-radius: 6px;
+      font-size: 0.7rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      background: linear-gradient(135deg, #8b5cf6 0%, #6366f1 100%);
+      color: white;
+      box-shadow: 0 2px 8px rgba(139, 92, 246, 0.4);
     }
 
     .rating-badge {
@@ -637,6 +650,20 @@
     }
 
     .row-status {
+      display: flex;
+      gap: 8px;
+      align-items: center;
+
+      .dlc-chip {
+        font-size: 0.7rem;
+        font-weight: 600;
+        padding: 5px 10px;
+        border-radius: 6px;
+        text-transform: uppercase;
+        background: rgba(139, 92, 246, 0.15);
+        color: #a78bfa;
+      }
+
       .status-chip {
         font-size: 0.7rem;
         font-weight: 600;
@@ -649,7 +676,6 @@
         &.on-hold { background: rgba(107, 114, 128, 0.15); color: #9ca3af; }
         &.dropped { background: rgba(239, 68, 68, 0.15); color: var(--error-color); }
         &.not-started { background: var(--background-color); color: var(--text-muted); }
-        &.dlc { background: rgba(245, 158, 11, 0.15); color: var(--primary-color); }
       }
     }
   }

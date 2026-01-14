@@ -119,6 +119,13 @@
         }
       }
 
+      .title-actions {
+        display: flex;
+        gap: 8px;
+        flex-shrink: 0;
+      }
+
+      .dlc-btn,
       .favorite-btn {
         flex-shrink: 0;
         width: 44px;
@@ -136,10 +143,30 @@
           align-items: center;
           justify-content: center;
           line-height: 1;
+        }
+      }
 
-          &.favorited {
-            color: var(--error-color);
+      .dlc-btn {
+        &.active {
+          background: rgba(139, 92, 246, 0.15);
+          border-color: #a78bfa;
+
+          mat-icon {
+            color: #a78bfa;
           }
+        }
+
+        &:hover:not(.active) {
+          border-color: #a78bfa;
+          mat-icon {
+            color: #a78bfa;
+          }
+        }
+      }
+
+      .favorite-btn {
+        mat-icon.favorited {
+          color: var(--error-color);
         }
       }
     }
@@ -149,6 +176,17 @@
       align-items: center;
       gap: 12px;
       flex-wrap: wrap;
+
+      .dlc-badge {
+        padding: 6px 14px;
+        border-radius: 8px;
+        font-size: 0.8rem;
+        font-weight: 600;
+        text-transform: uppercase;
+        background: linear-gradient(135deg, #8b5cf6 0%, #6366f1 100%);
+        color: white;
+        box-shadow: 0 2px 8px rgba(139, 92, 246, 0.3);
+      }
 
       .status-badge {
         padding: 6px 14px;
@@ -162,7 +200,6 @@
         &.on-hold { background: #6b7280; color: white; }
         &.dropped { background: var(--error-color); color: white; }
         &.not-started { background: var(--border-color); color: var(--text-primary); }
-        &.dlc { background: var(--primary-color); color: #1a1a1a; }
       }
 
       .platform-tag {
@@ -400,12 +437,6 @@
         border-color: var(--border-color) !important;
         color: var(--text-secondary) !important;
         &.active { background: var(--border-color) !important; color: var(--text-primary) !important; }
-      }
-
-      &.dlc {
-        border-color: var(--primary-color) !important;
-        color: var(--primary-color) !important;
-        &.active { background: var(--primary-color) !important; color: #1a1a1a !important; }
       }
     }
   }

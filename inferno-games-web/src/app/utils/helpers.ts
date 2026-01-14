@@ -21,7 +21,6 @@ export class InfernoGamesHelpers {
             case GameStatus.IN_PROGRESS: return 'in-progress';
             case GameStatus.ON_HOLD: return 'on-hold';
             case GameStatus.DROPPED: return 'dropped';
-            case GameStatus.DLC: return 'dlc';
             default: return 'not-started';
         }
     }
@@ -32,7 +31,6 @@ export class InfernoGamesHelpers {
             case GameStatus.IN_PROGRESS: return 'Playing';
             case GameStatus.ON_HOLD: return 'On Hold';
             case GameStatus.DROPPED: return 'Dropped';
-            case GameStatus.DLC: return 'DLC';
             default: return 'Backlog';
         }
     }
@@ -43,7 +41,6 @@ export class InfernoGamesHelpers {
             case GameStatus.IN_PROGRESS: return 'Currently playing';
             case GameStatus.ON_HOLD: return 'Taking a break from this one';
             case GameStatus.DROPPED: return 'No longer playing';
-            case GameStatus.DLC: return 'DLC content';
             default: return 'Haven\'t started yet';
         }
     }

@@ -112,6 +112,9 @@ mat-form-field {
 
 .checkbox-row {
   margin-top: 8px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 24px;
 
   mat-checkbox {
     ::ng-deep {
@@ -129,7 +132,6 @@ mat-form-field {
     }
 
     mat-icon {
-      color: var(--error-color);
       font-size: 18px;
       width: 18px;
       height: 18px;
@@ -137,6 +139,14 @@ mat-form-field {
       display: inline-flex;
       align-items: center;
       justify-content: center;
+
+      &:first-of-type {
+        color: var(--error-color);
+      }
+    }
+
+    &:nth-child(2) mat-icon {
+      color: #a78bfa;
     }
   }
 }

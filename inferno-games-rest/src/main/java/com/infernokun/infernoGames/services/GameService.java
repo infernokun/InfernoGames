@@ -197,6 +197,13 @@ public class GameService {
         return gameRepository.save(game);
     }
 
+    public Game toggleDlc(Long id) {
+        Game game = getGameById(id);
+        game.setIsDlc(!game.getIsDlc());
+        log.info("Toggled DLC for game '{}': {}", game.getTitle(), game.getIsDlc());
+        return gameRepository.save(game);
+    }
+
     // ─── Query Operations ───────────────────────────────────────────────────────
 
     public List<Game> searchGames(String query) {
@@ -239,7 +246,6 @@ public class GameService {
         long notStartedGames = gameRepository.countByStatus(GameStatus.NOT_STARTED);
         long onHoldGames = gameRepository.countByStatus(GameStatus.ON_HOLD);
         long droppedGames = gameRepository.countByStatus(GameStatus.DROPPED);
-        long dlcGames = gameRepository.countByStatus(GameStatus.DLC);
         long favoriteGames = gameRepository.countByFavoriteTrue();
         Double totalPlaytime = gameRepository.getTotalPlaytime();
         Double averageRating = gameRepository.getAverageRating();
@@ -250,7 +256,6 @@ public class GameService {
         stats.put("notStartedGames", notStartedGames);
         stats.put("onHoldGames", onHoldGames);
         stats.put("droppedGames", droppedGames);
-        stats.put("dlcGames", dlcGames);
         stats.put("favoriteGames", favoriteGames);
         stats.put("totalPlaytime", totalPlaytime != null ? totalPlaytime : 0.0);
         stats.put("averageRating", averageRating != null ? Math.round(averageRating * 10.0) / 10.0 : 0.0);

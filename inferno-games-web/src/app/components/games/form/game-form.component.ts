@@ -76,7 +76,8 @@ export class GameFormComponent implements OnInit, OnDestroy {
       rating: [null, [Validators.min(1), Validators.max(10)]],
       playtimeHours: [0, [Validators.min(0)]],
       notes: [''],
-      favorite: [false]
+      favorite: [false],
+      isDlc: [false]
     });
   }
 
@@ -102,7 +103,8 @@ export class GameFormComponent implements OnInit, OnDestroy {
               rating: res.data.rating,
               playtimeHours: res.data.playtimeHours,
               notes: res.data.notes,
-              favorite: res.data.favorite
+              favorite: res.data.favorite,
+              isDlc: res.data.isDlc
             });
           }
           this.loading = false;

@@ -142,6 +142,12 @@
           {{ helpers.getStatusLabel(game.status) }}
         </div>
 
+        @if (game.isDlc) {
+        <div class="dlc-badge" matTooltip="Downloadable Content">
+          DLC
+        </div>
+        }
+
         @if (game.rating) {
         <div class="rating-badge">
           <mat-icon>star</mat-icon>
@@ -221,6 +227,9 @@
         </div>
 
         <div class="row-status">
+          @if (game.isDlc) {
+          <span class="dlc-chip">DLC</span>
+          }
           <span class="status-chip" [class]="helpers.getStatusColor(game.status)">
             {{ helpers.getStatusLabel(game.status) }}
           </span>

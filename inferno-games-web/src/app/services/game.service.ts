@@ -111,6 +111,19 @@ export class GameService extends BaseService {
     );
   }
 
+  toggleDlc(id: number): Observable<ApiResponse<Game>> {
+    return this.post<ApiResponse<Game>>(`${this.apiUrl}/${id}/dlc`, {}).pipe(
+      map(response => ({
+        ...response,
+        data: response.data ? new Game(response.data) : undefined
+      })),
+      catchError(error => {
+        console.error('Error toggling DLC:', error);
+        return of({ code: 500, data: undefined, message: 'Failed to toggle DLC', type: 'ERROR' as any, timeMs: 0 });
+      })
+    );
+  }
+
   // ─── Query Operations ───────────────────────────────────────────────────────
 
   searchGames(query: string): Observable<ApiResponse<Game[]>> {

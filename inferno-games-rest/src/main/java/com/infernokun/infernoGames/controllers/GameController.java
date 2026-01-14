@@ -73,6 +73,11 @@ public class GameController extends BaseController {
         return createSuccessResponse(gameService.toggleFavorite(id));
     }
 
+    @PostMapping("/{id}/dlc")
+    public ResponseEntity<ApiResponse<Game>> toggleDlc(@PathVariable Long id) {
+        return createSuccessResponse(gameService.toggleDlc(id));
+    }
+
     // ─── Query Endpoints ────────────────────────────────────────────────────────
 
     @GetMapping("/search")

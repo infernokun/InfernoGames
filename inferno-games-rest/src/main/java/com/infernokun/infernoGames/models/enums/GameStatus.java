@@ -5,6 +5,5 @@ public enum GameStatus {
     IN_PROGRESS,
     COMPLETED,
     ON_HOLD,
-    DROPPED,
-    DLC
+    DROPPED
 }

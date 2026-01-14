@@ -405,7 +405,6 @@
       &.on-hold { background: #6b7280; color: white; }
       &.dropped { background: var(--error-color); color: white; }
       &.not-started { background: var(--border-color); color: var(--text-primary); }
-      &.dlc { background: var(--primary-color); color: var(--text-primary); }
     }
 
     .favorite-badge {
@@ -430,6 +429,26 @@
         justify-content: center;
         line-height: 1;
       }
+    }
+
+    .dlc-badge {
+      position: absolute;
+      top: 12px;
+      right: 12px;
+      padding: 6px 12px;
+      border-radius: 8px;
+      font-size: 0.75rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      background: linear-gradient(135deg, #8b5cf6 0%, #6366f1 100%);
+      color: white;
+      box-shadow: 0 2px 8px rgba(139, 92, 246, 0.4);
+    }
+
+    // When both favorite and DLC badges exist, move DLC below favorite
+    .favorite-badge + .dlc-badge {
+      top: 52px;
     }
 
     .rating-badge {
@@ -511,7 +530,6 @@
         &.on-hold { background: rgba(107, 114, 128, 0.15); color: #9ca3af; }
         &.dropped { background: rgba(239, 68, 68, 0.15); color: var(--error-color); }
         &.not-started { background: var(--background-color); color: var(--text-muted); }
-        &.dlc { background: rgba(245, 158, 11, 0.15); color: var(--accent-color); }
       }
     }
   }

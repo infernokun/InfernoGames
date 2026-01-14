@@ -178,7 +178,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
 
   private processGames(): void {
     this.inProgressGames = this.games
-      .filter(g => g.status === GameStatus.IN_PROGRESS || g.status === GameStatus.DLC)
+      .filter(g => g.status === GameStatus.IN_PROGRESS)
       .slice(0, 4);
 
     this.recentlyCompletedGames = this.games

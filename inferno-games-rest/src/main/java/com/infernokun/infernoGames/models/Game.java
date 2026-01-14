@@ -108,6 +108,10 @@ public class Game {
     private Boolean favorite = false;
 
     @Builder.Default
+    @Column(name = "is_dlc")
+    private Boolean isDlc = false;
+
+    @Builder.Default
     @Column(name = "achievements")
     private Integer achievements = 0;
 

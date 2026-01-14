@@ -90,6 +90,19 @@ export class GameDetailComponent implements OnInit, OnDestroy {
     }
   }
 
+  toggleDlc(): void {
+    if (this.game?.id) {
+      this.gameService.toggleDlc(this.game.id).subscribe({
+        next: (res) => {
+          if (res.data && this.game) {
+            this.game.isDlc = res.data.isDlc;
+            this.snackBar.open(this.game.isDlc ? 'Marked as DLC' : 'Unmarked as DLC', 'Close', { duration: 2000 });
+          }
+        }
+      });
+    }
+  }
+
   updateStatus(status: GameStatus): void {
     if (this.game?.id) {
       this.gameService.updateGameStatus(this.game.id, status).subscribe({

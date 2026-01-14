@@ -265,7 +265,7 @@ export class GamesListComponent implements OnInit, OnDestroy {
           comparison = (a.playtimeHours || 0) - (b.playtimeHours || 0);
           break;
         case 'status':
-          const statusOrder = ['IN_PROGRESS', 'DLC', 'NOT_STARTED', 'ON_HOLD', 'COMPLETED', 'DROPPED'];
+          const statusOrder = ['IN_PROGRESS', 'NOT_STARTED', 'ON_HOLD', 'COMPLETED', 'DROPPED'];
           comparison = statusOrder.indexOf(a.status || '') - statusOrder.indexOf(b.status || '');
           break;
         case 'dateAdded':

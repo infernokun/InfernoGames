@@ -29,14 +29,22 @@
         <div class="hero-info">
           <div class="title-row">
             <h1 class="game-title">{{ game.title }}</h1>
-            <button mat-icon-button class="favorite-btn" (click)="toggleFavorite()">
-              <mat-icon [class.favorited]="game.favorite">
-                {{ game.favorite ? 'favorite' : 'favorite_border' }}
-              </mat-icon>
-            </button>
+            <div class="title-actions">
+              <button mat-icon-button class="dlc-btn" [class.active]="game.isDlc" (click)="toggleDlc()" matTooltip="{{ game.isDlc ? 'Unmark as DLC' : 'Mark as DLC' }}">
+                <mat-icon>extension</mat-icon>
+              </button>
+              <button mat-icon-button class="favorite-btn" (click)="toggleFavorite()">
+                <mat-icon [class.favorited]="game.favorite">
+                  {{ game.favorite ? 'favorite' : 'favorite_border' }}
+                </mat-icon>
+              </button>
+            </div>
           </div>
 
           <div class="meta-tags">
+            @if (game.isDlc) {
+              <span class="dlc-badge">DLC</span>
+            }
             <span class="status-badge" [class]="helpers.getStatusColor(game.status)">
               {{ helpers.getStatusLabel(game.status) }}
             </span>
