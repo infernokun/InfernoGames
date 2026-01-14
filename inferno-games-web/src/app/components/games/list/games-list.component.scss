@@ -404,6 +404,7 @@
       &.on-hold { background: #6b7280; color: white; }
       &.dropped { background: var(--error-color); color: white; }
       &.not-started { background: var(--border-color); color: var(--text-primary); }
+      &.dlc { background: var(--primary-color); color: #1a1a1a; }
     }
 
     .rating-badge {
@@ -648,6 +649,7 @@
         &.on-hold { background: rgba(107, 114, 128, 0.15); color: #9ca3af; }
         &.dropped { background: rgba(239, 68, 68, 0.15); color: var(--error-color); }
         &.not-started { background: var(--background-color); color: var(--text-muted); }
+        &.dlc { background: rgba(245, 158, 11, 0.15); color: var(--primary-color); }
       }
     }
   }

@@ -299,8 +299,8 @@
           @for (platform of platformStats; track platform.platform) {
           <div class="platform-item">
             <div class="platform-info">
-              <mat-icon>{{ getPlatformIcon(platform.platform) }}</mat-icon>
-              <span class="platform-name">{{ getPlatformLabel(platform.platform) }}</span>
+              <mat-icon>{{ helpers.getPlatformIcon(platform.platform) }}</mat-icon>
+              <span class="platform-name">{{ helpers.getPlatformLabel(platform.platform) }}</span>
             </div>
             <div class="platform-stats">
               <span class="game-count">{{ platform.gameCount }} games</span>
@@ -355,16 +355,16 @@
             <mat-icon>videogame_asset</mat-icon>
           </div>
           }
-          <div class="status-badge" [class]="getStatusColor(game.status)">
-            {{ getStatusLabel(game.status) }}
+          <div class="status-badge" [class]="helpers.getStatusColor(game.status)">
+            {{ helpers.getStatusLabel(game.status) }}
           </div>
         </div>
         <div class="game-info">
           <h3 class="game-title">{{ game.title }}</h3>
           <div class="game-meta">
             <span class="platform">
-              <mat-icon>{{ getPlatformIcon(game.platform || '') }}</mat-icon>
-              {{ getPlatformLabel(game.platform || '') }}
+              <mat-icon>{{ helpers.getPlatformIcon(game.platform || '') }}</mat-icon>
+              {{ helpers.getPlatformLabel(game.platform || '') }}
             </span>
             <span class="playtime">
               <mat-icon>schedule</mat-icon>
@@ -414,8 +414,8 @@
         <div class="game-info">
           <h3 class="game-title">{{ game.title }}</h3>
           <div class="game-meta">
-            <span class="status-chip" [class]="getStatusColor(game.status)">
-              {{ getStatusLabel(game.status) }}
+            <span class="status-chip" [class]="helpers.getStatusColor(game.status)">
+              {{ helpers.getStatusLabel(game.status) }}
             </span>
           </div>
         </div>

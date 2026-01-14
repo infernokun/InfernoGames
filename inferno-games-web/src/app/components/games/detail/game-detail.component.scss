@@ -162,6 +162,7 @@
         &.on-hold { background: #6b7280; color: white; }
         &.dropped { background: var(--error-color); color: white; }
         &.not-started { background: var(--border-color); color: var(--text-primary); }
+        &.dlc { background: var(--primary-color); color: #1a1a1a; }
       }
 
       .platform-tag {
@@ -399,6 +400,12 @@
         border-color: var(--border-color) !important;
         color: var(--text-secondary) !important;
         &.active { background: var(--border-color) !important; color: var(--text-primary) !important; }
+      }
+
+      &.dlc {
+        border-color: var(--primary-color) !important;
+        color: var(--primary-color) !important;
+        &.active { background: var(--primary-color) !important; color: #1a1a1a !important; }
       }
     }
   }

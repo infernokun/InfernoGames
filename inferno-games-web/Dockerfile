@@ -7,7 +7,7 @@ WORKDIR /app/
 # Install pnpm globally
 RUN npm install -g pnpm
 
-COPY --link *.json pnpm-lock.yaml /app/
+COPY --link package.json pnpm-lock.yaml /app/
 COPY --link src/ /app/src/
 
 RUN --mount=type=cache,target=/root/.npm/_cacache \
@@ -24,19 +24,28 @@ LABEL maintainer="infernokun@infernokun.com" \
   source="https://github.com/infernokun/InfernoGames" \
   run="docker run -p 80:80 infernokun/inferno-games -d"
 
-COPY --link --chown=101:101 nginx/nginx.conf /etc/nginx/nginx.conf
+# Create nginx user with fixed UID/GID for consistency
+RUN addgroup -g 101 -S nginx && \
+    adduser -D -u 101 -S nginx
+
+# Copy nginx config
+COPY --link nginx/nginx.conf /etc/nginx/nginx.conf
+
+# Set proper ownership and permissions
 RUN set -eux \
-  && chown 101:101 -R /var/cache/nginx \
-  && chown 101:101 -R /var/log/nginx \
-  && chown 101:101 -R /etc/nginx \
-  && chown 101:101 -R /usr/share/nginx \
+  && chown -R nginx:nginx /var/cache/nginx \
+  && chown -R nginx:nginx /var/log/nginx \
+  && chown -R nginx:nginx /etc/nginx \
+  && chown -R nginx:nginx /usr/share/nginx \
   && touch /var/run/nginx.pid \
-  && chown 101:101 /var/run/nginx.pid \
+  && chown nginx:nginx /var/run/nginx.pid \
   && rm -f /etc/nginx/conf.d/default.conf
 
-COPY --link --chown=101:101 --from=compile-stage /app/dist/app/browser /usr/share/nginx/html/
+# Copy built application
+COPY --link --from=compile-stage /app/dist/app/browser /usr/share/nginx/html/
 
-COPY --chmod=755 ./scripts/docker-entrypoint.sh /docker-entrypoint.sh
+# Copy and set permissions for entrypoint script
+COPY --link --chmod=755 ./scripts/docker-entrypoint.sh /docker-entrypoint.sh
 
 VOLUME [ "/etc/nginx" ]
 
