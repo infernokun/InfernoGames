@@ -104,7 +104,7 @@ export class GameFormComponent implements OnInit, OnDestroy {
               playtimeHours: res.data.playtimeHours,
               notes: res.data.notes,
               favorite: res.data.favorite,
-              isDlc: res.data.isDlc
+              dlc: res.data.dlc
             });
           }
           this.loading = false;

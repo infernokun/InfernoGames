@@ -166,7 +166,7 @@ export class Game {
   completedAt?: Date;
   notes?: string;
   favorite?: boolean;
-  isDlc?: boolean;
+  dlc?: boolean;
   dlcOwned?: string[];
   achievements?: number;
   totalAchievements?: number;
@@ -212,7 +212,7 @@ export class Game {
       this.completedAt = data.completedAt ? DateUtils.parseDateTimeArray(data.completedAt) : undefined;
       this.notes = data.notes;
       this.favorite = data.favorite || false;
-      this.isDlc = data.isDlc || false;
+      this.dlc = data.dlc || false;
       this.dlcOwned = data.dlcOwned || [];
       this.achievements = data.achievements || 0;
       this.totalAchievements = data.totalAchievements || 0;

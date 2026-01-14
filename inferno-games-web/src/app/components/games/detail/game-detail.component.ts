@@ -95,8 +95,8 @@ export class GameDetailComponent implements OnInit, OnDestroy {
       this.gameService.toggleDlc(this.game.id).subscribe({
         next: (res) => {
           if (res.data && this.game) {
-            this.game.isDlc = res.data.isDlc;
-            this.snackBar.open(this.game.isDlc ? 'Marked as DLC' : 'Unmarked as DLC', 'Close', { duration: 2000 });
+            this.game.dlc = res.data.dlc;
+            this.snackBar.open(this.game.dlc ? 'Marked as DLC' : 'Unmarked as DLC', 'Close', { duration: 2000 });
           }
         }
       });

@@ -358,7 +358,7 @@
           <div class="status-badge" [class]="helpers.getStatusColor(game.status)">
             {{ helpers.getStatusLabel(game.status) }}
           </div>
-          @if (game.isDlc) {
+          @if (game.dlc) {
           <div class="dlc-badge">DLC</div>
           }
         </div>
@@ -407,7 +407,7 @@
           <div class="favorite-badge">
             <mat-icon>favorite</mat-icon>
           </div>
-          @if (game.isDlc) {
+          @if (game.dlc) {
           <div class="dlc-badge">DLC</div>
           }
           @if (game.rating) {
@@ -454,7 +454,7 @@
             <mat-icon>videogame_asset</mat-icon>
           </div>
           }
-          @if (game.isDlc) {
+          @if (game.dlc) {
           <div class="dlc-badge">DLC</div>
           }
           <button class="quick-start-btn" mat-mini-fab color="primary" (click)="startPlaying($event, game)"

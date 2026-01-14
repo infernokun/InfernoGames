@@ -30,7 +30,7 @@
           <div class="title-row">
             <h1 class="game-title">{{ game.title }}</h1>
             <div class="title-actions">
-              <button mat-icon-button class="dlc-btn" [class.active]="game.isDlc" (click)="toggleDlc()" matTooltip="{{ game.isDlc ? 'Unmark as DLC' : 'Mark as DLC' }}">
+              <button mat-icon-button class="dlc-btn" [class.active]="game.dlc" (click)="toggleDlc()" matTooltip="{{ game.dlc ? 'Unmark as DLC' : 'Mark as DLC' }}">
                 <mat-icon>extension</mat-icon>
               </button>
               <button mat-icon-button class="favorite-btn" (click)="toggleFavorite()">
@@ -42,7 +42,7 @@
           </div>
 
           <div class="meta-tags">
-            @if (game.isDlc) {
+            @if (game.dlc) {
               <span class="dlc-badge">DLC</span>
             }
             <span class="status-badge" [class]="helpers.getStatusColor(game.status)">
