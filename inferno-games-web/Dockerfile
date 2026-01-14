@@ -8,6 +8,7 @@ WORKDIR /app/
 RUN npm install -g pnpm
 
 COPY --link package.json pnpm-lock.yaml /app/
+COPY --link angular.json tsconfig.json tsconfig.app.json /app/
 COPY --link src/ /app/src/
 
 RUN --mount=type=cache,target=/root/.npm/_cacache \

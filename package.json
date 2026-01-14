@@ -23,9 +23,5 @@
   "bugs": {
     "url": "https://github.com/infernokun/InfernoGames/issues"
   },
-  "homepage": "https://github.com/infernokun/InfernoGames#readme",
-  "workspaces": [
-    "inferno-games-web",
-    "inferno-games-rest"
-  ]
+  "homepage": "https://github.com/infernokun/InfernoGames#readme"
 }
