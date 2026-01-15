@@ -31,6 +31,8 @@ public interface GameRepository extends JpaRepository<Game, Long> {
     // Find favorites
     List<Game> findByFavoriteTrue();
 
+    List<Game> findByDlcTrue();
+
     // Find by genre
     List<Game> findByGenreContainingIgnoreCase(String genre);
 
@@ -64,6 +66,8 @@ public interface GameRepository extends JpaRepository<Game, Long> {
 
     // Count favorites
     long countByFavoriteTrue();
+
+    long countByDlcTrue();
 
     // Sum total playtime
     @Query("SELECT COALESCE(SUM(g.playtimeHours), 0) FROM Game g")

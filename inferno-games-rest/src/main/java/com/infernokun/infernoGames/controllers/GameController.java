@@ -109,6 +109,11 @@ public class GameController extends BaseController {
         return createSuccessResponse(gameService.getFavoriteGames());
     }
 
+    @GetMapping("/dlc")
+    public ResponseEntity<ApiResponse<List<Game>>> getDlcGames() {
+        return createSuccessResponse(gameService.getDlcGames());
+    }
+
     @GetMapping("/recent")
     public ResponseEntity<ApiResponse<List<Game>>> getRecentlyAddedGames() {
         return createSuccessResponse(gameService.getRecentlyAddedGames());

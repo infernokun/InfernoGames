@@ -63,6 +63,8 @@ public class GameRequest {
 
     private Boolean favorite;
 
+    private Boolean dlc;
+
     private Integer achievements;
 
     private Integer totalAchievements;

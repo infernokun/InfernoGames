@@ -44,7 +44,7 @@ public class ExecutionTimeAspect {
 
             return result;
         } catch (Exception e) {
-            log.error("Error in controller method: {}", joinPoint.getSignature().getName(), e);
+            log.error("Error in controller method: {}", joinPoint.getSignature().getName());
             throw e;
         }
     }

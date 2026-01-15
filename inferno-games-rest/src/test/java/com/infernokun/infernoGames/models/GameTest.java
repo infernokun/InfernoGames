@@ -167,19 +167,6 @@ class GameTest {
         }
 
         @Test
-        @DisplayName("updateStatus to DLC should not affect timestamps")
-        void updateStatus_ToDLC_DoesNotAffectTimestamps() {
-            game.setStartedAt(null);
-            game.setCompletedAt(null);
-
-            game.updateStatus(GameStatus.DLC);
-
-            assertThat(game.getStatus()).isEqualTo(GameStatus.DLC);
-            assertThat(game.getStartedAt()).isNull();
-            assertThat(game.getCompletedAt()).isNull();
-        }
-
-        @Test
         @DisplayName("updateStatus to NOT_STARTED should not affect timestamps")
         void updateStatus_ToNotStarted_DoesNotAffectTimestamps() {
             game.updateStatus(GameStatus.NOT_STARTED);

@@ -31,13 +31,13 @@ class ApiResponseTest {
         @Test
         @DisplayName("success(data) should create success response with data")
         void success_CreatesSuccessResponseWithData() {
-            String testData = "test data";
-            ApiResponse<String> response = ApiResponse.success(testData);
+            Integer data = 123;
+            ApiResponse<Integer> response = ApiResponse.success(data);
 
             assertThat(response.getCode()).isEqualTo(HttpStatus.SC_OK);
             assertThat(response.getMessage()).isEqualTo("Success");
             assertThat(response.getType()).isEqualTo(ApiResponse.TYPE.SUCCESS);
-            assertThat(response.getData()).isEqualTo(testData);
+            assertThat(response.getData()).isEqualTo(data);
         }
 
         @Test
@@ -162,7 +162,7 @@ class ApiResponseTest {
         @Test
         @DisplayName("hasData should return true when data is present")
         void hasData_ReturnsTrueWhenDataPresent() {
-            ApiResponse<String> response = ApiResponse.success("data");
+            ApiResponse<String> response = ApiResponse.success("data", "message");
 
             assertThat(response.hasData()).isTrue();
         }

@@ -90,6 +90,7 @@ public class GameService {
                 .completedAt(request.getCompletedAt())
                 .notes(request.getNotes())
                 .favorite(request.getFavorite() != null ? request.getFavorite() : false)
+                .dlc(request.getDlc() != null ? request.getDlc() : false)
                 .achievements(request.getAchievements() != null ? request.getAchievements() : 0)
                 .totalAchievements(request.getTotalAchievements() != null ? request.getTotalAchievements() : 0)
                 .igdbId(request.getIgdbId())
@@ -160,6 +161,7 @@ public class GameService {
         if (request.getCompletedAt() != null) game.setCompletedAt(request.getCompletedAt());
         if (request.getNotes() != null) game.setNotes(request.getNotes());
         if (request.getFavorite() != null) game.setFavorite(request.getFavorite());
+        if (request.getDlc() != null) game.setDlc(request.getDlc());
         if (request.getAchievements() != null) game.setAchievements(request.getAchievements());
         if (request.getTotalAchievements() != null) game.setTotalAchievements(request.getTotalAchievements());
 
@@ -223,6 +225,8 @@ public class GameService {
         return gameRepository.findByFavoriteTrue();
     }
 
+    public List<Game> getDlcGames() { return gameRepository.findByDlcTrue(); }
+
     public List<Game> advancedSearch(String title, GameStatus status, GamePlatform platform, String genre) {
         return gameRepository.searchGames(title, status, platform, genre);
     }
@@ -248,6 +252,7 @@ public class GameService {
         long onHoldGames = gameRepository.countByStatus(GameStatus.ON_HOLD);
         long droppedGames = gameRepository.countByStatus(GameStatus.DROPPED);
         long favoriteGames = gameRepository.countByFavoriteTrue();
+        long dlcGames = gameRepository.countByDlcTrue();
         Double totalPlaytime = gameRepository.getTotalPlaytime();
         Double averageRating = gameRepository.getAverageRating();
 
@@ -258,6 +263,7 @@ public class GameService {
         stats.put("onHoldGames", onHoldGames);
         stats.put("droppedGames", droppedGames);
         stats.put("favoriteGames", favoriteGames);
+        stats.put("dlcGames", dlcGames);
         stats.put("totalPlaytime", totalPlaytime != null ? totalPlaytime : 0.0);
         stats.put("averageRating", averageRating != null ? Math.round(averageRating * 10.0) / 10.0 : 0.0);
         stats.put("completionRate", totalGames > 0 ? Math.round((completedGames * 100.0) / totalGames) : 0);
@@ -352,6 +358,7 @@ public class GameService {
                 .igdbRating(dto.getRating())
                 .igdbRatingCount(dto.getRatingCount())
                 .favorite(false)
+                .dlc(false)
                 .playtimeHours(0.0)
                 .completionPercentage(0)
                 .achievements(0)

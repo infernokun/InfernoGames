@@ -321,32 +321,29 @@ class GameRequestTest {
         @Test
         @DisplayName("all args constructor should set all fields")
         void allArgsConstructor_SetsAllFields() {
-            LocalDateTime now = LocalDateTime.now();
-            
-            GameRequest request = new GameRequest(
-                    "Title",
-                    "Description",
-                    "Developer",
-                    "Publisher",
-                    2024,
-                    "Action",
-                    List.of("Action"),
-                    "https://cover.jpg",
-                    List.of("https://ss.jpg"),
-                    GamePlatform.PC,
-                    List.of(GamePlatform.PC),
-                    GameStatus.IN_PROGRESS,
-                    8,
-                    25.0,
-                    50,
-                    now,
-                    null,
-                    "Notes",
-                    true,
-                    10,
-                    20,
-                    12345L
-            );
+            GameRequest request = GameRequest.builder()
+                    .title("Title")
+                    .description("Description")
+                    .developer("Developer")
+                    .publisher("Publisher")
+                    .releaseYear(2024)
+                    .genre("Action")
+                    .genres(List.of("Action"))
+                    .coverImageUrl("https://cover.jpg")
+                    .screenshotUrls(List.of("https://ss.jpg"))
+                    .platform(GamePlatform.PC)
+                    .status(GameStatus.IN_PROGRESS)
+                    .rating(8)
+                    .playtimeHours(15.5)
+                    .completionPercentage(75)
+                    .startedAt(LocalDateTime.now().minusDays(1))
+                    .notes("Notes")
+                    .favorite(true)
+                    .achievements(25)
+                    .totalAchievements(50)
+                    .steamAppId("12345")
+                    .igdbId(98765L)
+                    .build();
 
             assertThat(request.getTitle()).isEqualTo("Title");
             assertThat(request.getDescription()).isEqualTo("Description");
@@ -354,15 +351,19 @@ class GameRequestTest {
             assertThat(request.getPublisher()).isEqualTo("Publisher");
             assertThat(request.getReleaseYear()).isEqualTo(2024);
             assertThat(request.getGenre()).isEqualTo("Action");
+            assertThat(request.getGenres()).containsExactlyInAnyOrder("Action");
             assertThat(request.getPlatform()).isEqualTo(GamePlatform.PC);
             assertThat(request.getStatus()).isEqualTo(GameStatus.IN_PROGRESS);
             assertThat(request.getRating()).isEqualTo(8);
-            assertThat(request.getPlaytimeHours()).isEqualTo(25.0);
-            assertThat(request.getCompletionPercentage()).isEqualTo(50);
+            assertThat(request.getPlaytimeHours()).isEqualTo(15.5);
+            assertThat(request.getCompletionPercentage()).isEqualTo(75);
+            assertThat(request.getStartedAt()).isNotNull();
+            assertThat(request.getNotes()).isEqualTo("Notes");
             assertThat(request.getFavorite()).isTrue();
-            assertThat(request.getAchievements()).isEqualTo(10);
-            assertThat(request.getTotalAchievements()).isEqualTo(20);
-            assertThat(request.getIgdbId()).isEqualTo(12345L);
+            assertThat(request.getAchievements()).isEqualTo(25);
+            assertThat(request.getTotalAchievements()).isEqualTo(50);
+            assertThat(request.getSteamAppId()).isEqualTo("12345");
+            assertThat(request.getIgdbId()).isEqualTo(98765L);
         }
     }
 

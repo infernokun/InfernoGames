@@ -202,6 +202,19 @@ export class GameService extends BaseService {
     );
   }
 
+  getDlcGames(): Observable<ApiResponse<Game[]>> {
+    return this.get<ApiResponse<Game[]>>(`${this.apiUrl}/dlc`).pipe(
+      map(response => ({
+        ...response,
+        data: response.data?.map(g => new Game(g)) || []
+      })),
+      catchError(error => {
+        console.error('Error fetching dlc games:', error);
+        return of({ code: 500, data: [], message: 'Failed to fetch dlc', type: 'ERROR' as any, timeMs: 0 });
+      })
+    );
+  }
+
   getRecentlyAddedGames(): Observable<ApiResponse<Game[]>> {
     return this.get<ApiResponse<Game[]>>(`${this.apiUrl}/recent`).pipe(
       map(response => ({
