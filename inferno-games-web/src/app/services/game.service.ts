@@ -30,7 +30,13 @@ export class GameService extends BaseService {
       })),
       catchError(error => {
         console.error('Error fetching games:', error);
-        return of(new ApiResponse<Game[]>({ code: 500, data: [], message: 'Failed to fetch games', type: Type.ERROR, timeMs: 0 }));
+        return of(new ApiResponse<Game[]>({
+          code: 500,
+          data: [],
+          message: 'Failed to fetch games',
+          type: Type.ERROR,
+          timeMs: 0
+        }));
       })
     );
   }
@@ -699,11 +705,11 @@ export class GameService extends BaseService {
       catchError(error => {
         console.error('Error refreshing Steam cache:', error);
         return of(new ApiResponse<void>({
-        code: 500,
-        data: undefined,
-        message: 'Failed to refresh Steam cache',
-        type: Type.ERROR,
-        timeMs: 0
+          code: 500,
+          data: undefined,
+          message: 'Failed to refresh Steam cache',
+          type: Type.ERROR,
+          timeMs: 0
         }));
       })
     );
