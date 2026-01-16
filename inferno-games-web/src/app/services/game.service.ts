@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable, map, catchError, of } from 'rxjs';
-import { ApiResponse } from '../models/api-response.model';
+import { ApiResponse, Type } from '../models/api-response.model';
 import { Game, GameStats, PlatformStats, GenreStats, GameStatus, GamePlatform, IGDBGame, SteamGameInfo, SteamLibraryStats, SteamStatus, SteamUserProfile } from '../models/game.model';
 import { EnvironmentService } from './environment.service';
 import { BaseService } from './base.service';
@@ -30,7 +30,7 @@ export class GameService extends BaseService {
       })),
       catchError(error => {
         console.error('Error fetching games:', error);
-        return of({ code: 500, data: [], message: 'Failed to fetch games', type: 'ERROR' as any, timeMs: 0 });
+        return of(new ApiResponse<Game[]>({ code: 500, data: [], message: 'Failed to fetch games', type: Type.ERROR, timeMs: 0 }));
       })
     );
   }
@@ -43,7 +43,13 @@ export class GameService extends BaseService {
       })),
       catchError(error => {
         console.error('Error fetching game:', error);
-        return of({ code: 500, data: undefined, message: 'Failed to fetch game', type: 'ERROR' as any, timeMs: 0 });
+        return of(new ApiResponse<Game>({
+          code: 500,
+          data: undefined,
+          message: 'Failed to fetch game',
+          type: Type.ERROR,
+          timeMs: 0
+        }));
       })
     );
   }
@@ -56,7 +62,13 @@ export class GameService extends BaseService {
       })),
       catchError(error => {
         console.error('Error creating game:', error);
-        return of({ code: 500, data: undefined, message: 'Failed to create game', type: 'ERROR' as any, timeMs: 0 });
+        return of(new ApiResponse<Game>({
+          code: 500,
+          data: undefined,
+          message: 'Failed to create game',
+          type: Type.ERROR,
+          timeMs: 0
+        }));
       })
     );
   }
@@ -69,7 +81,13 @@ export class GameService extends BaseService {
       })),
       catchError(error => {
         console.error('Error updating game:', error);
-        return of({ code: 500, data: undefined, message: 'Failed to update game', type: 'ERROR' as any, timeMs: 0 });
+        return of(new ApiResponse<Game>({
+          code: 500,
+          data: undefined,
+          message: 'Failed to update game',
+          type: Type.ERROR,
+          timeMs: 0
+        }));
       })
     );
   }
@@ -78,7 +96,13 @@ export class GameService extends BaseService {
     return this.delete<ApiResponse<void>>(`${this.apiUrl}/${id}`).pipe(
       catchError(error => {
         console.error('Error deleting game:', error);
-        return of({ code: 500, data: undefined, message: 'Failed to delete game', type: 'ERROR' as any, timeMs: 0 });
+        return of(new ApiResponse<void>({
+          code: 500,
+          data: undefined,
+          message: 'Failed to delete game',
+          type: Type.ERROR,
+          timeMs: 0
+        }));
       })
     );
   }
@@ -93,7 +117,13 @@ export class GameService extends BaseService {
       })),
       catchError(error => {
         console.error('Error updating game status:', error);
-        return of({ code: 500, data: undefined, message: 'Failed to update status', type: 'ERROR' as any, timeMs: 0 });
+        return of(new ApiResponse<Game>({
+          code: 500,
+          data: undefined,
+          message: 'Failed to update status',
+          type: Type.ERROR,
+          timeMs: 0
+        }));
       })
     );
   }
@@ -106,7 +136,13 @@ export class GameService extends BaseService {
       })),
       catchError(error => {
         console.error('Error toggling favorite:', error);
-        return of({ code: 500, data: undefined, message: 'Failed to toggle favorite', type: 'ERROR' as any, timeMs: 0 });
+        return of(new ApiResponse<Game>({
+          code: 500,
+          data: undefined,
+          message: 'Failed to toggle favorite',
+          type: Type.ERROR,
+          timeMs: 0
+        }));
       })
     );
   }
@@ -119,7 +155,13 @@ export class GameService extends BaseService {
       })),
       catchError(error => {
         console.error('Error toggling DLC:', error);
-        return of({ code: 500, data: undefined, message: 'Failed to toggle DLC', type: 'ERROR' as any, timeMs: 0 });
+        return of(new ApiResponse<Game>({
+          code: 500,
+          data: undefined,
+          message: 'Failed to toggle DLC',
+          type: Type.ERROR,
+          timeMs: 0
+        }));
       })
     );
   }
@@ -134,7 +176,13 @@ export class GameService extends BaseService {
       })),
       catchError(error => {
         console.error('Error searching games:', error);
-        return of({ code: 500, data: [], message: 'Failed to search games', type: 'ERROR' as any, timeMs: 0 });
+        return of(new ApiResponse<Game[]>({
+          code: 500,
+          data: [],
+          message: 'Failed to search games',
+          type: Type.ERROR,
+          timeMs: 0
+        }));
       })
     );
   }
@@ -158,7 +206,13 @@ export class GameService extends BaseService {
       })),
       catchError(error => {
         console.error('Error in advanced search:', error);
-        return of({ code: 500, data: [], message: 'Failed to search games', type: 'ERROR' as any, timeMs: 0 });
+        return of(new ApiResponse<Game[]>({
+          code: 500,
+          data: [],
+          message: 'Failed to search games',
+          type: Type.ERROR,
+          timeMs: 0
+        }));
       })
     );
   }
@@ -171,7 +225,13 @@ export class GameService extends BaseService {
       })),
       catchError(error => {
         console.error('Error fetching games by status:', error);
-        return of({ code: 500, data: [], message: 'Failed to fetch games', type: 'ERROR' as any, timeMs: 0 });
+        return of(new ApiResponse<Game[]>({
+          code: 500,
+          data: [],
+          message: 'Failed to fetch games',
+          type: Type.ERROR,
+          timeMs: 0
+        }));
       })
     );
   }
@@ -184,7 +244,13 @@ export class GameService extends BaseService {
       })),
       catchError(error => {
         console.error('Error fetching games by platform:', error);
-        return of({ code: 500, data: [], message: 'Failed to fetch games', type: 'ERROR' as any, timeMs: 0 });
+        return of(new ApiResponse<Game[]>({
+          code: 500,
+          data: [],
+          message: 'Failed to fetch games',
+          type: Type.ERROR,
+          timeMs: 0
+        }));
       })
     );
   }
@@ -197,7 +263,13 @@ export class GameService extends BaseService {
       })),
       catchError(error => {
         console.error('Error fetching favorite games:', error);
-        return of({ code: 500, data: [], message: 'Failed to fetch favorites', type: 'ERROR' as any, timeMs: 0 });
+        return of(new ApiResponse<Game[]>({
+          code: 500,
+          data: [],
+          message: 'Failed to fetch favorites',
+          type: Type.ERROR,
+          timeMs: 0
+        }));
       })
     );
   }
@@ -210,7 +282,13 @@ export class GameService extends BaseService {
       })),
       catchError(error => {
         console.error('Error fetching dlc games:', error);
-        return of({ code: 500, data: [], message: 'Failed to fetch dlc', type: 'ERROR' as any, timeMs: 0 });
+        return of(new ApiResponse<Game[]>({
+          code: 500,
+          data: [],
+          message: 'Failed to fetch dlc',
+          type: Type.ERROR,
+          timeMs: 0
+        }));
       })
     );
   }
@@ -223,7 +301,13 @@ export class GameService extends BaseService {
       })),
       catchError(error => {
         console.error('Error fetching recent games:', error);
-        return of({ code: 500, data: [], message: 'Failed to fetch recent games', type: 'ERROR' as any, timeMs: 0 });
+        return of(new ApiResponse<Game[]>({
+          code: 500,
+          data: [],
+          message: 'Failed to fetch recent games',
+          type: Type.ERROR,
+          timeMs: 0
+        }));
       })
     );
   }
@@ -236,7 +320,13 @@ export class GameService extends BaseService {
       })),
       catchError(error => {
         console.error('Error fetching completed games:', error);
-        return of({ code: 500, data: [], message: 'Failed to fetch completed games', type: 'ERROR' as any, timeMs: 0 });
+        return of(new ApiResponse<Game[]>({
+          code: 500,
+          data: [],
+          message: 'Failed to fetch completed games',
+          type: Type.ERROR,
+          timeMs: 0
+        }));
       })
     );
   }
@@ -247,7 +337,7 @@ export class GameService extends BaseService {
     return this.get<ApiResponse<GameStats>>(`${this.apiUrl}/stats`).pipe(
       catchError(error => {
         console.error('Error fetching game stats:', error);
-        return of({
+        return of(new ApiResponse<GameStats>({
           code: 500,
           data: {
             totalGames: 0,
@@ -258,9 +348,9 @@ export class GameService extends BaseService {
             completionRate: 0
           },
           message: 'Failed to fetch stats',
-          type: 'ERROR' as any,
+          type: Type.ERROR,
           timeMs: 0
-        });
+        }));
       })
     );
   }
@@ -283,7 +373,13 @@ export class GameService extends BaseService {
       }),
       catchError(error => {
         console.error('Error fetching platform stats:', error);
-        return of({ code: 500, data: [], message: 'Failed to fetch platform stats', type: 'ERROR' as any, timeMs: 0 });
+        return of(new ApiResponse<PlatformStats[]>({
+          code: 500,
+          data: [],
+          message: 'Failed to fetch platform stats',
+          type: Type.ERROR,
+          timeMs: 0
+        }));
       })
     );
   }
@@ -305,7 +401,13 @@ export class GameService extends BaseService {
       }),
       catchError(error => {
         console.error('Error fetching genre stats:', error);
-        return of({ code: 500, data: [], message: 'Failed to fetch genre stats', type: 'ERROR' as any, timeMs: 0 });
+        return of(new ApiResponse<GenreStats[]>({
+          code: 500,
+          data: [],
+          message: 'Failed to fetch genre stats',
+          type: Type.ERROR,
+          timeMs: 0
+        }));
       })
     );
   }
@@ -316,7 +418,13 @@ export class GameService extends BaseService {
     return this.get<ApiResponse<IGDBGame[]>>(`${this.apiUrl}/igdb/search?query=${encodeURIComponent(query)}`).pipe(
       catchError(error => {
         console.error('Error searching IGDB:', error);
-        return of({ code: 500, data: [], message: 'Failed to search IGDB', type: 'ERROR' as any, timeMs: 0 });
+        return of(new ApiResponse<IGDBGame[]>({
+          code: 500,
+          data: [],
+          message: 'Failed to search IGDB',
+          type: Type.ERROR,
+          timeMs: 0
+        }));
       })
     );
   }
@@ -325,7 +433,13 @@ export class GameService extends BaseService {
     return this.get<ApiResponse<IGDBGame>>(`${this.apiUrl}/igdb/${igdbId}`).pipe(
       catchError(error => {
         console.error('Error fetching IGDB game:', error);
-        return of({ code: 500, data: undefined, message: 'Failed to fetch IGDB game', type: 'ERROR' as any, timeMs: 0 });
+        return of(new ApiResponse<IGDBGame>({
+          code: 500,
+          data: undefined,
+          message: 'Failed to fetch IGDB game',
+          type: Type.ERROR,
+          timeMs: 0
+        }));
       })
     );
   }
@@ -334,7 +448,13 @@ export class GameService extends BaseService {
     return this.get<ApiResponse<IGDBGame[]>>(`${this.apiUrl}/igdb/popular?limit=${limit}`).pipe(
       catchError(error => {
         console.error('Error fetching popular IGDB games:', error);
-        return of({ code: 500, data: [], message: 'Failed to fetch popular games', type: 'ERROR' as any, timeMs: 0 });
+        return of(new ApiResponse<IGDBGame[]>({
+          code: 500,
+          data: [],
+          message: 'Failed to fetch popular games',
+          type: Type.ERROR,
+          timeMs: 0
+        }));
       })
     );
   }
@@ -343,7 +463,13 @@ export class GameService extends BaseService {
     return this.get<ApiResponse<IGDBGame[]>>(`${this.apiUrl}/igdb/recent?limit=${limit}`).pipe(
       catchError(error => {
         console.error('Error fetching recent IGDB releases:', error);
-        return of({ code: 500, data: [], message: 'Failed to fetch recent releases', type: 'ERROR' as any, timeMs: 0 });
+        return of(new ApiResponse<IGDBGame[]>({
+          code: 500,
+          data: [],
+          message: 'Failed to fetch recent releases',
+          type: Type.ERROR,
+          timeMs: 0
+        }));
       })
     );
   }
@@ -352,7 +478,13 @@ export class GameService extends BaseService {
     return this.get<ApiResponse<IGDBGame[]>>(`${this.apiUrl}/igdb/upcoming?limit=${limit}`).pipe(
       catchError(error => {
         console.error('Error fetching upcoming IGDB games:', error);
-        return of({ code: 500, data: [], message: 'Failed to fetch upcoming games', type: 'ERROR' as any, timeMs: 0 });
+        return of(new ApiResponse<IGDBGame[]>({
+          code: 500,
+          data: [],
+          message: 'Failed to fetch upcoming games',
+          type: Type.ERROR,
+          timeMs: 0
+        }));
       })
     );
   }
@@ -365,7 +497,13 @@ export class GameService extends BaseService {
       })),
       catchError(error => {
         console.error('Error importing from IGDB:', error);
-        return of({ code: 500, data: undefined, message: 'Failed to import from IGDB', type: 'ERROR' as any, timeMs: 0 });
+        return of(new ApiResponse<Game>({
+          code: 500,
+          data: undefined,
+          message: 'Failed to import from IGDB',
+          type: Type.ERROR,
+          timeMs: 0
+        }));
       })
     );
   }
@@ -378,7 +516,13 @@ export class GameService extends BaseService {
       })),
       catchError(error => {
         console.error('Error refreshing from IGDB:', error);
-        return of({ code: 500, data: undefined, message: 'Failed to refresh from IGDB', type: 'ERROR' as any, timeMs: 0 });
+        return of(new ApiResponse<Game>({
+          code: 500,
+          data: undefined,
+          message: 'Failed to refresh from IGDB',
+          type: Type.ERROR,
+          timeMs: 0
+        }));
       })
     );
   }
@@ -389,7 +533,13 @@ export class GameService extends BaseService {
     return this.delete<ApiResponse<void>>(`${this.apiUrl}/cache`).pipe(
       catchError(error => {
         console.error('Error clearing caches:', error);
-        return of({ code: 500, data: undefined, message: 'Failed to clear caches', type: 'ERROR' as any, timeMs: 0 });
+        return of(new ApiResponse<void>({
+          code: 500,
+          data: undefined,
+          message: 'Failed to clear caches',
+          type: Type.ERROR,
+          timeMs: 0
+        }));
       })
     );
   }
@@ -400,7 +550,13 @@ export class GameService extends BaseService {
     return this.get<ApiResponse<SteamStatus>>(`${this.apiUrl}/steam/status`).pipe(
       catchError(error => {
         console.error('Error getting Steam status:', error);
-        return of({ code: 500, data: { configured: false, message: 'Failed to get Steam status' }, message: 'Failed to get Steam status', type: 'ERROR' as any, timeMs: 0 });
+        return of(new ApiResponse<SteamStatus>({
+          code: 500,
+          data: { configured: false, message: 'Failed to get Steam status' },
+          message: 'Failed to get Steam status',
+          type: Type.ERROR,
+          timeMs: 0
+        }));
       })
     );
   }
@@ -409,7 +565,13 @@ export class GameService extends BaseService {
     return this.get<ApiResponse<SteamUserProfile>>(`${this.apiUrl}/steam/user`).pipe(
       catchError(error => {
         console.error('Error getting Steam user profile:', error);
-        return of({ code: 404, data: undefined as any, message: 'Failed to get Steam user profile', type: 'ERROR' as any, timeMs: 0 });
+        return of(new ApiResponse<SteamUserProfile>({
+          code: 404,
+          data: undefined,
+          message: 'Failed to get Steam user profile',
+          type: Type.ERROR,
+          timeMs: 0
+        }));
       })
     );
   }
@@ -418,7 +580,13 @@ export class GameService extends BaseService {
     return this.get<ApiResponse<SteamGameInfo[]>>(`${this.apiUrl}/steam/library`).pipe(
       catchError(error => {
         console.error('Error fetching Steam library:', error);
-        return of({ code: 500, data: [], message: 'Failed to fetch Steam library', type: 'ERROR' as any, timeMs: 0 });
+        return of(new ApiResponse<SteamGameInfo[]>({
+          code: 500,
+          data: [],
+          message: 'Failed to fetch Steam library',
+          type: Type.ERROR,
+          timeMs: 0
+        }));
       })
     );
   }
@@ -427,7 +595,13 @@ export class GameService extends BaseService {
     return this.get<ApiResponse<SteamGameInfo[]>>(`${this.apiUrl}/steam/library/with-genres`).pipe(
       catchError(error => {
         console.error('Error fetching Steam library with genres:', error);
-        return of({ code: 500, data: [], message: 'Failed to fetch Steam library with genres', type: 'ERROR' as any, timeMs: 0 });
+        return of(new ApiResponse<SteamGameInfo[]>({
+          code: 500,
+          data: [],
+          message: 'Failed to fetch Steam library with genres',
+          type: Type.ERROR,
+          timeMs: 0
+        }));
       })
     );
   }
@@ -436,7 +610,7 @@ export class GameService extends BaseService {
     return this.get<ApiResponse<SteamLibraryStats>>(`${this.apiUrl}/steam/library/stats`).pipe(
       catchError(error => {
         console.error('Error fetching Steam library stats:', error);
-        return of({
+        return of(new ApiResponse<SteamLibraryStats>({
           code: 500,
           data: {
             totalGames: 0,
@@ -453,9 +627,9 @@ export class GameService extends BaseService {
             playedPercentage: 0
           },
           message: 'Failed to fetch Steam library stats',
-          type: 'ERROR' as any,
+          type: Type.ERROR,
           timeMs: 0
-        });
+        }));
       })
     );
   }
@@ -464,7 +638,13 @@ export class GameService extends BaseService {
     return this.get<ApiResponse<SteamGameInfo[]>>(`${this.apiUrl}/steam/search?query=${encodeURIComponent(query)}`).pipe(
       catchError(error => {
         console.error('Error searching Steam library:', error);
-        return of({ code: 500, data: [], message: 'Failed to search Steam library', type: 'ERROR' as any, timeMs: 0 });
+        return of(new ApiResponse<SteamGameInfo[]>({
+          code: 500,
+          data: [],
+          message: 'Failed to search Steam library',
+          type: Type.ERROR,
+          timeMs: 0
+        }));
       })
     );
   }
@@ -473,7 +653,13 @@ export class GameService extends BaseService {
     return this.get<ApiResponse<SteamGameInfo[]>>(`${this.apiUrl}/steam/recent?count=${count}`).pipe(
       catchError(error => {
         console.error('Error fetching recently played Steam games:', error);
-        return of({ code: 500, data: [], message: 'Failed to fetch recently played games', type: 'ERROR' as any, timeMs: 0 });
+        return of(new ApiResponse<SteamGameInfo[]>({
+          code: 500,
+          data: [],
+          message: 'Failed to fetch recently played games',
+          type: Type.ERROR,
+          timeMs: 0
+        }));
       })
     );
   }
@@ -482,7 +668,13 @@ export class GameService extends BaseService {
     return this.get<ApiResponse<SteamGameInfo[]>>(`${this.apiUrl}/steam/most-played?limit=${limit}`).pipe(
       catchError(error => {
         console.error('Error fetching most played Steam games:', error);
-        return of({ code: 500, data: [], message: 'Failed to fetch most played games', type: 'ERROR' as any, timeMs: 0 });
+        return of(new ApiResponse<SteamGameInfo[]>({
+          code: 500,
+          data: [],
+          message: 'Failed to fetch most played games',
+          type: Type.ERROR,
+          timeMs: 0
+        }));
       })
     );
   }
@@ -491,7 +683,13 @@ export class GameService extends BaseService {
     return this.get<ApiResponse<{ appId: string; owned: boolean; gameInfo?: SteamGameInfo }>>(`${this.apiUrl}/steam/check/${appId}`).pipe(
       catchError(error => {
         console.error('Error checking Steam ownership:', error);
-        return of({ code: 500, data: { appId, owned: false }, message: 'Failed to check ownership', type: 'ERROR' as any, timeMs: 0 });
+        return of(new ApiResponse<{ appId: string; owned: boolean; gameInfo?: SteamGameInfo }>({
+          code: 500,
+          data: { appId, owned: false },
+          message: 'Failed to check ownership',
+          type: Type.ERROR,
+          timeMs: 0
+        }));
       })
     );
   }
@@ -500,7 +698,13 @@ export class GameService extends BaseService {
     return this.post<ApiResponse<void>>(`${this.apiUrl}/steam/refresh`, {}).pipe(
       catchError(error => {
         console.error('Error refreshing Steam cache:', error);
-        return of({ code: 500, data: undefined, message: 'Failed to refresh Steam cache', type: 'ERROR' as any, timeMs: 0 });
+        return of(new ApiResponse<void>({
+        code: 500,
+        data: undefined,
+        message: 'Failed to refresh Steam cache',
+        type: Type.ERROR,
+        timeMs: 0
+        }));
       })
     );
   }
@@ -513,7 +717,13 @@ export class GameService extends BaseService {
       })),
       catchError(error => {
         console.error('Error syncing Steam data:', error);
-        return of({ code: 500, data: undefined, message: 'Failed to sync Steam data', type: 'ERROR' as any, timeMs: 0 });
+        return of(new ApiResponse<Game>({
+          code: 500,
+          data: undefined,
+          message: 'Failed to sync Steam data',
+          type: Type.ERROR,
+          timeMs: 0
+        }));
       })
     );
   }
@@ -522,7 +732,13 @@ export class GameService extends BaseService {
     return this.post<ApiResponse<void>>(`${this.apiUrl}/steam/sync-all`, {}).pipe(
       catchError(error => {
         console.error('Error triggering Steam sync:', error);
-        return of({ code: 500, data: undefined, message: 'Failed to trigger Steam sync', type: 'ERROR' as any, timeMs: 0 });
+        return of(new ApiResponse<void>({
+          code: 500,
+          data: undefined,
+          message: 'Failed to trigger Steam sync',
+          type: Type.ERROR,
+          timeMs: 0
+        }));
       })
     );
   }
@@ -531,7 +747,13 @@ export class GameService extends BaseService {
     return this.post<ApiResponse<{ updatedGames: number; message: string }>>(`${this.apiUrl}/steam/validate-platforms`, {}).pipe(
       catchError(error => {
         console.error('Error validating Steam platforms:', error);
-        return of({ code: 500, data: { updatedGames: 0, message: 'Failed to validate platforms' }, message: 'Failed to validate platforms', type: 'ERROR' as any, timeMs: 0 });
+        return of(new ApiResponse<{ updatedGames: number; message: string }>({
+          code: 500,
+          data: { updatedGames: 0, message: 'Failed to validate platforms' },
+          message: 'Failed to validate platforms',
+          type: Type.ERROR,
+          timeMs: 0
+        }));
       })
     );
   }
@@ -540,7 +762,13 @@ export class GameService extends BaseService {
     return this.post<ApiResponse<{ updatedGames: number; message: string }>>(`${this.apiUrl}/steam/migrate`, {}).pipe(
       catchError(error => {
         console.error('Error migrating Steam data:', error);
-        return of({ code: 500, data: { updatedGames: 0, message: 'Failed to migrate Steam data' }, message: 'Failed to migrate Steam data', type: 'ERROR' as any, timeMs: 0 });
+        return of(new ApiResponse<{ updatedGames: number; message: string }>({
+          code: 500,
+          data: { updatedGames: 0, message: 'Failed to migrate Steam data' },
+          message: 'Failed to migrate Steam data',
+          type: Type.ERROR,
+          timeMs: 0
+        }));
       })
     );
   }
